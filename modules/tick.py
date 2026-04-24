@@ -13,7 +13,7 @@ from typing import Optional
 import asyncio
 import math
 
-from .constants import TICKS_PER_HOUR
+from .constants import TICKS_PER_HOUR, COURSES
 
 
 # ============================================================
@@ -374,6 +374,26 @@ class LearnTickProcessor(TickProcessor):
         
         if completed >= planned:
             hours = planned / TICKS_PER_HOUR
+            
+            # 获取课程对应的技能名称
+            course_skill = course.get("skill")
+            
+            # 累加经验到用户技能经验池
+            if course_skill and detail["earned_exp"] > 0:
+                from .skills import get_skill_level
+                user.setdefault("skill_exp", {})
+                user["skill_exp"][course_skill] = user["skill_exp"].get(course_skill, 0) + detail["earned_exp"]
+                
+                # 根据总经验计算技能等级
+                user.setdefault("skills", {})
+                user["skills"][course_skill] = get_skill_level(user["skill_exp"][course_skill])
+                
+                self.plugin.logger.info(
+                    f"用户 {user['nickname']} 完成{course_name}学习，"
+                    f"获得{detail['earned_exp']}经验，"
+                    f"{course_skill}技能提升至 Lv.{user['skills'][course_skill]}"
+                )
+            
             user.setdefault("records", []).append({
                 "type": "学习",
                 "detail": f"完成了{course_name}{hours}小时",
@@ -495,8 +515,22 @@ class TickManager:
         # 检查是否已完成
         if ActionDetail.is_expired(detail, now):
             self.plugin.logger.info(f"用户 {user['nickname']} 的{action_type}已完成，清理状态")
-            completed = detail["completed_ticks"]
-            detail["completed_ticks"] = completed
+            
+            # 如果是学习动作，写入经验
+            if action_type == TickType.LEARN:
+                course_name = detail.get("data", {}).get("course_name")
+                course = COURSES.get(course_name, {})
+                course_skill = course.get("skill")
+                if course_skill and detail.get("earned_exp", 0) > 0:
+                    from .skills import get_skill_level
+                    user.setdefault("skill_exp", {})
+                    user["skill_exp"][course_skill] = user["skill_exp"].get(course_skill, 0) + detail["earned_exp"]
+                    user.setdefault("skills", {})
+                    user["skills"][course_skill] = get_skill_level(user["skill_exp"][course_skill])
+                    self.plugin.logger.info(
+                        f"停机恢复: {user['nickname']} {course_skill}技能提升至 Lv.{user['skills'][course_skill]}"
+                    )
+            
             user["status"] = "空闲"
             user["current_action"] = None
             user["action_detail"] = None
