@@ -114,6 +114,9 @@ class NiumaLife(Star):
 
         self._last_hourly_tick = datetime.now(timezone.utc)
         self._last_daily_tick = datetime.now(timezone.utc)
+        
+        # 商店状态（随机商品刷新）
+        self._shop_state = {}
 
         # 注册所有命令
         register_all_commands(self)

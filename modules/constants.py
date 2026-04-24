@@ -17,7 +17,9 @@ def load_json(name: str) -> dict:
 # 加载所有配置
 ITEMS = load_json("items")
 STOCKS = load_json("stocks")
-FOODS = load_json("foods")
+
+# 食物系统已合并到 ITEMS，按 category="food" 过滤
+FOODS = {k: v for k, v in ITEMS.items() if v.get("category") == "food"}
 RESIDENCES = load_json("residences")
 JOBS = load_json("jobs")
 COURSES = load_json("courses")

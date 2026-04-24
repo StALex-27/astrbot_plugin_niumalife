@@ -27,7 +27,12 @@ from ...modules.checkin import get_luck_rating, get_streak_reward, roll_lucky_dr
 from ...modules.item import (
     ITEMS, RARITY_COLORS, RARITY_NAMES, SLOTS, SLOT_EMOJI,
     get_equipped_items, equip_item, unequip_item, auto_equip_if_empty,
-    calc_equipped_effects, format_item, format_item_effects, get_items_by_slot
+    calc_equipped_effects, format_item, format_item_effects, get_items_by_slot,
+    get_inventory_count, apply_item_effects, get_all_inventory
+)
+from ...modules.shop import (
+    SHOPS, get_all_shops, get_shop_items, get_global_random_items,
+    format_shop_list, format_shop_items, buy_item, is_item_in_shop
 )
 
 
@@ -688,12 +693,135 @@ def register_interactive_commands(plugin):
         
         lines = ["━━━━━━━━━━━━━━", "【 背包 】", "━━━━━━━━━━━━━━"]
         for i, item in enumerate(inventory, 1):
-            equipped = " [装备中]" if item.get("equipped") else ""
-            lines.append(f"{i}. {item.get('name', item.get('id', '未知'))}{equipped}")
+            name = item.get('name', item.get('id', '未知'))
+            qty = item.get('quantity', 1)
+            if qty > 1:
+                name = f"{name} x{qty}"
+            lines.append(f"{i}. {name}")
         lines.append("━━━━━━━━━━━━━━")
-        lines.append("使用: /背包 使用/装备 序号")
+        lines.append("使用: /背包 使用 物品名")
+        lines.append("      /装备 装备名 穿戴装备")
         
         yield event.plain_result("\n".join(lines))
+    
+    # ========== 商店 ==========
+    @filter.command("商店")
+    async def shop_cmd(event: AstrMessageEvent):
+        """商店命令"""
+        user_id = str(event.get_sender_id())
+        user = await plugin._store.get_user(user_id)
+        
+        if not user:
+            yield event.plain_result("📋 你还没有注册！\n先输入 /签到 注册")
+            return
+        
+        _, args = plugin._parser.parse(event)
+        
+        # 无参数：显示商店列表
+        if not args:
+            # 显示基础商店 + 随机商品
+            lines = ["━━━━━━━━━━━━━━", "【 商 店 首 页 】", "━━━━━━━━━━━━━━"]
+            
+            # 基础商店
+            lines.append("🏪 基础商店")
+            fixed, _ = get_shop_items(plugin, "基础商店")
+            global_random = get_global_random_items(plugin, 3)
+            
+            for item_id in fixed[:4]:
+                item = ITEMS.get(item_id, {})
+                lines.append(f"  • {item.get('name', item_id)} §e{item.get('price', 0)}金§r")
+            
+            if global_random:
+                lines.append("  ★ 随机商品:")
+                for item_id in global_random:
+                    item = ITEMS.get(item_id, {})
+                    lines.append(f"    ★ {item.get('name', item_id)} §e{item.get('price', 0)}金§r")
+            
+            lines.append("━━━━━━━━━━━━━━")
+            lines.append("📂 分类商店:")
+            for shop_id in ["小吃街", "药品店", "超市", "工具店"]:
+                shop = SHOPS.get(shop_id, {})
+                lines.append(f"  {shop.get('emoji', '🏪')} /商店 {shop_id}")
+            
+            lines.append("━━━━━━━━━━━━━━")
+            lines.append("💰 金币: {}".format(int(user.get('gold', 0))))
+            lines.append("━━━━━━━━━━━━━━")
+            lines.append("指令: /商店 <商店名> 查看商品")
+            lines.append("      /商店 买 <物品名> [数量]")
+            
+            yield event.plain_result("\n".join(lines))
+            return
+        
+        # 处理子命令
+        sub_cmd = args[0]
+        
+        # 查看特定商店
+        if sub_cmd in SHOPS:
+            shop_id = sub_cmd
+            shop = SHOPS.get(shop_id)
+            fixed, random_items = get_shop_items(plugin, shop_id)
+            
+            lines = ["━━━━━━━━━━━━━━", f"{shop.get('emoji', '🏪')} 【 {shop.get('name', shop_id)} 】", f"{shop.get('desc', '')}", "━━━━━━━━━━━━━━"]
+            
+            if fixed:
+                lines.append("【 常驻商品 】")
+                for item_id in fixed:
+                    item = ITEMS.get(item_id, {})
+                    price = item.get('price', 0)
+                    effects = item.get('effects', {})
+                    effect_str = format_food_effects(effects)
+                    lines.append(f"• {item.get('name', item_id)} §e{price}金§r {effect_str}")
+            
+            if random_items:
+                lines.append("【 限时商品 】")
+                for item_id in random_items:
+                    item = ITEMS.get(item_id, {})
+                    price = item.get('price', 0)
+                    effects = item.get('effects', {})
+                    effect_str = format_food_effects(effects)
+                    lines.append(f"★ {item.get('name', item_id)} §e{price}金§r {effect_str}")
+            
+            lines.append("━━━━━━━━━━━━━━")
+            lines.append("购买: /商店 买 <物品名> [数量]")
+            
+            yield event.plain_result("\n".join(lines))
+            return
+        
+        # 购买指令
+        if sub_cmd == "买":
+            if len(args) < 2:
+                yield event.plain_result("📋 格式: /商店 买 <物品名> [数量]\n例: /商店 买 泡面 3")
+                return
+            
+            item_name = args[1]
+            quantity = int(args[2]) if len(args) > 2 else 1
+            
+            # 查找物品
+            item_id = None
+            for iid, item in ITEMS.items():
+                if item.get('name') == item_name or iid == item_name:
+                    item_id = iid
+                    break
+            
+            if not item_id:
+                yield event.plain_result(f"📋 未找到物品: {item_name}")
+                return
+            
+            # 尝试在所有商店中购买
+            success = False
+            for shop_id in SHOPS.keys():
+                if is_item_in_shop(plugin, shop_id, item_id):
+                    success, msg = buy_item(plugin, user, shop_id, item_id, quantity)
+                    if success:
+                        await plugin._store.update_user(user_id, user)
+                        yield event.plain_result(f"✅ {msg}\n\n物品: {ITEMS.get(item_id, {}).get('name', item_id)} x{quantity}\n剩余金币: {int(user.get('gold', 0))}")
+                        return
+            
+            yield event.plain_result(f"⚠️ {item_name} 不在任何商店中销售")
+            return
+        
+        # 未知指令
+        yield event.plain_result("📋 格式: /商店 <商店名>\n     /商店 买 <物品名> [数量]\n\n可选商店: 基础商店, 小吃街, 药品店, 超市, 工具店, 数码店, 服装店, 饰品店")
     
     # ========== 股市 ==========
     @filter.command("股市")
@@ -869,3 +997,25 @@ def _format_profile_text(user: dict) -> str:
         f"{luck_emoji} {luck_name} {buff_text}\\n"
         f"━━━━━━━━━━━━━━"
     )
+
+
+def format_food_effects(effects: dict) -> str:
+    """格式化食物/药品效果（简短）"""
+    if not effects:
+        return ""
+    
+    effect_names = {
+        "satiety": "饱食",
+        "mood": "心情",
+        "health": "健康",
+        "energy": "精力",
+        "strength": "体力",
+    }
+    
+    parts = []
+    for key, value in effects.items():
+        name = effect_names.get(key, key)
+        if isinstance(value, (int, float)) and value > 0:
+            parts.append(f"+{value}{name}")
+    
+    return f"({', '.join(parts)})" if parts else ""
