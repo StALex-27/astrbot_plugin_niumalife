@@ -1,0 +1,212 @@
+{
+  "公园散步": {
+    "cost_per_hour": 0,
+    "restore_mood": 5,
+    "consume_strength": 2,
+    "consume_energy": 1,
+    "desc": "免费的休闲方式"
+  },
+  "看电视": {
+    "cost_per_hour": 5,
+    "restore_mood": 8,
+    "consume_strength": 1,
+    "consume_energy": 2,
+    "desc": "在家休息"
+  },
+  "听音乐": {
+    "cost_per_hour": 3,
+    "restore_mood": 6,
+    "consume_strength": 0,
+    "consume_energy": 1,
+    "desc": "放松心情"
+  },
+  "玩手机": {
+    "cost_per_hour": 5,
+    "restore_mood": 10,
+    "consume_strength": 1,
+    "consume_energy": 3,
+    "desc": "刷视频聊天"
+  },
+  "逛商场": {
+    "cost_per_hour": 50,
+    "restore_mood": 20,
+    "consume_strength": 3,
+    "consume_energy": 5,
+    "desc": "购物放松"
+  },
+  "看电影": {
+    "cost_per_hour": 30,
+    "restore_mood": 25,
+    "consume_strength": 2,
+    "consume_energy": 4,
+    "desc": "约会必备"
+  },
+  "唱K": {
+    "cost_per_hour": 40,
+    "restore_mood": 30,
+    "consume_strength": 5,
+    "consume_energy": 8,
+    "desc": "释放压力"
+  },
+  "酒吧": {
+    "cost_per_hour": 80,
+    "restore_mood": 35,
+    "consume_strength": 5,
+    "consume_energy": 10,
+    "desc": "借酒消愁"
+  },
+  "聚餐": {
+    "cost_per_hour": 60,
+    "restore_mood": 28,
+    "consume_strength": 4,
+    "consume_energy": 6,
+    "desc": "社交活动"
+  },
+  "慢跑": {
+    "cost_per_hour": 0,
+    "restore_mood": 12,
+    "consume_strength": 8,
+    "consume_energy": 5,
+    "desc": "锻炼身体"
+  },
+  "健身房": {
+    "cost_per_hour": 30,
+    "restore_mood": 15,
+    "consume_strength": 10,
+    "consume_energy": 8,
+    "desc": "塑形增肌"
+  },
+  "游泳": {
+    "cost_per_hour": 40,
+    "restore_mood": 18,
+    "consume_strength": 12,
+    "consume_energy": 10,
+    "desc": "全身运动"
+  },
+  "篮球": {
+    "cost_per_hour": 20,
+    "restore_mood": 20,
+    "consume_strength": 15,
+    "consume_energy": 12,
+    "desc": "团队运动"
+  },
+  "瑜伽": {
+    "cost_per_hour": 25,
+    "restore_mood": 15,
+    "consume_strength": 5,
+    "consume_energy": 4,
+    "desc": "修身养性"
+  },
+  "拳击": {
+    "cost_per_hour": 35,
+    "restore_mood": 25,
+    "consume_strength": 18,
+    "consume_energy": 15,
+    "desc": "释放压力"
+  },
+  "网吧开黑": {
+    "cost_per_hour": 15,
+    "restore_mood": 22,
+    "consume_strength": 3,
+    "consume_energy": 8,
+    "desc": "游戏社交"
+  },
+  "手游氪金": {
+    "cost_per_hour": 100,
+    "restore_mood": 30,
+    "consume_strength": 1,
+    "consume_energy": 5,
+    "desc": "抽卡上头"
+  },
+  "电玩城": {
+    "cost_per_hour": 60,
+    "restore_mood": 28,
+    "consume_strength": 4,
+    "consume_energy": 6,
+    "desc": "童年回忆"
+  },
+  "密室逃脱": {
+    "cost_per_hour": 80,
+    "restore_mood": 32,
+    "consume_strength": 6,
+    "consume_energy": 10,
+    "desc": "烧脑刺激"
+  },
+  "桌游吧": {
+    "cost_per_hour": 45,
+    "restore_mood": 26,
+    "consume_strength": 4,
+    "consume_energy": 7,
+    "desc": "社交推理"
+  },
+  "SPA按摩": {
+    "cost_per_hour": 150,
+    "restore_mood": 35,
+    "consume_strength": -10,
+    "consume_energy": -15,
+    "desc": "极致放松"
+  },
+  "温泉度假": {
+    "cost_per_hour": 200,
+    "restore_mood": 40,
+    "consume_strength": -15,
+    "consume_energy": -20,
+    "desc": "身心享受"
+  },
+  "高尔夫": {
+    "cost_per_hour": 300,
+    "restore_mood": 35,
+    "consume_strength": 10,
+    "consume_energy": 8,
+    "desc": "高端运动"
+  },
+  "游艇派对": {
+    "cost_per_hour": 500,
+    "restore_mood": 50,
+    "consume_strength": 5,
+    "consume_energy": 10,
+    "desc": "奢华体验"
+  },
+  "出国旅游": {
+    "cost_per_hour": 800,
+    "restore_mood": 60,
+    "consume_strength": 15,
+    "consume_energy": 20,
+    "desc": "人生巅峰"
+  },
+  "蹦极": {
+    "cost_per_hour": 200,
+    "restore_mood": 45,
+    "consume_strength": 20,
+    "consume_energy": 18,
+    "desc": "极限挑战"
+  },
+  "跳伞": {
+    "cost_per_hour": 250,
+    "restore_mood": 50,
+    "consume_strength": 22,
+    "consume_energy": 20,
+    "desc": "俯瞰世界"
+  },
+  "潜水": {
+    "cost_per_hour": 180,
+    "restore_mood": 40,
+    "consume_strength": 18,
+    "consume_energy": 15,
+    "desc": "探索海底"
+  },
+  "攀岩": {
+    "cost_per_hour": 120,
+    "restore_mood": 38,
+    "consume_strength": 25,
+    "consume_energy": 20,
+    "desc": "挑战自我"
+  },
+  "赛车": {
+    "cost_per_hour": 350,
+    "restore_mood": 48,
+    "consume_strength": 15,
+    "consume_energy": 18,
+    "desc": "速度激情"
+  }
+}

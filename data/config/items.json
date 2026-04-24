@@ -1,0 +1,137 @@
+{
+  "破旧T恤": {
+    "rarity": "common",
+    "type": "服装",
+    "price": 50,
+    "effect": {
+      "strength_bonus": 1
+    },
+    "desc": "基础服装，体力+1"
+  },
+  "工人手套": {
+    "rarity": "common",
+    "type": "工具",
+    "price": 80,
+    "effect": {
+      "strength_bonus": 2
+    },
+    "desc": "提升干活效率，体力+2"
+  },
+  "登山背包": {
+    "rarity": "uncommon",
+    "type": "工具",
+    "price": 200,
+    "effect": {
+      "strength_bonus": 3,
+      "energy_bonus": 2
+    },
+    "desc": "户外装备，体力+3 精力+2"
+  },
+  "破旧运动鞋": {
+    "rarity": "common",
+    "type": "工具",
+    "price": 100,
+    "effect": {
+      "strength_bonus": 2,
+      "energy_bonus": 1
+    },
+    "desc": "基础鞋类，体力+2 精力+1"
+  },
+  "程序员马克杯": {
+    "rarity": "uncommon",
+    "type": "工具",
+    "price": 150,
+    "effect": {
+      "exp_bonus": 5
+    },
+    "desc": "编程神器，经验+5%"
+  },
+  "商务手表": {
+    "rarity": "rare",
+    "type": "饰品",
+    "price": 500,
+    "effect": {
+      "mood_bonus": 5,
+      "work_income_bonus": 3
+    },
+    "desc": "商务人士标配，心情+5 收入+3%"
+  },
+  "工牌": {
+    "rarity": "common",
+    "type": "饰品",
+    "price": 30,
+    "effect": {
+      "work_income_bonus": 1
+    },
+    "desc": "入门级工牌，收入+1%"
+  },
+  "电动车": {
+    "rarity": "uncommon",
+    "type": "工具",
+    "price": 2000,
+    "effect": {
+      "energy_bonus": 10,
+      "work_income_bonus": 5
+    },
+    "desc": "外卖神器，精力+10 收入+5%"
+  },
+  "小米手机": {
+    "rarity": "uncommon",
+    "type": "工具",
+    "price": 1500,
+    "effect": {
+      "exp_bonus": 8
+    },
+    "desc": "性价比之王，经验+8%"
+  },
+  "苹果手机": {
+    "rarity": "rare",
+    "type": "工具",
+    "price": 6000,
+    "effect": {
+      "exp_bonus": 15,
+      "mood_bonus": 3
+    },
+    "desc": "高端手机，经验+15% 心情+3"
+  },
+  "机械键盘": {
+    "rarity": "rare",
+    "type": "工具",
+    "price": 800,
+    "effect": {
+      "exp_bonus": 10,
+      "energy_bonus": 3
+    },
+    "desc": "程序员标配，经验+10% 精力+3"
+  },
+  "猫": {
+    "rarity": "rare",
+    "type": "宠物",
+    "price": 5000,
+    "effect": {
+      "mood_bonus": 15,
+      "health_bonus": 5
+    },
+    "desc": "治愈系宠物，心情+15 健康+5"
+  },
+  "狗": {
+    "rarity": "epic",
+    "type": "宠物",
+    "price": 10000,
+    "effect": {
+      "mood_bonus": 25,
+      "health_bonus": 10,
+      "strength_bonus": 5
+    },
+    "desc": "忠诚伙伴，心情+25 健康+10 体力+5"
+  },
+  "仓鼠": {
+    "rarity": "common",
+    "type": "宠物",
+    "price": 500,
+    "effect": {
+      "mood_bonus": 8
+    },
+    "desc": "小巧可爱，心情+8"
+  }
+}

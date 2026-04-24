@@ -1,0 +1,79 @@
+{
+  "桥下": {
+    "type": "free",
+    "price": 0,
+    "rent": 0,
+    "strength_recovery": 2,
+    "energy_recovery": 2,
+    "mood_recovery": -1,
+    "health_recovery": -1,
+    "sleep_bonus": 1.0,
+    "desc": "免费的桥下空地"
+  },
+  "地下室": {
+    "type": "rent",
+    "price": 0,
+    "rent": 200,
+    "strength_recovery": 3,
+    "energy_recovery": 3,
+    "mood_recovery": 0,
+    "health_recovery": 0,
+    "sleep_bonus": 1.2,
+    "desc": "简陋的地下室"
+  },
+  "合租房": {
+    "type": "rent",
+    "price": 0,
+    "rent": 500,
+    "strength_recovery": 5,
+    "energy_recovery": 5,
+    "mood_recovery": 0,
+    "health_recovery": 0,
+    "sleep_bonus": 1.5,
+    "desc": "合租的 apartment"
+  },
+  "公寓": {
+    "type": "rent",
+    "price": 0,
+    "rent": 800,
+    "strength_recovery": 7,
+    "energy_recovery": 7,
+    "mood_recovery": 1,
+    "health_recovery": 1,
+    "sleep_bonus": 1.8,
+    "desc": "普通公寓"
+  },
+  "景江公寓": {
+    "type": "buy",
+    "price": 500000,
+    "rent": 0,
+    "strength_recovery": 12,
+    "energy_recovery": 12,
+    "mood_recovery": 2,
+    "health_recovery": 2,
+    "sleep_bonus": 2.5,
+    "desc": "高档公寓(可购)"
+  },
+  "别墅": {
+    "type": "buy",
+    "price": 2000000,
+    "rent": 0,
+    "strength_recovery": 15,
+    "energy_recovery": 15,
+    "mood_recovery": 5,
+    "health_recovery": 5,
+    "sleep_bonus": 3.0,
+    "desc": "豪华别墅(可购)"
+  },
+  "海豹国际": {
+    "type": "buy",
+    "price": 5000000,
+    "rent": 0,
+    "strength_recovery": 20,
+    "energy_recovery": 20,
+    "mood_recovery": 8,
+    "health_recovery": 8,
+    "sleep_bonus": 4.0,
+    "desc": "终极目标酒店(可购)"
+  }
+}

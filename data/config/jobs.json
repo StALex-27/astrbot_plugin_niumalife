@@ -1,0 +1,156 @@
+{
+  "搬砖": {
+    "type": "体力",
+    "hourly_wage": 20,
+    "consume_strength": 8,
+    "consume_energy": 1,
+    "consume_mood": 2,
+    "consume_health": 0,
+    "consume_satiety": 5,
+    "skill_required": {"苦力": 1},
+    "difficulty": "入门"
+  },
+  "清洁工": {
+    "type": "体力",
+    "hourly_wage": 15,
+    "consume_strength": 5,
+    "consume_energy": 1,
+    "consume_mood": 1,
+    "consume_health": 0,
+    "consume_satiety": 4,
+    "skill_required": {"苦力": 1},
+    "difficulty": "入门"
+  },
+  "外卖配送": {
+    "type": "体力",
+    "hourly_wage": 25,
+    "consume_strength": 6,
+    "consume_energy": 2,
+    "consume_mood": 1,
+    "consume_health": 1,
+    "consume_satiety": 6,
+    "skill_required": {"苦力": 2},
+    "difficulty": "入门"
+  },
+  "快递分拣": {
+    "type": "体力",
+    "hourly_wage": 22,
+    "consume_strength": 7,
+    "consume_energy": 1,
+    "consume_mood": 2,
+    "consume_health": 1,
+    "consume_satiety": 7,
+    "skill_required": {"苦力": 2},
+    "difficulty": "入门"
+  },
+  "工地小工": {
+    "type": "体力",
+    "hourly_wage": 35,
+    "consume_strength": 10,
+    "consume_energy": 2,
+    "consume_mood": 3,
+    "consume_health": 2,
+    "consume_satiety": 8,
+    "skill_required": {"苦力": 3},
+    "difficulty": "初级"
+  },
+  "文员": {
+    "type": "脑力",
+    "hourly_wage": 30,
+    "consume_strength": 1,
+    "consume_energy": 5,
+    "consume_mood": 0,
+    "consume_health": 0,
+    "consume_satiety": 3,
+    "skill_required": {"办公软件": 1},
+    "difficulty": "入门"
+  },
+  "数据录入": {
+    "type": "脑力",
+    "hourly_wage": 35,
+    "consume_strength": 1,
+    "consume_energy": 6,
+    "consume_mood": 1,
+    "consume_health": 0,
+    "consume_satiety": 4,
+    "skill_required": {"办公软件": 1, "数学": 1},
+    "difficulty": "入门"
+  },
+  "客服": {
+    "type": "脑力",
+    "hourly_wage": 32,
+    "consume_strength": 2,
+    "consume_energy": 7,
+    "consume_mood": 5,
+    "consume_health": 0,
+    "consume_satiety": 6,
+    "skill_required": {"沟通能力": 2},
+    "difficulty": "初级"
+  },
+  "会计": {
+    "type": "脑力",
+    "hourly_wage": 60,
+    "consume_strength": 1,
+    "consume_energy": 8,
+    "consume_mood": 2,
+    "consume_health": 0,
+    "consume_satiety": 5,
+    "skill_required": {"数学": 3, "办公软件": 2},
+    "difficulty": "中级"
+  },
+  "程序员": {
+    "type": "脑力",
+    "hourly_wage": 80,
+    "consume_strength": 1,
+    "consume_energy": 10,
+    "consume_mood": 3,
+    "consume_health": 1,
+    "consume_satiety": 4,
+    "skill_required": {"编程": 3},
+    "difficulty": "中级"
+  },
+  "销售": {
+    "type": "技能",
+    "hourly_wage": 50,
+    "consume_strength": 2,
+    "consume_energy": 6,
+    "consume_mood": 8,
+    "consume_health": 0,
+    "consume_satiety": 7,
+    "skill_required": {"沟通能力": 3, "销售": 2},
+    "difficulty": "中级"
+  },
+  "项目经理": {
+    "type": "技能",
+    "hourly_wage": 100,
+    "consume_strength": 2,
+    "consume_energy": 8,
+    "consume_mood": 5,
+    "consume_health": 0,
+    "consume_satiety": 6,
+    "skill_required": {"管理": 3, "沟通能力": 3},
+    "difficulty": "高级"
+  },
+  "技术总监": {
+    "type": "技能",
+    "hourly_wage": 150,
+    "consume_strength": 1,
+    "consume_energy": 12,
+    "consume_mood": 3,
+    "consume_health": 1,
+    "consume_satiety": 5,
+    "skill_required": {"编程": 5, "管理": 3},
+    "difficulty": "高级"
+  },
+  "企业顾问": {
+    "type": "技能",
+    "hourly_wage": 200,
+    "consume_strength": 1,
+    "consume_energy": 10,
+    "consume_mood": 2,
+    "consume_health": 0,
+    "consume_satiety": 4,
+    "skill_required": {"管理": 5, "沟通能力": 4},
+    "difficulty": "高级"
+  }
+}

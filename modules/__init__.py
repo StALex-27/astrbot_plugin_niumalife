@@ -1,0 +1,1 @@
+# NiuMa Life - AstrBot Plugin

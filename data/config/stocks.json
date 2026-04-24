@@ -1,0 +1,37 @@
+{
+  "牛马科技": {
+    "code": "NIU001",
+    "base_price": 100,
+    "volatility": 0.1,
+    "category": "科技",
+    "desc": "牛马人生集团旗下科技公司"
+  },
+  "搬砖集团": {
+    "code": "BAN002",
+    "base_price": 50,
+    "volatility": 0.05,
+    "category": "建筑",
+    "desc": "专注搬砖三十年"
+  },
+  "外卖快送": {
+    "code": "WAI003",
+    "base_price": 80,
+    "volatility": 0.08,
+    "category": "服务",
+    "desc": "最快最准时"
+  },
+  "程序员培训": {
+    "code": "COD004",
+    "base_price": 200,
+    "volatility": 0.15,
+    "category": "教育",
+    "desc": "培养未来的码农"
+  },
+  "海豹银行": {
+    "code": "SEA005",
+    "base_price": 150,
+    "volatility": 0.03,
+    "category": "金融",
+    "desc": "最稳定的股票"
+  }
+}

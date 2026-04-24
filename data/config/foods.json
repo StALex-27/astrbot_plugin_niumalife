@@ -1,0 +1,66 @@
+{
+  "馒头": {
+    "price": 3,
+    "restore_strength": 3,
+    "restore_energy": 0,
+    "restore_mood": 0,
+    "restore_health": 0,
+    "restore_satiety": 10
+  },
+  "泡面": {
+    "price": 5,
+    "restore_strength": 5,
+    "restore_energy": 2,
+    "restore_mood": -2,
+    "restore_health": 0,
+    "restore_satiety": 15
+  },
+  "盒饭": {
+    "price": 15,
+    "restore_strength": 15,
+    "restore_energy": 5,
+    "restore_mood": 1,
+    "restore_health": 0,
+    "restore_satiety": 25
+  },
+  "快餐": {
+    "price": 30,
+    "restore_strength": 20,
+    "restore_energy": 5,
+    "restore_mood": 2,
+    "restore_health": 0,
+    "restore_satiety": 30
+  },
+  "自助餐": {
+    "price": 100,
+    "restore_strength": 50,
+    "restore_energy": 20,
+    "restore_mood": 10,
+    "restore_health": 0,
+    "restore_satiety": 50
+  },
+  "营养餐": {
+    "price": 80,
+    "restore_strength": 30,
+    "restore_energy": 15,
+    "restore_mood": 0,
+    "restore_health": 5,
+    "restore_satiety": 40
+  },
+  "大餐": {
+    "price": 300,
+    "restore_strength": 20,
+    "restore_energy": 20,
+    "restore_mood": 20,
+    "restore_health": 20,
+    "restore_satiety": 60
+  },
+  "补品": {
+    "price": 500,
+    "restore_strength": 0,
+    "restore_energy": 20,
+    "restore_mood": 0,
+    "restore_health": 30,
+    "restore_satiety": 20
+  }
+}
