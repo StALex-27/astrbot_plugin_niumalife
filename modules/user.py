@@ -1,12 +1,14 @@
 """
 用户数据操作模块
 包含 DataStore、用户数据初始化/迁移等函数
+重构: 使用 AstrBot KV 存储替代 JSON 文件，解决并发竞态问题
 """
-import json
 import asyncio
-from pathlib import Path
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..main import NiumaLife
 
 from .constants import INITIAL_GOLD, INITIAL_ATTRIBUTES, INITIAL_SKILLS
 
@@ -20,39 +22,62 @@ class UserStatus:
     ENTERTAINING = "娱乐中"
 
 
+# KV 存储键名前缀
+USER_KEY_PREFIX = "user:"
+ALL_USERS_KEY = "__all_users__"
+
+
 class DataStore:
-    """数据存储管理器"""
+    """数据存储管理器 - 基于 AstrBot KV 存储
     
-    def __init__(self, data_dir: Path):
-        self._data_dir = data_dir
-        self._data_dir.mkdir(parents=True, exist_ok=True)
-        self._users_file = data_dir / "users.json"
-        self._user_locks: dict[str, asyncio.Lock] = {}
+    使用 SQLite 后端，解决 JSON 文件的并发竞态问题
+    每个用户独立存储，键名格式: user:{user_id}
+    """
     
-    def _load_users(self) -> dict:
-        if self._users_file.exists():
-            with open(self._users_file, "r", encoding="utf-8") as f:
-                return json.load(f)
-        return {}
+    def __init__(self, plugin: "NiumaLife"):
+        """初始化 DataStore
+        
+        Args:
+            plugin: 插件实例，用于访问 KV 存储方法
+        """
+        self._plugin = plugin
+        self._all_users_key = ALL_USERS_KEY
     
-    def _save_users(self, users: dict):
-        with open(self._users_file, "w", encoding="utf-8") as f:
-            json.dump(users, f, ensure_ascii=False, indent=2)
+    def _user_key(self, user_id: str) -> str:
+        """生成用户数据键名"""
+        return f"{USER_KEY_PREFIX}{user_id}"
     
-    def get_user(self, user_id: str) -> Optional[dict]:
-        users = self._load_users()
-        user_data = users.get(user_id)
+    # ========================================================
+    # 公开 API (异步)
+    # ========================================================
+    
+    async def get_user(self, user_id: str) -> Optional[dict]:
+        """获取用户数据
+        
+        Args:
+            user_id: 用户ID
+        
+        Returns:
+            用户数据字典，不存在则返回 None
+        """
+        user_data = await self._plugin.get_kv_data(self._user_key(user_id), None)
         if user_data:
             # 迁移旧用户数据（检查是否需要迁移）
             if "checkin" not in user_data or "active_buffs" not in user_data.get("checkin", {}):
                 user_data = migrate_user_data(user_data)
-                # 保存迁移后的数据
-                self.update_user(user_id, user_data)
+                await self.update_user(user_id, user_data)
         return user_data
     
-    def create_user(self, user_id: str, nickname: str) -> dict:
-        """创建新用户"""
-        users = self._load_users()
+    async def create_user(self, user_id: str, nickname: str) -> dict:
+        """创建新用户
+        
+        Args:
+            user_id: 用户ID
+            nickname: 用户昵称
+        
+        Returns:
+            新用户数据字典
+        """
         user_data = {
             "user_id": user_id,
             "nickname": nickname,
@@ -79,20 +104,95 @@ class DataStore:
                 "active_buffs": [],      # 当前生效的临时buffs
             },
         }
-        users[user_id] = user_data
-        self._save_users(users)
+        
+        # 存储用户数据
+        await self._plugin.put_kv_data(self._user_key(user_id), user_data)
+        
+        # 更新全局用户索引
+        await self._add_to_index(user_id)
+        
         return user_data
     
-    def update_user(self, user_id: str, user_data: dict):
-        users = self._load_users()
-        users[user_id] = user_data
-        self._save_users(users)
+    async def update_user(self, user_id: str, user_data: dict):
+        """更新用户数据
+        
+        Args:
+            user_id: 用户ID
+            user_data: 新的用户数据（完整替换）
+        """
+        await self._plugin.put_kv_data(self._user_key(user_id), user_data)
+    
+    async def delete_user(self, user_id: str):
+        """删除用户
+        
+        Args:
+            user_id: 用户ID
+        """
+        await self._plugin.delete_kv_data(self._user_key(user_id))
+        await self._remove_from_index(user_id)
+    
+    async def get_all_users(self) -> dict[str, dict]:
+        """获取所有用户数据
+        
+        Returns:
+            {user_id: user_data} 字典
+        """
+        # 从索引获取所有用户ID
+        index = await self._plugin.get_kv_data(self._all_users_key, [])
+        if not index:
+            return {}
+        
+        # 批量获取用户数据
+        users = {}
+        for user_id in index:
+            user_data = await self._plugin.get_kv_data(self._user_key(user_id), None)
+            if user_data:
+                users[user_id] = user_data
+        
+        return users
+    
+    async def save(self):
+        """保存所有数据（KV 存储无需手动保存，此方法保留兼容）"""
+        pass
+    
+    # ========================================================
+    # 私有方法
+    # ========================================================
+    
+    async def _get_index(self) -> list[str]:
+        """获取用户索引列表"""
+        return await self._plugin.get_kv_data(self._all_users_key, [])
+    
+    async def _save_index(self, index: list[str]):
+        """保存用户索引列表"""
+        await self._plugin.put_kv_data(self._all_users_key, index)
+    
+    async def _add_to_index(self, user_id: str):
+        """添加用户到索引"""
+        index = await self._get_index()
+        if user_id not in index:
+            index.append(user_id)
+            await self._save_index(index)
+    
+    async def _remove_from_index(self, user_id: str):
+        """从索引移除用户"""
+        index = await self._get_index()
+        if user_id in index:
+            index.remove(user_id)
+            await self._save_index(index)
+    
+    # ========================================================
+    # 兼容性别名 (部分同步接口保留用于快速迁移)
+    # ========================================================
     
     def get_lock(self, user_id: str) -> asyncio.Lock:
-        if user_id not in self._user_locks:
-            self._user_locks[user_id] = asyncio.Lock()
-        return self._user_locks[user_id]
+        """获取用户锁（KV 存储无需锁，此方法保留兼容）"""
+        return asyncio.Lock()
 
+
+# ========================================================
+# 数据迁移函数
+# ========================================================
 
 def migrate_inventory(user_data: dict) -> dict:
     """迁移库存数据

@@ -21,7 +21,7 @@ def register_life_commands(plugin):
     async def food_list(event: AstrMessageEvent):
         """查看食物列表"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")
@@ -54,7 +54,7 @@ def register_life_commands(plugin):
     async def eat(event: AstrMessageEvent):
         """购买并食用食物"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")
@@ -95,7 +95,7 @@ def register_life_commands(plugin):
             attrs["satiety"] = MAX_ATTRIBUTE
         
         user["attributes"] = attrs
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             url = await plugin._renderer.render_eat(
@@ -124,7 +124,7 @@ def register_life_commands(plugin):
     async def sleep(event: AstrMessageEvent):
         """开始睡眠"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")
@@ -159,7 +159,7 @@ def register_life_commands(plugin):
         user["current_action"] = TickType.SLEEP
         user["action_detail"] = detail
         
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         lines = [
             "━━━━━━━━━━━━━━",
@@ -197,7 +197,7 @@ def register_life_commands(plugin):
     async def cancel_sleep(event: AstrMessageEvent):
         """取消睡眠"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")
@@ -211,7 +211,7 @@ def register_life_commands(plugin):
         user["locked_until"] = None
         user["current_action"] = None
         user["action_detail"] = None
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             url = await plugin._renderer.render_success("✅ 已取消睡眠，返回空闲状态", event)
@@ -223,7 +223,7 @@ def register_life_commands(plugin):
     async def residence(event: AstrMessageEvent):
         """查看当前住所"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")

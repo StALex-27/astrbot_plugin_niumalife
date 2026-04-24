@@ -21,7 +21,7 @@ def register_entertain_commands(plugin):
     async def entertainment_list(event: AstrMessageEvent):
         """查看可进行的娱乐活动"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")
@@ -59,7 +59,7 @@ def register_entertain_commands(plugin):
     async def start_entertain(event: AstrMessageEvent):
         """开始娱乐"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")
@@ -109,7 +109,7 @@ def register_entertain_commands(plugin):
         user["current_action"] = TickType.ENTERTAIN
         user["action_detail"] = detail
         
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         lines = [
             "━━━━━━━━━━━━━━",
@@ -143,7 +143,7 @@ def register_entertain_commands(plugin):
     async def cancel_entertain(event: AstrMessageEvent):
         """取消娱乐"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")
@@ -157,7 +157,7 @@ def register_entertain_commands(plugin):
         user["locked_until"] = None
         user["current_action"] = None
         user["action_detail"] = None
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             url = await plugin._renderer.render_success("✅ 已取消娱乐，返回空闲状态", event)

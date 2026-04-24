@@ -104,7 +104,7 @@ class NiumaLife(Star):
         super().__init__(context)
 
         self._data_dir = StarTools.get_data_dir("niumalife")
-        self._store = DataStore(self._data_dir)
+        self._store = DataStore(self)
         self._parser = CommandParser()
 
         self._background_tasks: list[asyncio.Task] = []
@@ -130,14 +130,14 @@ class NiumaLife(Star):
                 if GROUP_ID:
                     logger.info(f"已加载群ID配置: {GROUP_ID}")
 
-        task1 = asyncio.create_task(self._tick_loop())
-        task2 = asyncio.create_task(self._hourly_tick_loop())
-        task3 = asyncio.create_task(self._daily_settlement_loop())
-        self._background_tasks.append(task1)
-        self._background_tasks.append(task2)
-        self._background_tasks.append(task3)
+        # 加载触发器状态
+        await self._tick_manager.load_tick_state()
 
-        logger.info("Tick系统已启动")
+        # 启动主循环
+        task1 = asyncio.create_task(self._tick_loop())
+        self._background_tasks.append(task1)
+
+        logger.info("Tick系统已启动 (基于时间触发)")
 
     async def terminate(self):
         logger.info("牛马人生插件关闭")
@@ -254,6 +254,12 @@ class NiumaLife(Star):
                 # 检查是否需要自动睡觉
                 await self._check_night_auto_sleep(now)
 
+                # 触发基于时间的事件（每小时/每日/Cron）
+                await self._tick_manager.trigger_time_based_events(now)
+
+                # Tick 所有用户动作
+                await self._tick_manager.tick_all_users(now)
+
                 # 每小时数据保存
                 await self._hourly_data_save(now)
 
@@ -276,7 +282,7 @@ class NiumaLife(Star):
 
     async def _process_all_free_passive_recovery(self, now: datetime):
         """处理所有空闲用户的被动恢复"""
-        users = self._store.get_all_users()
+        users = await self._store.get_all_users()
         for user_id, user in users.items():
             if user.get("status") == UserStatus.FREE.value:
                 await self._process_free_passive_recovery(user_id, user, now)
@@ -299,14 +305,14 @@ class NiumaLife(Star):
         attrs["satiety"] = max(0, attrs.get("satiety", 0) - SATIETY_CONSUMPTION_RATE)
 
         user["attributes"] = attrs
-        self._store.update_user(user_id, user)
+        await self._store.update_user(user_id, user)
 
     async def _check_night_auto_sleep(self, now: datetime):
         """夜间自动睡觉检测 (0-8点空闲用户自动睡眠)"""
         hour = now.hour
         # 0点到8点之间,空闲状态的用户自动睡眠
         if hour >= 0 and hour < 8:
-            users = self._store.get_all_users()
+            users = await self._store.get_all_users()
             for user_id, user in users.items():
                 if user.get("status") == UserStatus.FREE.value:
                     await self._start_sleep_auto(user_id, user, now)
@@ -332,12 +338,12 @@ class NiumaLife(Star):
         user["status"] = UserStatus.SLEEPING
         user["current_action"] = TickType.SLEEP
         user["action_detail"] = detail
-        self._store.update_user(user_id, user)
+        await self._store.update_user(user_id, user)
 
     async def _hourly_data_save(self, now: datetime):
         """每小时保存数据"""
         try:
-            self._store.save()
+            await self._store.save()
         except Exception as e:
             logger.error(f"数据保存失败: {e}")
 
@@ -382,7 +388,7 @@ class NiumaLife(Star):
         learn_stats = []
         rent_deducted = []
 
-        users = self._store.get_all_users()
+        users = await self._store.get_all_users()
         for user_id, user in users.items():
             try:
                 attrs = user.get("attributes", {})
@@ -402,7 +408,7 @@ class NiumaLife(Star):
                     attrs["health"] = max(0, attrs["health"] - 5)
                     attrs["mood"] = max(0, attrs["mood"] - 10)
 
-                self._store.update_user(user_id, user)
+                await self._store.update_user(user_id, user)
 
             except Exception as e:
                 logger.error(f"结算用户 {user_id} 时出错: {e}")

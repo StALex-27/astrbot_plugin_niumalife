@@ -16,7 +16,7 @@ def register_basic_commands(plugin):
         user_id = str(event.get_sender_id())
         nickname = event.get_sender_name()
         
-        existing = plugin._store.get_user(user_id)
+        existing = await plugin._store.get_user(user_id)
         if existing:
             try:
                 url = await plugin._renderer.render_error(
@@ -29,7 +29,7 @@ def register_basic_commands(plugin):
                 yield event.plain_result("📋 你已经是牛马了！\\n使用 /档案 查看你的状态")
             return
         
-        user = plugin._store.create_user(user_id, nickname)
+        user = await plugin._store.create_user(user_id, nickname)
         
         try:
             url = await plugin._renderer.render_success(
@@ -61,7 +61,7 @@ def register_basic_commands(plugin):
     async def profile(event: AstrMessageEvent):
         """查看个人档案"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             try:
@@ -89,7 +89,7 @@ def register_basic_commands(plugin):
     async def status(event: AstrMessageEvent):
         """查看当前状态"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             try:

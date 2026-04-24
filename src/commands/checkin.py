@@ -24,7 +24,7 @@ def register_checkin_commands(plugin):
     async def checkin(event: AstrMessageEvent):
         """每日签到"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n输入「我要当牛马」开始游戏")
@@ -133,7 +133,7 @@ def register_checkin_commands(plugin):
             "active_buffs": checkin.get("active_buffs", []),
             "luck_history": luck_history,
         }
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         # 添加记录
         user.setdefault("records", []).append({
@@ -142,7 +142,7 @@ def register_checkin_commands(plugin):
             "gold_change": total_gold,
             "time": now.isoformat(),
         })
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         # 生成报告
         report = format_checkin_report(luck_value, base_gold, streak, streak_reward, drop, total_gold)
@@ -172,7 +172,7 @@ def register_checkin_commands(plugin):
     async def my_buffs(event: AstrMessageEvent):
         """查看当前生效的buff"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")
@@ -202,7 +202,7 @@ def register_checkin_commands(plugin):
     async def checkin_stats(event: AstrMessageEvent):
         """查看签到统计"""
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！")

@@ -36,7 +36,7 @@ def register_interactive_commands(plugin):
     @filter.command("档案")
     async def profile(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             try:
@@ -56,7 +56,7 @@ def register_interactive_commands(plugin):
     @filter.command("打工")
     async def work(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 自动注册")
@@ -139,7 +139,7 @@ def register_interactive_commands(plugin):
         user["status"] = UserStatus.WORKING
         user["current_action"] = TickType.WORK
         user["action_detail"] = detail
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             url = await plugin._renderer.render_job_start(
@@ -170,7 +170,7 @@ def register_interactive_commands(plugin):
     @filter.command("学习")
     async def learn(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
@@ -222,7 +222,7 @@ def register_interactive_commands(plugin):
         user["status"] = UserStatus.LEARNING
         user["current_action"] = TickType.LEARN
         user["action_detail"] = detail
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             url = await plugin._renderer.render_entertain_start(
@@ -241,7 +241,7 @@ def register_interactive_commands(plugin):
     @filter.command("娱乐")
     async def entertain(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
@@ -288,7 +288,7 @@ def register_interactive_commands(plugin):
         user["status"] = UserStatus.ENTERTAINING
         user["current_action"] = TickType.ENTERTAIN
         user["action_detail"] = detail
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             url = await plugin._renderer.render_entertain_start(
@@ -307,7 +307,7 @@ def register_interactive_commands(plugin):
     @filter.command("吃")
     async def eat(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
@@ -340,7 +340,7 @@ def register_interactive_commands(plugin):
         attrs["satiety"] = min(MAX_ATTRIBUTE, attrs["satiety"] + food["restore_satiety"])
         
         user["attributes"] = attrs
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             url = await plugin._renderer.render_eat(
@@ -360,13 +360,13 @@ def register_interactive_commands(plugin):
     @filter.command("签到")
     async def checkin(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         # 自动注册
         is_new_user = False
         if not user:
             nickname = event.get_sender_name()
-            user = plugin._store.create_user(user_id, nickname)
+            user = await plugin._store.create_user(user_id, nickname)
             is_new_user = True
         
         now = datetime.now(LOCAL_TZ)
@@ -443,7 +443,7 @@ def register_interactive_commands(plugin):
             "active_buffs": checkin_data.get("active_buffs", []),
             "luck_history": luck_history,
         }
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             result = {
@@ -471,7 +471,7 @@ def register_interactive_commands(plugin):
     @filter.command("住")
     async def residence_cmd(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
@@ -515,7 +515,7 @@ def register_interactive_commands(plugin):
             
             user["residence"] = target_name
             user["gold"] -= daily_rent
-            plugin._store.update_user(user_id, user)
+            await plugin._store.update_user(user_id, user)
             yield event.plain_result(f"✅ 租房成功！\\n━━━━━━━━━━━━━━\\n🏠 {target_name}\\n💰 -{daily_rent}金币 (日租)\\n━━━━━━━━━━━━━━\\n🎉 欢迎入住！")
         
         elif action in ["买", "买房"] and target_name:
@@ -531,7 +531,7 @@ def register_interactive_commands(plugin):
             
             user["residence"] = target_name
             user["gold"] -= price
-            plugin._store.update_user(user_id, user)
+            await plugin._store.update_user(user_id, user)
             yield event.plain_result(f"✅ 购房成功！\\n━━━━━━━━━━━━━━\\n🏠 {target_name}\\n💰 -{price}金币\\n━━━━━━━━━━━━━━\\n🎉 恭喜拥有房产！")
         
         else:
@@ -546,7 +546,7 @@ def register_interactive_commands(plugin):
     @filter.command("背包")
     async def backpack(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
@@ -573,7 +573,7 @@ def register_interactive_commands(plugin):
         from modules.stock import format_stock_list, get_user_stocks, trade_stock
         
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
@@ -592,12 +592,12 @@ def register_interactive_commands(plugin):
         if action == "买" and code:
             success, msg = trade_stock(user, code, amount, "buy")
             if success:
-                plugin._store.update_user(user_id, user)
+                await plugin._store.update_user(user_id, user)
             yield event.plain_result(msg)
         elif action == "卖" and code:
             success, msg = trade_stock(user, code, amount, "sell")
             if success:
-                plugin._store.update_user(user_id, user)
+                await plugin._store.update_user(user_id, user)
             yield event.plain_result(msg)
         elif action == "持股":
             stocks = get_user_stocks(user)
@@ -615,7 +615,7 @@ def register_interactive_commands(plugin):
     @filter.command("取消")
     async def cancel(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
-        user = plugin._store.get_user(user_id)
+        user = await plugin._store.get_user(user_id)
         
         if not user:
             yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
@@ -630,7 +630,7 @@ def register_interactive_commands(plugin):
         user["locked_until"] = None
         user["current_action"] = None
         user["action_detail"] = None
-        plugin._store.update_user(user_id, user)
+        await plugin._store.update_user(user_id, user)
         
         try:
             url = await plugin._renderer.render_success(f"✅ 已取消 {old_status}，返回空闲状态", event)
