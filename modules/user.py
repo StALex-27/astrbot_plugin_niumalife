@@ -88,6 +88,7 @@ class DataStore:
             "skills": INITIAL_SKILLS.copy(),
             "residence": "桥下",
             "inventory": [],
+            "equipped_items": {},  # {slot: {id, name, effects}}
             "stock_holdings": {},
             "achievements": [],
             "records": [],
@@ -258,6 +259,9 @@ def migrate_user_data(user_data: dict) -> dict:
         user_data["records"] = []
     if "inventory" not in user_data:
         user_data["inventory"] = []
+    # 迁移装备栏位系统 (v0.0.12+)
+    if "equipped_items" not in user_data:
+        user_data["equipped_items"] = {}
     if "skills" not in user_data or not isinstance(user_data.get("skills"), dict):
         user_data["skills"] = INITIAL_SKILLS.copy()
     if "residence" not in user_data:

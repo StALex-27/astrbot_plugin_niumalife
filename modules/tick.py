@@ -14,6 +14,7 @@ import asyncio
 import math
 
 from .constants import TICKS_PER_HOUR, COURSES
+from .item import calc_equipped_effects
 
 
 # ============================================================
@@ -173,6 +174,10 @@ class WorkTickProcessor(TickProcessor):
         planned = detail["planned_ticks"]
         completed = detail["completed_ticks"]
         
+        # 获取装备效果加成
+        effects = calc_equipped_effects(user)
+        work_income_bonus = effects.get("work_income_bonus", 0) / 100.0  # 转换为小数
+        
         # 每分钟结算
         while ticks_since_last >= 1.0 and completed < planned:
             ticks_since_last -= 1.0
@@ -207,7 +212,7 @@ class WorkTickProcessor(TickProcessor):
                 efficiency *= 0.7
             
             # 每分钟获得金币
-            gold_per_tick = job.get("hourly_wage", 20) / TICKS_PER_HOUR * efficiency * income_multi
+            gold_per_tick = job.get("hourly_wage", 20) / TICKS_PER_HOUR * efficiency * income_multi * (1 + work_income_bonus)
             gold_earned = int(gold_per_tick) + int(fixed_bonus / TICKS_PER_HOUR)
             detail["earned_gold"] += gold_earned
             user["gold"] += gold_earned
@@ -279,6 +284,11 @@ class SleepTickProcessor(TickProcessor):
         planned = detail["planned_ticks"]
         completed = detail["completed_ticks"]
         
+        # 装备效果加成
+        effects = calc_equipped_effects(user)
+        sleep_strength_bonus = effects.get("sleep_strength_bonus", 0) / 100.0
+        sleep_energy_bonus = effects.get("sleep_energy_bonus", 0) / 100.0
+        
         # 每分钟恢复
         while ticks_since_last >= 1.0 and completed < planned:
             ticks_since_last -= 1.0
@@ -287,8 +297,8 @@ class SleepTickProcessor(TickProcessor):
             attrs = user["attributes"]
             
             # 每分钟恢复（按比例）
-            strength_rec = res_info.get("strength_recovery", 5) / TICKS_PER_HOUR * sleep_bonus * 1.5
-            energy_rec = res_info.get("energy_recovery", 5) / TICKS_PER_HOUR * sleep_bonus * 1.5
+            strength_rec = res_info.get("strength_recovery", 5) / TICKS_PER_HOUR * sleep_bonus * 1.5 * (1 + sleep_strength_bonus)
+            energy_rec = res_info.get("energy_recovery", 5) / TICKS_PER_HOUR * sleep_bonus * 1.5 * (1 + sleep_energy_bonus)
             mood_rec = res_info.get("mood_recovery", 2) / TICKS_PER_HOUR * sleep_bonus
             health_rec = res_info.get("health_recovery", 2) / TICKS_PER_HOUR * sleep_bonus
             
@@ -347,6 +357,10 @@ class LearnTickProcessor(TickProcessor):
         active_buffs = checkin.get("active_buffs", [])
         exp_multi = calc_exp_multi(active_buffs)
         
+        # 装备效果加成
+        effects = calc_equipped_effects(user)
+        learn_exp_bonus = effects.get("learn_exp_bonus", 0) / 100.0
+        
         while ticks_since_last >= 1.0 and completed < planned:
             ticks_since_last -= 1.0
             completed += 1
@@ -360,7 +374,7 @@ class LearnTickProcessor(TickProcessor):
             attrs["satiety"] = max(0, attrs["satiety"] - course.get("consume_satiety", 5) / TICKS_PER_HOUR)
             
             # 每分钟获得经验
-            exp_per_tick = course.get("exp_per_hour", 10) / TICKS_PER_HOUR * exp_multi
+            exp_per_tick = course.get("exp_per_hour", 10) / TICKS_PER_HOUR * exp_multi * (1 + learn_exp_bonus)
             exp_gained = int(exp_per_tick)
             detail["earned_exp"] += exp_gained
             
@@ -434,6 +448,10 @@ class EntertainTickProcessor(TickProcessor):
         planned = detail["planned_ticks"]
         completed = detail["completed_ticks"]
         
+        # 装备效果加成
+        effects = calc_equipped_effects(user)
+        entertain_mood_bonus = effects.get("entertain_mood_bonus", 0) / 100.0
+        
         while ticks_since_last >= 1.0 and completed < planned:
             ticks_since_last -= 1.0
             completed += 1
@@ -445,7 +463,7 @@ class EntertainTickProcessor(TickProcessor):
             user["gold"] = max(0, user["gold"] - cost_per_tick)
             
             # 每分钟恢复/消耗
-            attrs["mood"] = min(100, attrs["mood"] + entertainment.get("restore_mood", 15) / TICKS_PER_HOUR)
+            attrs["mood"] = min(100, attrs["mood"] + entertainment.get("restore_mood", 15) / TICKS_PER_HOUR * (1 + entertain_mood_bonus))
             attrs["strength"] = max(0, attrs["strength"] - entertainment.get("consume_strength", 5) / TICKS_PER_HOUR)
             attrs["energy"] = max(0, attrs["energy"] - entertainment.get("consume_energy", 3) / TICKS_PER_HOUR)
             
@@ -555,6 +573,25 @@ class TickManager:
         for user_id, user in users.items():
             try:
                 await self.process_user_actions(user_id, user, now)
+                
+                # 被动效果：仅对空闲状态用户生效
+                if user.get("status") == "FREE" or user.get("status") == "空闲":
+                    effects = calc_equipped_effects(user)
+                    attrs = user.get("attributes", {})
+                    
+                    # 被动心情恢复 (per tick/minute)
+                    passive_mood = effects.get("passive_mood", 0)
+                    if passive_mood > 0:
+                        attrs["mood"] = min(100, attrs.get("mood", 100) + passive_mood)
+                    
+                    # 被动金币获取 (per tick/minute)
+                    passive_gold = effects.get("passive_gold", 0)
+                    if passive_gold > 0:
+                        user["gold"] = user.get("gold", 0) + passive_gold
+                    
+                    user["attributes"] = attrs
+                    await self.plugin._store.update_user(user_id, user)
+                    
             except Exception as e:
                 self.plugin.logger.error(f"Tick用户{user_id}时出错: {e}")
     

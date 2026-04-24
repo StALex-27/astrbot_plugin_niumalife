@@ -9,6 +9,7 @@ from astrbot.api.event import filter, AstrMessageEvent
 from modules.constants import JOBS, MAX_ATTRIBUTE
 from modules.user import UserStatus
 from modules.tick import TickType, ActionDetail
+from modules.item import calc_equipped_effects
 
 
 LOCAL_TZ = timezone(timedelta(hours=8))
@@ -83,11 +84,16 @@ def register_work_commands(plugin):
             yield event.plain_result(f"📋 {reason}，无法工作")
             return
         
+        # 计算装备效果（减少工作时长）
+        effects = calc_equipped_effects(user)
+        work_time_reduce = effects.get("work_time_reduce", 0)  # 百分比
+        effective_hours = hours * (1 - work_time_reduce / 100)
+        
         # 使用新的ActionDetail结构
         now = datetime.now(LOCAL_TZ)
         detail = ActionDetail.create(
             action_type=TickType.WORK,
-            hours=hours,
+            hours=effective_hours,
             start_time=now,
             job_name=job_name,
             hourly_wage=job["hourly_wage"],
@@ -104,21 +110,30 @@ def register_work_commands(plugin):
         
         await plugin._store.update_user(user_id, user)
         
+        # 计算预计收益（包含装备加成）
+        effects = calc_equipped_effects(user)
+        work_income_bonus = effects.get("work_income_bonus", 0)
+        
         lines = [
             "━━━━━━━━━━━━━━",
             "「 开 始 工 作 」",
             "━━━━━━━━━━━━━━",
             f"📋 工作：{job_name}",
             f"⏰ 时长：{hours} 小时",
-            f"💰 预计收益：{job['hourly_wage'] * hours} 金币",
-            "━━━━━━━━━━━━━━",
-            "「 消耗预估 」",
-            f"💪 体力：-{job['consume_strength'] * hours}",
-            f"⚡ 精力：-{job['consume_energy'] * hours}",
-            f"😊 心情：-{job['consume_mood'] * hours}",
-            f"🍖 饱食：-{int(job['consume_satiety'] * hours * 0.5)}",
-            "━━━━━━━━━━━━━━",
+            f"💰 预计收益：{int(job['hourly_wage'] * hours * (1 + work_income_bonus/100))} 金币",
         ]
+        
+        # 显示装备加成信息
+        if work_time_reduce > 0 or work_income_bonus > 0:
+            lines.append(f"🎒 装备加成：工作时长-{work_time_reduce:.0f}%，收入+{work_income_bonus:.0f}%")
+        
+        lines.append("━━━━━━━━━━━━━━")
+        lines.append("「 消耗预估 」")
+        lines.append(f"💪 体力：-{job['consume_strength'] * hours}")
+        lines.append(f"⚡ 精力：-{job['consume_energy'] * hours}")
+        lines.append(f"😊 心情：-{job['consume_mood'] * hours}")
+        lines.append(f"🍖 饱食：-{int(job['consume_satiety'] * hours * 0.5)}")
+        lines.append("━━━━━━━━━━━━━━")
         
         try:
             emoji = "💪" if job.get("type") == "体力" else "🧠"

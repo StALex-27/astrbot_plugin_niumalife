@@ -1,137 +1,227 @@
 {
-  "破旧T恤": {
+  "格子衬衫": {
+    "name": "格子衬衫",
+    "slot": "clothing",
     "rarity": "common",
-    "type": "服装",
-    "price": 50,
-    "effect": {
-      "strength_bonus": 1
-    },
-    "desc": "基础服装，体力+1"
+    "tier": 1,
+    "price": 120,
+    "effects": {"work_income_bonus": 3},
+    "desc": "经典款式，职场百搭"
   },
-  "工人手套": {
+  "纯色T恤": {
+    "name": "纯色T恤",
+    "slot": "clothing",
+    "rarity": "uncommon",
+    "tier": 2,
+    "price": 250,
+    "effects": {"energy_bonus": 0.5, "mood_bonus": 0.3},
+    "desc": "舒适面料，休闲首选"
+  },
+  "品牌卫衣": {
+    "name": "品牌卫衣",
+    "slot": "clothing",
+    "rarity": "rare",
+    "tier": 3,
+    "price": 850,
+    "effects": {"work_income_bonus": 8, "learn_exp_bonus": 5},
+    "desc": "国潮品牌，年轻人的选择"
+  },
+  "商务休闲装": {
+    "name": "商务休闲装",
+    "slot": "clothing",
+    "rarity": "epic",
+    "tier": 4,
+    "price": 3800,
+    "effects": {"work_income_bonus": 15, "energy_bonus": 1, "mood_bonus": 1},
+    "desc": "精心剪裁，商务休闲两相宜"
+  },
+  "定制西装": {
+    "name": "定制西装",
+    "slot": "clothing",
+    "rarity": "legendary",
+    "tier": 5,
+    "price": 28000,
+    "effects": {"work_income_bonus": 25, "energy_bonus": 2, "mood_bonus": 2},
+    "desc": "纯手工定制，精英人士的标配"
+  },
+  "棒球帽": {
+    "name": "棒球帽",
+    "slot": "head",
     "rarity": "common",
-    "type": "工具",
+    "tier": 1,
     "price": 80,
-    "effect": {
-      "strength_bonus": 2
-    },
-    "desc": "提升干活效率，体力+2"
+    "effects": {"mood_bonus": 0.3},
+    "desc": "防晒遮阳，街头风格"
   },
-  "登山背包": {
+  "防蓝光眼镜": {
+    "name": "防蓝光眼镜",
+    "slot": "head",
     "rarity": "uncommon",
-    "type": "工具",
-    "price": 200,
-    "effect": {
-      "strength_bonus": 3,
-      "energy_bonus": 2
-    },
-    "desc": "户外装备，体力+3 精力+2"
+    "tier": 2,
+    "price": 350,
+    "effects": {"health_bonus": 0.5, "mood_bonus": 0.2},
+    "desc": "过滤蓝光，护眼新选择"
   },
-  "破旧运动鞋": {
-    "rarity": "common",
-    "type": "工具",
-    "price": 100,
-    "effect": {
-      "strength_bonus": 2,
-      "energy_bonus": 1
-    },
-    "desc": "基础鞋类，体力+2 精力+1"
-  },
-  "程序员马克杯": {
-    "rarity": "uncommon",
-    "type": "工具",
-    "price": 150,
-    "effect": {
-      "exp_bonus": 5
-    },
-    "desc": "编程神器，经验+5%"
-  },
-  "商务手表": {
+  "降噪耳机": {
+    "name": "降噪耳机",
+    "slot": "head",
     "rarity": "rare",
-    "type": "饰品",
-    "price": 500,
-    "effect": {
-      "mood_bonus": 5,
-      "work_income_bonus": 3
-    },
-    "desc": "商务人士标配，心情+5 收入+3%"
+    "tier": 3,
+    "price": 1600,
+    "effects": {"passive_mood": 0.2, "entertain_mood_bonus": 10},
+    "desc": "Sony WH-1000XM5，隔绝世界喧嚣"
   },
-  "工牌": {
+  "智能眼镜": {
+    "name": "智能眼镜",
+    "slot": "head",
+    "rarity": "epic",
+    "tier": 4,
+    "price": 5500,
+    "effects": {"entertain_mood_bonus": 18, "learn_exp_bonus": 8, "passive_mood": 0.3},
+    "desc": "Meta Ray-Ban，AR增强现实"
+  },
+  "VisionPro": {
+    "name": "Vision Pro",
+    "slot": "head",
+    "rarity": "legendary",
+    "tier": 5,
+    "price": 35000,
+    "effects": {"entertain_mood_bonus": 30, "passive_mood": 0.8, "learn_exp_bonus": 15},
+    "desc": "苹果未来科技，沉浸式体验"
+  },
+  "帆布双肩包": {
+    "name": "帆布双肩包",
+    "slot": "tool",
     "rarity": "common",
-    "type": "饰品",
-    "price": 30,
-    "effect": {
-      "work_income_bonus": 1
-    },
-    "desc": "入门级工牌，收入+1%"
+    "tier": 1,
+    "price": 90,
+    "effects": {"strength_bonus": 0.3},
+    "desc": "耐用能装，学生党标配"
   },
-  "电动车": {
+  "移动电源": {
+    "name": "移动电源",
+    "slot": "tool",
     "rarity": "uncommon",
-    "type": "工具",
-    "price": 2000,
-    "effect": {
-      "energy_bonus": 10,
-      "work_income_bonus": 5
-    },
-    "desc": "外卖神器，精力+10 收入+5%"
+    "tier": 2,
+    "price": 280,
+    "effects": {"energy_bonus": 0.6, "mood_bonus": 0.3},
+    "desc": "20000mAh大容量，手机不断电"
   },
-  "小米手机": {
-    "rarity": "uncommon",
-    "type": "工具",
-    "price": 1500,
-    "effect": {
-      "exp_bonus": 8
-    },
-    "desc": "性价比之王，经验+8%"
-  },
-  "苹果手机": {
+  "降噪耳塞": {
+    "name": "降噪耳塞",
+    "slot": "tool",
     "rarity": "rare",
-    "type": "工具",
-    "price": 6000,
-    "effect": {
-      "exp_bonus": 15,
-      "mood_bonus": 3
-    },
-    "desc": "高端手机，经验+15% 心情+3"
+    "tier": 3,
+    "price": 1400,
+    "effects": {"sleep_strength_bonus": 12, "sleep_energy_bonus": 10},
+    "desc": "AirPods Pro，静享安宁夜晚"
   },
   "机械键盘": {
-    "rarity": "rare",
-    "type": "工具",
-    "price": 800,
-    "effect": {
-      "exp_bonus": 10,
-      "energy_bonus": 3
-    },
-    "desc": "程序员标配，经验+10% 精力+3"
-  },
-  "猫": {
-    "rarity": "rare",
-    "type": "宠物",
-    "price": 5000,
-    "effect": {
-      "mood_bonus": 15,
-      "health_bonus": 5
-    },
-    "desc": "治愈系宠物，心情+15 健康+5"
-  },
-  "狗": {
+    "name": "机械键盘",
+    "slot": "tool",
     "rarity": "epic",
-    "type": "宠物",
-    "price": 10000,
-    "effect": {
-      "mood_bonus": 25,
-      "health_bonus": 10,
-      "strength_bonus": 5
-    },
-    "desc": "忠诚伙伴，心情+25 健康+10 体力+5"
+    "tier": 4,
+    "price": 3200,
+    "effects": {"work_income_bonus": 12, "work_time_reduce": 8},
+    "desc": "HHKB静电容，打字如飞"
   },
-  "仓鼠": {
+  "人体工学椅": {
+    "name": "人体工学椅",
+    "slot": "tool",
+    "rarity": "legendary",
+    "tier": 5,
+    "price": 18000,
+    "effects": {"sleep_strength_bonus": 18, "strength_bonus": 1.5, "health_bonus": 1.5},
+    "desc": "Herman Miller Embody，久坐不累"
+  },
+  "钥匙扣": {
+    "name": "钥匙扣",
+    "slot": "accessory",
     "rarity": "common",
-    "type": "宠物",
-    "price": 500,
-    "effect": {
-      "mood_bonus": 8
-    },
-    "desc": "小巧可爱，心情+8"
+    "tier": 1,
+    "price": 40,
+    "effects": {"passive_gold": 0.8},
+    "desc": "出门不忘带钥匙"
+  },
+  "品牌钱包": {
+    "name": "品牌钱包",
+    "slot": "accessory",
+    "rarity": "uncommon",
+    "tier": 2,
+    "price": 600,
+    "effects": {"passive_gold": 1.5, "mood_bonus": 0.4},
+    "desc": "质感皮质，绅士风度"
+  },
+  "平安玉佩": {
+    "name": "平安玉佩",
+    "slot": "accessory",
+    "rarity": "rare",
+    "tier": 3,
+    "price": 2800,
+    "effects": {"health_bonus": 1, "mood_bonus": 0.8, "passive_gold": 1.2},
+    "desc": "和田美玉，保佑平安顺遂"
+  },
+  "AppleWatch": {
+    "name": "Apple Watch",
+    "slot": "accessory",
+    "rarity": "epic",
+    "tier": 4,
+    "price": 6800,
+    "effects": {"health_bonus": 1.5, "passive_gold": 2.5, "work_income_bonus": 10},
+    "desc": "S9旗舰，健康管理专家"
+  },
+  "限定高达": {
+    "name": "限定高达",
+    "slot": "accessory",
+    "rarity": "legendary",
+    "tier": 5,
+    "price": 30000,
+    "effects": {"mood_bonus": 3, "entertain_mood_bonus": 25, "passive_gold": 3},
+    "desc": "RG命运女神，镇宅之宝"
+  },
+  "备用机": {
+    "name": "备用机",
+    "slot": "phone",
+    "rarity": "common",
+    "tier": 1,
+    "price": 200,
+    "effects": {"satiety_bonus": 0.3},
+    "desc": "卡到怀疑人生，但能打电话"
+  },
+  "红米Note12": {
+    "name": "红米Note12",
+    "slot": "phone",
+    "rarity": "uncommon",
+    "tier": 2,
+    "price": 1300,
+    "effects": {"work_income_bonus": 6, "passive_gold": 1},
+    "desc": "性价比之王，务实之选"
+  },
+  "小米14Ultra": {
+    "name": "小米14 Ultra",
+    "slot": "phone",
+    "rarity": "rare",
+    "tier": 3,
+    "price": 4500,
+    "effects": {"passive_mood": 0.25, "work_income_bonus": 10},
+    "desc": "徕卡影像，记录生活美好"
+  },
+  "华为Mate60Pro": {
+    "name": "华为Mate60 Pro+",
+    "slot": "phone",
+    "rarity": "epic",
+    "tier": 4,
+    "price": 9500,
+    "effects": {"passive_mood": 0.5, "work_time_reduce": 10, "health_bonus": 1},
+    "desc": "遥遥领先，国产骄傲"
+  },
+  "iPhone16ProMax": {
+    "name": "iPhone 16 Pro Max",
+    "slot": "phone",
+    "rarity": "legendary",
+    "tier": 5,
+    "price": 28000,
+    "effects": {"passive_mood": 1, "health_bonus": 1.5, "entertain_mood_bonus": 20},
+    "desc": "钛金属边框，顶配旗舰机皇"
   }
 }
