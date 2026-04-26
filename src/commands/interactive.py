@@ -22,7 +22,7 @@ from datetime import datetime, timezone, timedelta
 from astrbot.api.event import filter, AstrMessageEvent
 from ...modules.constants import JOBS, COURSES, FOODS, RESIDENCES, ENTERTAINMENTS, MAX_ATTRIBUTE
 from ...modules.user import UserStatus
-from ...modules.tick import TickType, ActionDetail
+from ...modules.tick import ActionDetail, TICK_TYPE_WORK, TICK_TYPE_LEARN, TICK_TYPE_ENTERTAIN
 from ...modules.checkin import get_luck_rating, get_streak_reward, roll_lucky_drop
 from ...modules.item import (
     ITEMS, RARITY_COLORS, RARITY_NAMES, SLOTS, SLOT_EMOJI,
@@ -126,6 +126,15 @@ def register_interactive_commands(plugin):
             yield event.plain_result(f"📋 {reason}")
             return
         
+        # 检查压力力竭
+        from ...modules.constants import JOB_PRESSURE_TYPE
+        from ...modules.debuff import is_exhausted, format_pressure
+        pressure_type = JOB_PRESSURE_TYPE.get(job_name, "body")
+        if is_exhausted(user, pressure_type):
+            p_info = format_pressure(user)
+            yield event.plain_result(f"📋 你太累了，无法继续从事该类型工作！\n━━━━━━━━━━━━━━\n{p_info}\n━━━━━━━━━━━━━━\n请先休息或娱乐缓解压力")
+            return
+        
         expected_gold = job['hourly_wage'] * hours
         consume_strength = job['consume_strength'] * hours
         consume_energy = job['consume_energy'] * hours
@@ -134,7 +143,7 @@ def register_interactive_commands(plugin):
         
         now = datetime.now(LOCAL_TZ)
         detail = ActionDetail.create(
-            action_type=TickType.WORK,
+            action_type=TICK_TYPE_WORK,
             hours=hours,
             start_time=now,
             job_name=job_name,
@@ -147,7 +156,7 @@ def register_interactive_commands(plugin):
         )
         
         user["status"] = UserStatus.WORKING
-        user["current_action"] = TickType.WORK
+        user["current_action"] = TICK_TYPE_WORK
         user["action_detail"] = detail
         await plugin._store.update_user(user_id, user)
         
@@ -218,7 +227,7 @@ def register_interactive_commands(plugin):
         
         now = datetime.now(LOCAL_TZ)
         detail = ActionDetail.create(
-            action_type=TickType.LEARN,
+            action_type=TICK_TYPE_LEARN,
             hours=hours,
             start_time=now,
             course_name=course_name,
@@ -230,7 +239,7 @@ def register_interactive_commands(plugin):
         )
         
         user["status"] = UserStatus.LEARNING
-        user["current_action"] = TickType.LEARN
+        user["current_action"] = TICK_TYPE_LEARN
         user["action_detail"] = detail
         await plugin._store.update_user(user_id, user)
         
@@ -285,7 +294,7 @@ def register_interactive_commands(plugin):
         
         now = datetime.now(LOCAL_TZ)
         detail = ActionDetail.create(
-            action_type=TickType.ENTERTAIN,
+            action_type=TICK_TYPE_ENTERTAIN,
             hours=hours,
             start_time=now,
             entertainment_name=ent_name,
@@ -296,7 +305,7 @@ def register_interactive_commands(plugin):
         )
         
         user["status"] = UserStatus.ENTERTAINING
-        user["current_action"] = TickType.ENTERTAIN
+        user["current_action"] = TICK_TYPE_ENTERTAIN
         user["action_detail"] = detail
         await plugin._store.update_user(user_id, user)
         
@@ -826,47 +835,119 @@ def register_interactive_commands(plugin):
     # ========== 股市 ==========
     @filter.command("股市")
     async def stock_cmd(event: AstrMessageEvent):
-        from modules.stock import format_stock_list, get_user_stocks, trade_stock
+        from modules.stock import STOCKS, STOCK_CODE_TO_NAME, is_trading_hour
+        from datetime import datetime, timezone, timedelta
+        LOCAL_TZ = timezone(timedelta(hours=8))
         
         user_id = str(event.get_sender_id())
         user = await plugin._store.get_user(user_id)
         
         if not user:
-            yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
+            yield event.plain_result("📋 你还没有注册！\n先输入 /签到 注册")
             return
         
         _, args = plugin._parser.parse(event)
         
         if not args:
-            yield event.plain_result(f"📈 股市行情:\\n━━━━━━━━━━━━━━\\n{format_stock_list()}\\n━━━━━━━━━━━━━━\\n操作: /股市 买/卖 股票代码 数量")
+            now = datetime.now(LOCAL_TZ)
+            trading = is_trading_hour(now.hour)
+            status = "📈 交易中" if trading else "⏸️ 休盘中"
+            
+            lines = ["━━━━━━━━━━━━━━", f"【 股市行情 】{status}", "━━━━━━━━━━━━━━"]
+            lines.append(f"{'代码':<8} {'名称':<8} {'价格':>8}  {'涨跌幅':>8}")
+            lines.append("-" * 42)
+            
+            stocks_data = []
+            for name, info in STOCKS.items():
+                code = info["code"]
+                price_key = f"stock_price:{name}"
+                open_key = f"stock_open:{name}"
+                current_price = await plugin.get_kv_data(price_key, info["base_price"])
+                open_price = await plugin.get_kv_data(open_key, info["base_price"])
+                
+                change = (current_price - open_price) / open_price * 100 if open_price > 0 else 0
+                # A股习惯：红涨绿跌
+                if change > 0:
+                    change_str = f"🔺+{change:.2f}%"
+                elif change < 0:
+                    change_str = f"🔻{change:.2f}%"
+                else:
+                    change_str = f"➖ 0.00%"
+                
+                stocks_data.append((abs(change), name, code, current_price, change_str))
+            
+            # 按涨跌幅绝对值排序
+            stocks_data.sort(key=lambda x: x[0], reverse=True)
+            
+            for _, name, code, price, change_str in stocks_data:
+                lines.append(f"{code:<8} {name:<8} ¥{price:>7.2f}  {change_str}")
+            
+            lines.append("━━━━━━━━━━━━━━")
+            lines.append("操作: /股市 买/卖 代码 数量")
+            yield event.plain_result("\n".join(lines))
             return
         
         action = args[0]
-        code = args[1] if len(args) > 1 else None
+        code = args[1].upper() if len(args) > 1 else None
         amount = int(args[2]) if len(args) > 2 else 1
         
         if action == "买" and code:
-            success, msg = trade_stock(user, code, amount, "buy")
+            from modules.stock import trade_stock
+            stock_name = STOCK_CODE_TO_NAME.get(code)
+            if not stock_name:
+                yield event.plain_result(f"📋 无效股票代码: {code}\n使用 /股市 查看代码")
+                return
+            price_key = f"stock_price:{stock_name}"
+            current_price = await plugin.get_kv_data(price_key, STOCKS[stock_name]["base_price"])
+            success, msg = trade_stock(user, stock_name, code, amount, current_price, "buy")
             if success:
                 await plugin._store.update_user(user_id, user)
             yield event.plain_result(msg)
         elif action == "卖" and code:
-            success, msg = trade_stock(user, code, amount, "sell")
+            from modules.stock import trade_stock
+            stock_name = STOCK_CODE_TO_NAME.get(code)
+            if not stock_name:
+                yield event.plain_result(f"📋 无效股票代码: {code}\n使用 /股市 查看代码")
+                return
+            price_key = f"stock_price:{stock_name}"
+            current_price = await plugin.get_kv_data(price_key, STOCKS[stock_name]["base_price"])
+            success, msg = trade_stock(user, stock_name, code, amount, current_price, "sell")
             if success:
                 await plugin._store.update_user(user_id, user)
             yield event.plain_result(msg)
         elif action == "持股":
-            stocks = get_user_stocks(user)
-            if not stocks:
+            from modules.stock import STOCKS
+            holdings = user.get("stock_holdings", {})
+            if not holdings:
                 yield event.plain_result("📋 你目前没有持股")
             else:
                 lines = ["━━━━━━━━━━━━━━", "【 我的持股 】", "━━━━━━━━━━━━━━"]
-                for c, info in stocks.items():
-                    lines.append(f"• {c}: {info['amount']}股 (成本{info['avg_price']})")
+                total_profit = 0
+                for name, info in holdings.items():
+                    code = STOCKS[name]["code"]
+                    price_key = f"stock_price:{name}"
+                    open_key = f"stock_open:{name}"
+                    current_price = await plugin.get_kv_data(price_key, STOCKS[name]["base_price"])
+                    open_price = await plugin.get_kv_data(open_key, STOCKS[name]["base_price"])
+                    cost = info["avg_price"] * info["amount"]
+                    value = current_price * info["amount"]
+                    profit = value - cost
+                    profit_pct = profit / cost * 100 if cost > 0 else 0
+                    change = (current_price - open_price) / open_price * 100 if open_price > 0 else 0
+                    profit_str = f"+{profit:.0f}" if profit >= 0 else f"{profit:.0f}"
+                    change_str = f"+{change:.1f}%" if change >= 0 else f"{change:.1f}%"
+                    total_profit += profit
+                    lines.append(f"{code} {name}: {info['amount']}股")
+                    lines.append(f"  成本¥{info['avg_price']:.2f} | 现价¥{current_price:.2f} | 今日{change_str}")
+                    lines.append(f"  盈亏: {profit_str}({profit_pct:+.1f}%)")
+                lines.append("━━━━━━━━━━━━━━")
+                total_str = f"+{total_profit:.0f}" if total_profit >= 0 else f"{total_profit:.0f}"
+                lines.append(f"📊 总盈亏: {total_str}金币")
                 yield event.plain_result("\n".join(lines))
         else:
-            yield event.plain_result("📈 股市操作:\\n━━━━━━━━━━━━━━\\n• /股市 - 查看行情\\n• /股市 买 代码 数量\\n• /股市 卖 代码 数量\\n• /股市 持股\\n━━━━━━━━━━━━━━")
-    
+            yield event.plain_result("📈 股市操作:\n━━━━━━━━━━━━━━\n• /股市 - 查看行情\n• /股市 买 代码 数量\n• /股市 卖 代码 数量\n• /股市 持股\n━━━━━━━━━━━━━━")
+
+
     # ========== 取消 ==========
     @filter.command("取消")
     async def cancel(event: AstrMessageEvent):
@@ -940,6 +1021,157 @@ def register_interactive_commands(plugin):
 ━━━━━━━━━━━━━━
 """)
 
+    # ========== 设置 ==========
+    @filter.command("设置")
+    async def settings_cmd(event: AstrMessageEvent):
+        """用户设置指令"""
+        user_id = str(event.get_sender_id())
+        user = await plugin._store.get_user(user_id)
+        
+        if not user:
+            yield event.plain_result("📋 你还没有注册！\n先输入 /签到 注册")
+            return
+        
+        # 提取群组ID（如果有）
+        actual_group_id = event.get_group_id() if not event.is_private_chat() else ""
+        
+        # 更新用户所在群组
+        if actual_group_id and actual_group_id not in user.get("groups", []):
+            user.setdefault("groups", []).append(actual_group_id)
+            await plugin._store.update_user(user_id, user)
+        
+        _, args = plugin._parser.parse(event)
+        
+        settings = user.setdefault("settings", {
+            "sub_group_daily": False,
+            "sub_personal_daily": False,
+            "daily_report_hour": 23,
+            "daily_report_minute": 0,
+            "notification_enabled": True,
+        })
+        
+        if not args:
+            # 显示当前设置
+            sub_group = "✅ 已开启" if settings.get("sub_group_daily") else "❌ 未开启"
+            sub_personal = "✅ 已开启" if settings.get("sub_personal_daily") else "❌ 未开启"
+            hour = settings.get("daily_report_hour", 23)
+            minute = settings.get("daily_report_minute", 0)
+            notif = "📳 开启" if settings.get("notification_enabled") else "🔕 关闭"
+            
+            lines = [
+                "━━━━━━━━━━━━━━",
+                "【 ⚙️ 个人设置 】",
+                "━━━━━━━━━━━━━━",
+                f"📰 群日报订阅: {sub_group}",
+                f"📋 个人日报订阅: {sub_personal}",
+                f"⏰ 日报时间: {hour:02d}:{minute:02d}",
+                f"🔔 通知: {notif}",
+                "━━━━━━━━━━━━━━",
+                "━━━━━━━━━━━━━━",
+                "📖 指令说明:",
+                "/设置 订阅群日报 - 开启本群日报",
+                "/设置 取消订阅群日报",
+                "/设置 订阅个人日报 - 开启个人日报",
+                "/设置 取消订阅个人日报",
+                "/设置 日报时间 HH:MM - 自定义时间",
+                "/设置 通知开/关",
+                "━━━━━━━━━━━━━━",
+            ]
+            
+            # 如果在群中，显示群设置
+            if actual_group_id:
+                group_config = await plugin._get_group_config(actual_group_id)
+                group_enabled = "✅ 已开启" if group_config.get("enabled") else "❌ 未开启"
+                lines.append(f"📢 本群日报: {group_enabled}")
+                lines.append("/设置 开启本群日报 - 群管理操作")
+            
+            yield event.plain_result("\n".join(lines))
+            return
+        
+        action = args[0]
+        
+        if action == "订阅群日报":
+            if not actual_group_id:
+                yield event.plain_result("📋 请在群聊中使用此指令！")
+                return
+            settings["sub_group_daily"] = True
+            # 加入群订阅列表
+            group_config = await plugin._get_group_config(actual_group_id)
+            if actual_group_id not in group_config.get("subscribers", []):
+                group_config.setdefault("subscribers", []).append(user_id)
+            await plugin._save_group_config(actual_group_id, group_config)
+            await plugin._store.update_user(user_id, user)
+            yield event.plain_result(f"✅ 已订阅本群日报！\n📅 每日 {settings.get('daily_report_hour',23):02d}:{settings.get('daily_report_minute',0):02d} 接收")
+        
+        elif action == "取消订阅群日报":
+            settings["sub_group_daily"] = False
+            if actual_group_id:
+                group_config = await plugin._get_group_config(actual_group_id)
+                if user_id in group_config.get("subscribers", []):
+                    group_config["subscribers"].remove(user_id)
+                await plugin._save_group_config(actual_group_id, group_config)
+            await plugin._store.update_user(user_id, user)
+            yield event.plain_result("❌ 已取消订阅本群日报")
+        
+        elif action == "订阅个人日报":
+            settings["sub_personal_daily"] = True
+            await plugin._store.update_user(user_id, user)
+            yield event.plain_result(f"✅ 已开启个人日报！\n📅 每日 {settings.get('daily_report_hour',23):02d}:{settings.get('daily_report_minute',0):02d} 私聊推送")
+        
+        elif action == "取消订阅个人日报":
+            settings["sub_personal_daily"] = False
+            await plugin._store.update_user(user_id, user)
+            yield event.plain_result("❌ 已取消个人日报")
+        
+        elif action == "日报时间" and len(args) >= 2:
+            try:
+                time_parts = args[1].split(":")
+                hour = int(time_parts[0])
+                minute = int(time_parts[1]) if len(time_parts) > 1 else 0
+                if not (0 <= hour < 24 and 0 <= minute < 60):
+                    raise ValueError()
+                settings["daily_report_hour"] = hour
+                settings["daily_report_minute"] = minute
+                await plugin._store.update_user(user_id, user)
+                yield event.plain_result(f"✅ 日报时间已调整为 {hour:02d}:{minute:02d}")
+            except (ValueError, IndexError):
+                yield event.plain_result("📋 格式错误！使用: /设置 日报时间 HH:MM\n例如: /设置 日报时间 21:00")
+        
+        elif action == "开启本群日报":
+            if not actual_group_id:
+                yield event.plain_result("📋 请在群聊中使用此指令！")
+                return
+            # 群管理操作：开启本群日报功能
+            group_config = await plugin._get_group_config(actual_group_id)
+            group_config["enabled"] = True
+            await plugin._save_group_config(actual_group_id, group_config)
+            yield event.plain_result("✅ 本群已开启日报功能\n📅 每日 23:00 自动生成并发送")
+        
+        elif action == "关闭本群日报":
+            if not actual_group_id:
+                yield event.plain_result("📋 请在群聊中使用此指令！")
+                return
+            group_config = await plugin._get_group_config(actual_group_id)
+            group_config["enabled"] = False
+            await plugin._save_group_config(actual_group_id, group_config)
+            yield event.plain_result("❌ 本群已关闭日报功能")
+        
+        elif action == "通知开":
+            settings["notification_enabled"] = True
+            await plugin._store.update_user(user_id, user)
+            yield event.plain_result("✅ 通知已开启")
+        
+        elif action == "通知关":
+            settings["notification_enabled"] = False
+            await plugin._store.update_user(user_id, user)
+            yield event.plain_result("🔕 通知已关闭")
+        
+        else:
+            yield event.plain_result("📋 无效设置指令！\n━━━━━━━━━━━━━━\n📖 /设置 订阅群日报\n📖 /设置 取消订阅群日报\n📖 /设置 订阅个人日报\n📖 /设置 取消订阅个人日报\n📖 /设置 日报时间 HH:MM\n━━━━━━━━━━━━━━")
+
+
+
+
 
 # ========== 辅助函数 ==========
 
@@ -980,6 +1212,26 @@ def _format_profile_text(user: dict) -> str:
     buffs = checkin.get("active_buffs", [])
     buff_text = f"({len(buffs)}个Buff)" if buffs else ""
     
+    # 压力显示
+    body_p = user.get("body_pressure", 0)
+    mind_p = user.get("mind_pressure", 0)
+    def pbar(p):
+        filled = int(p / 10)
+        return "█" * filled + "░" * (10 - filled)
+    pressure_lines = f"🏋️ 身体: {pbar(body_p)}{body_p:.0f}%\\n🧠 精神: {pbar(mind_p)}{mind_p:.0f}%"
+    
+    # Debuff 显示
+    debuffs = user.get("active_debuffs", [])
+    debuff_lines = ""
+    if debuffs:
+        from ...modules.constants import DEBUFF_DEFINITIONS
+        debuff_names = []
+        for d in debuffs:
+            ddef = DEBUFF_DEFINITIONS.get(d, {})
+            if ddef:
+                debuff_names.append(f"{ddef.get('emoji', '')}{ddef.get('name', d)}")
+        debuff_lines = "\\n" + " ".join(debuff_names)
+    
     return (
         f"━━━━━━━━━━━━━━\\n"
         f"【 牛马档案 】\\n"
@@ -987,11 +1239,13 @@ def _format_profile_text(user: dict) -> str:
         f"👤 {user.get('nickname', '未知')}\\n"
         f"💰 {user.get('gold', 0)}金币\\n"
         f"🏠 {user.get('residence', '桥下')}\\n"
-        f"📋 {user.get('status', '空闲')}\\n"
+        f"📋 {user.get('status', '空闲')}{debuff_lines}\\n"
         f"━━━━━━━━━━━━━━\\n"
         f"❤️ {attrs.get('health', 0)} 💪 {attrs.get('strength', 0)}\\n"
         f"⚡ {attrs.get('energy', 0)} 😊 {attrs.get('mood', 0)}\\n"
         f"🍖 {attrs.get('satiety', 0)}\\n"
+        f"━━━━━━━━━━━━━━\\n"
+        f"【 压力 】\\n{pressure_lines}\\n"
         f"━━━━━━━━━━━━━━\\n"
         f"🔥 连续签到: {checkin.get('streak', 0)}天\\n"
         f"{luck_emoji} {luck_name} {buff_text}\\n"

@@ -1,0 +1,24 @@
+{
+  "test_mode": {
+    "description": "测试模式（启用后会加速时间流逝）",
+    "type": "bool",
+    "default": false
+  },
+  "test_time_scale": {
+    "description": "测试模式时间倍率（0.01-1.0，数字越大时间越快）",
+    "type": "float",
+    "default": 0.1,
+    "min": 0.01,
+    "max": 1.0
+  },
+  "daily_settlement_time": {
+    "description": "每日结算时间（格式: HH:MM，如 23:30）",
+    "type": "string",
+    "default": "23:30"
+  },
+  "daily_report_time": {
+    "description": "群组日报发送时间（格式: HH:MM，如 23:00）",
+    "type": "string",
+    "default": "23:00"
+  }
+}

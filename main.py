@@ -29,7 +29,7 @@ from .modules.buff import (
     calc_income_multi, calc_cost_multi, calc_exp_multi, get_fixed_bonus,
     roll_buff, format_buffs, get_effective_buffs
 )
-from .modules.tick import TickManager, TickType, ActionDetail
+from .modules.tick import TickManager, ActionDetail, TICK_TYPE_SLEEP
 from .modules.renderer import CardRenderer
 
 # 导入命令模块
@@ -453,7 +453,7 @@ class NiumaLife(Star):
         sleep_hours = max(1, min(8, hours_to_8))
 
         detail = ActionDetail.create(
-            action_type=TickType.SLEEP,
+            action_type=TICK_TYPE_SLEEP,
             hours=sleep_hours,
             start_time=now,
             sleep_bonus=res_info.get("sleep_bonus", 1.0),
@@ -461,7 +461,7 @@ class NiumaLife(Star):
         )
 
         user["status"] = UserStatus.SLEEPING
-        user["current_action"] = TickType.SLEEP
+        user["current_action"] = TICK_TYPE_SLEEP
         user["action_detail"] = detail
         await self._store.update_user(user_id, user)
 
@@ -629,7 +629,7 @@ class NiumaLife(Star):
     ) -> str:
         """生成群组日报"""
         from .modules.user import get_today_key
-        from .modules.stock import STOCKS
+        from .modules.constants import STOCKS
         
         lines = [
             "━━━━━━━━━━━━━━",

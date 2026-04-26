@@ -2,36 +2,61 @@
   "牛马科技": {
     "code": "NIU001",
     "base_price": 100,
-    "volatility": 0.1,
+    "volatility": 0.10,
+    "daily_limit": 0.10,
     "category": "科技",
-    "desc": "牛马人生集团旗下科技公司"
+    "desc": "牛马人生集团旗下科技公司",
+    "trend_amplitude_min": 0.08,
+    "trend_amplitude_max": 0.20,
+    "trend_hours_min": 20,
+    "trend_hours_max": 80
   },
   "搬砖集团": {
     "code": "BAN002",
     "base_price": 50,
     "volatility": 0.05,
+    "daily_limit": 0.07,
     "category": "建筑",
-    "desc": "专注搬砖三十年"
+    "desc": "专注搬砖三十年",
+    "trend_amplitude_min": 0.05,
+    "trend_amplitude_max": 0.15,
+    "trend_hours_min": 30,
+    "trend_hours_max": 100
   },
   "外卖快送": {
     "code": "WAI003",
     "base_price": 80,
     "volatility": 0.08,
+    "daily_limit": 0.12,
     "category": "服务",
-    "desc": "最快最准时"
+    "desc": "最快最准时",
+    "trend_amplitude_min": 0.06,
+    "trend_amplitude_max": 0.18,
+    "trend_hours_min": 25,
+    "trend_hours_max": 90
   },
   "程序员培训": {
     "code": "COD004",
     "base_price": 200,
     "volatility": 0.15,
+    "daily_limit": 0.15,
     "category": "教育",
-    "desc": "培养未来的码农"
+    "desc": "培养未来的码农",
+    "trend_amplitude_min": 0.10,
+    "trend_amplitude_max": 0.30,
+    "trend_hours_min": 15,
+    "trend_hours_max": 60
   },
   "海豹银行": {
     "code": "SEA005",
     "base_price": 150,
     "volatility": 0.03,
+    "daily_limit": 0.05,
     "category": "金融",
-    "desc": "最稳定的股票"
+    "desc": "最稳定的股票",
+    "trend_amplitude_min": 0.03,
+    "trend_amplitude_max": 0.10,
+    "trend_hours_min": 40,
+    "trend_hours_max": 120
   }
 }

@@ -170,6 +170,30 @@ def get_all_inventory(user: dict) -> list:
 # 装备栏位管理
 # ============================================================
 
+def get_items_by_slot(user: dict, slot: str) -> list:
+    """获取背包中指定栏位的装备物品
+    
+    Args:
+        user: 用户数据
+        slot: 栏位名称 (clothing/head/tool/accessory/phone)
+    
+    Returns:
+        list: 该栏位的物品列表
+    """
+    inventory = user.get("inventory", [])
+    result = []
+    for inv_item in inventory:
+        item_id = inv_item.get("id")
+        item_info = ITEMS.get(item_id, {})
+        if item_info.get("slot") == slot:
+            result.append({
+                "id": item_id,
+                "name": item_info.get("name", item_id),
+                "quantity": inv_item.get("quantity", 1)
+            })
+    return result
+
+
 def get_equipped_items(user: dict) -> dict:
     """获取用户已装备的物品"""
     equipped = user.get("equipped_items", {})

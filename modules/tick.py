@@ -8,26 +8,35 @@ Tick结算系统模块 v2
 - 新增统一时间触发系统 (每小时/每日/Cron)
 - 支持停机恢复和精确计时
 """
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 import asyncio
 import math
 
-from .constants import TICKS_PER_HOUR, COURSES
+from .constants import (
+    TICKS_PER_HOUR, COURSES, JOBS, JOB_PRESSURE_TYPE, JOB_PRESSURE_RATE,
+    get_pressure_penalty, RESIDENCES, MAX_ATTRIBUTE, ENTERTAINMENTS,
+    ENTERTAINMENT_PRESSURE_RELIEF,
+)
 from .item import calc_equipped_effects
-from .user import UserStatus
+from .user import UserStatus, update_daily_stat, update_lifetime_stat
+from .buff import (
+    calc_income_multi, calc_cost_multi, calc_exp_multi, get_fixed_bonus,
+    BuffManager, BuffLimit,
+)
+from .debuff import calc_debuff_income_penalty, accumulate_pressure, is_exhausted
+from .skills import get_skill_level, exp_to_next_level
+from .stock import STOCKS, update_stock_price, is_trading_hour, init_stock_trend
 
 
 # ============================================================
 # 常量
 # ============================================================
 
-class TickType:
-    """Tick类型"""
-    WORK = "工作"
-    SLEEP = "睡眠"
-    LEARN = "学习"
-    ENTERTAIN = "娱乐"
+TICK_TYPE_WORK = "工作"
+TICK_TYPE_SLEEP = "睡眠"
+TICK_TYPE_LEARN = "学习"
+TICK_TYPE_ENTERTAIN = "娱乐"
 
 
 # ============================================================
@@ -54,7 +63,7 @@ class ActionDetail:
         """创建ActionDetail
         
         Args:
-            action_type: 动作类型 (TickType.WORK等)
+            action_type: 动作类型 (TICK_TYPE_WORK等)
             hours: 计划时长（小时）
             start_time: 开始时间
             **kwargs: 额外参数
@@ -153,18 +162,15 @@ class WorkTickProcessor(TickProcessor):
     """工作Tick处理器"""
     
     def get_action_type(self) -> str:
-        return TickType.WORK
+        return TICK_TYPE_WORK
     
     async def process(
         self, user_id: str, user: dict, detail: dict, now: datetime
     ) -> bool:
         """处理工作tick"""
-        from .constants import JOBS, JOB_PRESSURE_TYPE, JOB_PRESSURE_RATE
-        from .buff import calc_income_multi, calc_cost_multi, get_fixed_bonus
-        from .debuff import calc_debuff_income_penalty, accumulate_pressure, is_exhausted
         
         action_type = detail.get("action_type")
-        if action_type != TickType.WORK:
+        if action_type != TICK_TYPE_WORK:
             return False
         
         job_name = detail.get("data", {}).get("job_name")
@@ -187,7 +193,6 @@ class WorkTickProcessor(TickProcessor):
         work_income_bonus = effects.get("work_income_bonus", 0) / 100.0
         
         # 获取压力惩罚
-        from .constants import get_pressure_penalty
         pressure = user.get(f"{pressure_type}_pressure", 0)
         pressure_penalty = 1.0 - get_pressure_penalty(pressure)
         
@@ -255,7 +260,6 @@ class WorkTickProcessor(TickProcessor):
             })
             
             # ========== 记录统计数据 ==========
-            from .user import update_daily_stat, update_lifetime_stat
             gold_earned = detail["earned_gold"]
             update_daily_stat(user, "gold_work", gold_earned)
             update_daily_stat(user, "work_hours", hours)
@@ -268,7 +272,6 @@ class WorkTickProcessor(TickProcessor):
             # 消耗 job_count 类型的 buff
             buffs = checkin.get("active_buffs", [])
             remaining_buffs = []
-            from .buff import BuffManager, BuffLimit
             for buff in buffs:
                 if BuffManager.is_expired(buff):
                     continue
@@ -292,16 +295,15 @@ class SleepTickProcessor(TickProcessor):
     """睡眠Tick处理器"""
     
     def get_action_type(self) -> str:
-        return TickType.SLEEP
+        return TICK_TYPE_SLEEP
     
     async def process(
         self, user_id: str, user: dict, detail: dict, now: datetime
     ) -> bool:
         """处理睡眠tick"""
-        from .constants import RESIDENCES, MAX_ATTRIBUTE
         
         action_type = detail.get("action_type")
-        if action_type != TickType.SLEEP:
+        if action_type != TICK_TYPE_SLEEP:
             return False
         
         residence = user.get("residence", "桥下")
@@ -359,17 +361,15 @@ class LearnTickProcessor(TickProcessor):
     """学习Tick处理器"""
     
     def get_action_type(self) -> str:
-        return TickType.LEARN
+        return TICK_TYPE_LEARN
     
     async def process(
         self, user_id: str, user: dict, detail: dict, now: datetime
     ) -> bool:
         """处理学习tick"""
-        from .constants import COURSES
-        from .buff import calc_exp_multi
         
         action_type = detail.get("action_type")
-        if action_type != TickType.LEARN:
+        if action_type != TICK_TYPE_LEARN:
             return False
         
         course_name = detail.get("data", {}).get("course_name")
@@ -422,7 +422,6 @@ class LearnTickProcessor(TickProcessor):
             
             # 累加经验到用户技能经验池
             if course_skill and detail["earned_exp"] > 0:
-                from .skills import get_skill_level
                 user.setdefault("skill_exp", {})
                 user["skill_exp"][course_skill] = user["skill_exp"].get(course_skill, 0) + detail["earned_exp"]
                 
@@ -444,7 +443,6 @@ class LearnTickProcessor(TickProcessor):
             })
             
             # ========== 记录统计数据 ==========
-            from .user import update_daily_stat, update_lifetime_stat
             update_daily_stat(user, "learn_hours", hours)
             update_lifetime_stat(user, "total_learn_hours", hours)
             # ========== 统计记录完成 ==========
@@ -462,16 +460,15 @@ class EntertainTickProcessor(TickProcessor):
     """娱乐Tick处理器"""
     
     def get_action_type(self) -> str:
-        return TickType.ENTERTAIN
+        return TICK_TYPE_ENTERTAIN
     
     async def process(
         self, user_id: str, user: dict, detail: dict, now: datetime
     ) -> bool:
         """处理娱乐tick"""
-        from .constants import ENTERTAINMENTS
         
         action_type = detail.get("action_type")
-        if action_type != TickType.ENTERTAIN:
+        if action_type != TICK_TYPE_ENTERTAIN:
             return False
         
         entertainment_name = detail.get("data", {}).get("entertainment_name")
@@ -506,8 +503,6 @@ class EntertainTickProcessor(TickProcessor):
         
         # 娱乐结束时累积压力缓解（按娱乐类型）
         if completed >= planned:
-            from .constants import ENTERTAINMENT_PRESSURE_RELIEF
-            from .debuff import accumulate_pressure
             relief = ENTERTAINMENT_PRESSURE_RELIEF.get(entertainment_name, {"body": 0, "mind": 0})
             if relief.get("body", 0) > 0:
                 accumulate_pressure(user, "body", -relief["body"])
@@ -523,7 +518,6 @@ class EntertainTickProcessor(TickProcessor):
             })
             
             # ========== 记录统计数据 ==========
-            from .user import update_daily_stat, update_lifetime_stat
             update_daily_stat(user, "gold_spent", gold_cost)
             update_daily_stat(user, "entertain_count", 1)
             update_lifetime_stat(user, "total_gold_spent", gold_cost)
@@ -551,10 +545,10 @@ class TickManager:
     def __init__(self, plugin):
         self.plugin = plugin
         self._processors = {
-            TickType.WORK: WorkTickProcessor(plugin),
-            TickType.SLEEP: SleepTickProcessor(plugin),
-            TickType.LEARN: LearnTickProcessor(plugin),
-            TickType.ENTERTAIN: EntertainTickProcessor(plugin),
+            TICK_TYPE_WORK: WorkTickProcessor(plugin),
+            TICK_TYPE_SLEEP: SleepTickProcessor(plugin),
+            TICK_TYPE_LEARN: LearnTickProcessor(plugin),
+            TICK_TYPE_ENTERTAIN: EntertainTickProcessor(plugin),
         }
         
         # 时间触发器状态
@@ -588,12 +582,11 @@ class TickManager:
             self.plugin.logger.info(f"用户 {user['nickname']} 的{action_type}已完成，清理状态")
             
             # 如果是学习动作，写入经验
-            if action_type == TickType.LEARN:
+            if action_type == TICK_TYPE_LEARN:
                 course_name = detail.get("data", {}).get("course_name")
                 course = COURSES.get(course_name, {})
                 course_skill = course.get("skill")
                 if course_skill and detail.get("earned_exp", 0) > 0:
-                    from .skills import get_skill_level
                     user.setdefault("skill_exp", {})
                     user["skill_exp"][course_skill] = user["skill_exp"].get(course_skill, 0) + detail["earned_exp"]
                     user.setdefault("skills", {})
@@ -740,7 +733,6 @@ class TickManager:
     
     async def _update_stocks(self, now: datetime):
         """更新股票价格（每小时调用）"""
-        from .stock import STOCKS, update_stock_price, is_trading_hour, init_stock_trend
         
         trading = is_trading_hour(now.hour)
         
@@ -804,9 +796,6 @@ class TickManager:
 
     async def _send_daily_reports(self, cst_now):
         """发送每日报告（群组+个人）"""
-        from datetime import timezone, timedelta
-        from ..main import NiumaLife
-
         date_str = cst_now.strftime("%Y-%m-%d")
         today_key = date_str
 
