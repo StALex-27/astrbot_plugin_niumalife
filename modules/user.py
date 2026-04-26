@@ -20,6 +20,7 @@ class UserStatus:
     SLEEPING = "睡眠中"
     LEARNING = "学习中"
     ENTERTAINING = "娱乐中"
+    HOSPITALIZED = "住院中"
 
 
 # KV 存储键名前缀
@@ -104,6 +105,38 @@ class DataStore:
                 "lucky_drops": 0,        # 幸运掉落次数
                 "active_buffs": [],      # 当前生效的临时buffs
             },
+            # 压力系统
+            "body_pressure": 0,         # 身体疲劳 (0-100)
+            "mind_pressure": 0,         # 精神压力 (0-100)
+            # Debuff系统
+            "active_debuffs": [],       # 当前生效的 debuff ID 列表
+            "debuff_timers": {},        # {attr_name: timestamp} 属性低于阈值的时间戳
+            # 累计数据（永久）
+            "lifetime_stats": {
+                "total_gold_earned": 0,
+                "total_gold_spent": 0,
+                "total_work_hours": 0,
+                "total_work_count": 0,
+                "total_learn_hours": 0,
+                "total_entertain_count": 0,
+                "total_stock_trades": 0,
+                "total_stock_profit": 0,
+                "peak_gold": 0,
+                "checkin_days": 0,
+                "achievements_unlocked": 0,
+            },
+            # 每日数据（保留30天）
+            "daily_stats": {},          # {"YYYY-MM-DD": {...}}
+            # 用户设置
+            "settings": {
+                "sub_group_daily": False,
+                "sub_personal_daily": False,
+                "daily_report_hour": 23,
+                "daily_report_minute": 0,
+                "notification_enabled": True,
+            },
+            # 所在群组
+            "groups": [],              # ["qq_group_xxx"]
         }
         
         # 存储用户数据
@@ -259,7 +292,7 @@ def migrate_user_data(user_data: dict) -> dict:
         user_data["records"] = []
     if "inventory" not in user_data:
         user_data["inventory"] = []
-    # 迁移装备栏位系统 (v0.0.12+)
+    # 迁移装备栏位系统
     if "equipped_items" not in user_data:
         user_data["equipped_items"] = {}
     if "skills" not in user_data or not isinstance(user_data.get("skills"), dict):
@@ -268,9 +301,45 @@ def migrate_user_data(user_data: dict) -> dict:
         user_data["residence"] = "桥下"
     if "status" not in user_data:
         user_data["status"] = UserStatus.FREE
-    
-    # 迁移签到系统 (v0.0.6+)
-    if "checkin" not in user_data or not isinstance(user_data.get("checkin"), dict):
+    # 迁移压力系统 v0.1.2
+    if "body_pressure" not in user_data:
+        user_data["body_pressure"] = 0
+    if "mind_pressure" not in user_data:
+        user_data["mind_pressure"] = 0
+    if "active_debuffs" not in user_data:
+        user_data["active_debuffs"] = []
+    if "debuff_timers" not in user_data:
+        user_data["debuff_timers"] = {}
+    # 迁移日报系统 v0.1.5 (lifetime_stats)
+    if "lifetime_stats" not in user_data:
+        user_data["lifetime_stats"] = {
+            "total_gold_earned": 0,
+            "total_gold_spent": 0,
+            "total_work_hours": 0,
+            "total_work_count": 0,
+            "total_learn_hours": 0,
+            "total_entertain_count": 0,
+            "total_stock_trades": 0,
+            "total_stock_profit": 0,
+            "peak_gold": user_data.get("gold", 0),
+            "checkin_days": 0,
+            "achievements_unlocked": 0,
+        }
+    if "daily_stats" not in user_data:
+        user_data["daily_stats"] = {}
+    if "settings" not in user_data:
+        user_data["settings"] = {
+            "sub_group_daily": False,
+            "sub_personal_daily": False,
+            "daily_report_hour": 23,
+            "daily_report_minute": 0,
+            "notification_enabled": True,
+        }
+    if "groups" not in user_data:
+        user_data["groups"] = []
+    # 迁移签到系统
+    if "checkin" not in user_data or user_data.get("checkin") is None:
+        # 真的没有或为 None → 重建默认结构
         user_data["checkin"] = {
             "last_date": None,
             "streak": 0,
@@ -280,10 +349,117 @@ def migrate_user_data(user_data: dict) -> dict:
             "active_buffs": [],
         }
     else:
-        # 确保所有字段都存在
         checkin = user_data["checkin"]
-        for key in ["last_date", "streak", "total_days", "total_gold", "lucky_drops", "active_buffs"]:
+
+        # 旧字段名迁移（未来有字段改名时在这里添加）
+        old_field_migrations = {
+            # "old_name": "new_name"
+        }
+        for old_key, new_key in old_field_migrations.items():
+            if old_key in checkin and new_key not in checkin:
+                checkin[new_key] = checkin.pop(old_key)
+
+        # 补全新字段，保留已有值
+        defaults = {
+            "last_date": None,
+            "streak": 0,
+            "total_days": 0,
+            "total_gold": 0,
+            "lucky_drops": 0,
+            "active_buffs": [],
+        }
+        for key, default_val in defaults.items():
             if key not in checkin:
-                checkin[key] = 0 if key != "last_date" and key != "active_buffs" else (None if key == "last_date" else [])
+                checkin[key] = default_val
     
     return user_data
+
+
+# ========================================================
+# 统计更新辅助函数
+# ========================================================
+
+def get_today_key() -> str:
+    """获取今日日期键"""
+    from datetime import datetime, timezone, timedelta
+    return datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
+
+
+def init_daily_stats(stats: dict) -> dict:
+    """初始化今日统计数据"""
+    today = get_today_key()
+    if today not in stats:
+        stats[today] = {
+            "gold_work": 0,
+            "gold_stock_profit": 0,
+            "gold_stock_loss": 0,
+            "gold_spent": 0,
+            "work_hours": 0,
+            "work_count": 0,
+            "learn_hours": 0,
+            "entertain_count": 0,
+            "stock_trades": 0,
+            "debuff_minutes": 0,
+            "pressure_peaks": {"body": 0, "mind": 0},
+            "buffs_earned": [],
+            "checkin": False,
+            "hospital_minutes": 0,
+        }
+    return stats
+
+
+def update_daily_stat(user_data: dict, key: str, value):
+    """更新每日统计
+    
+    Args:
+        user_data: 用户数据
+        key: 统计键（见 init_daily_stats）
+        value: 更新的值（数字则累加，布尔则覆盖）
+    """
+    daily = user_data.setdefault("daily_stats", {})
+    today = get_today_key()
+    init_daily_stats(daily)
+    stat = daily[today]
+    
+    if isinstance(value, bool):
+        stat[key] = value
+    elif isinstance(value, (int, float)):
+        stat[key] = stat.get(key, 0) + value
+    elif isinstance(value, list):
+        stat.setdefault(key, []).extend(value)
+
+
+def update_lifetime_stat(user_data: dict, key: str, value):
+    """更新累计统计
+    
+    Args:
+        user_data: 用户数据
+        key: 统计键
+        value: 更新的值（数字则累加）
+    """
+    lifetime = user_data.setdefault("lifetime_stats", {})
+    if isinstance(value, (int, float)):
+        lifetime[key] = lifetime.get(key, 0) + value
+        # 更新峰值
+        if key == "total_gold_earned":
+            lifetime["peak_gold"] = max(lifetime.get("peak_gold", 0), user_data.get("gold", 0))
+
+
+def cleanup_old_daily_stats(user_data: dict, keep_days: int = 30):
+    """清理过期的每日统计数据
+    
+    Args:
+        user_data: 用户数据
+        keep_days: 保留天数
+    """
+    from datetime import datetime, timezone, timedelta
+    daily = user_data.get("daily_stats", {})
+    if not daily:
+        return
+    
+    today = datetime.now(timezone(timedelta(hours=8))).date()
+    cutoff = (today - timedelta(days=keep_days)).strftime("%Y-%m-%d")
+    
+    keys_to_remove = [k for k in daily if k < cutoff]
+    for k in keys_to_remove:
+        del daily[k]

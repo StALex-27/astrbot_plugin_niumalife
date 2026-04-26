@@ -12,9 +12,10 @@ from typing import Optional
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star, register, StarTools
 from astrbot.api import logger
+from astrbot.core.message.message_event_result import MessageChain
 
 # 导入自定义模块
-from .modules.constants import ITEMS, STOCKS, FOODS, RESIDENCES, JOBS, COURSES, ENTERTAINMENTS, MAX_ATTRIBUTE, INITIAL_GOLD, INITIAL_ATTRIBUTES, INITIAL_SKILLS
+from .modules.constants import ITEMS, STOCKS, FOODS, RESIDENCES, JOBS, COURSES, ENTERTAINMENTS, MAX_ATTRIBUTE, INITIAL_GOLD, INITIAL_ATTRIBUTES, INITIAL_SKILLS, TICKS_PER_HOUR
 from .modules.user import DataStore, UserStatus, migrate_user_data
 from .modules.status import StatusTransition
 from .modules.skills import get_skill_level, exp_to_next_level
@@ -42,13 +43,28 @@ from .src.commands import register_all_commands
 TEST_MODE = False
 TEST_TIME_SCALE = 0.1
 
-DAILY_SETTLEMENT_HOUR = 23
-DAILY_SETTLEMENT_MINUTE = 30
+# 不再使用，保留用于兼容性
+# DAILY_SETTLEMENT_HOUR = 23
+# DAILY_SETTLEMENT_MINUTE = 30
 
 SATIETY_CONSUMPTION_RATE = 0.05
 
 GROUP_ID = ""
-_LAST_SETTLEMENT_DATE = ""
+
+# KV Storage Keys
+GROUP_CONFIG_PREFIX = "group_config:"
+GROUP_DAILY_PREFIX = "group_daily:"
+
+# 群组默认配置
+DEFAULT_GROUP_CONFIG = {
+    "enabled": False,
+    "daily_report_hour": 23,
+    "daily_report_minute": 0,
+    "subscribers": [],
+    "total_gold_earned": 0,
+    "total_members": 0,
+}
+DAILY_SETTLEMENT_KV_KEY = "__daily_settlement__:last_date"
 
 
 # ============================================================
@@ -97,15 +113,18 @@ class CommandParser:
     "niumalife",
     "海獭 🦦",
     "牛马人生 - 打工群文字模拟经营游戏",
-    "0.0.11"
+    "0.1.5"
 )
 class NiumaLife(Star):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context, config):
         super().__init__(context)
+        self.config = config
+        self.context = context
 
         self._data_dir = StarTools.get_data_dir("niumalife")
         self._store = DataStore(self)
         self._parser = CommandParser()
+        self.logger = logger
 
         self._background_tasks: list[asyncio.Task] = []
         self._tick_interval = 60
@@ -121,9 +140,55 @@ class NiumaLife(Star):
         # 注册所有命令
         register_all_commands(self)
 
+    # ========================================================
+    # 配置读取助手
+    # ========================================================
+
+    @property
+    def test_mode(self) -> bool:
+        """测试模式"""
+        return getattr(self.config, 'test_mode', False)
+
+    @property
+    def test_time_scale(self) -> float:
+        """测试模式时间倍率"""
+        return getattr(self.config, 'test_time_scale', 0.1)
+
+    def parse_time_config(self, time_str: str, default: tuple[int, int] = (23, 0)) -> tuple[int, int]:
+        """
+        解析 HH:MM 格式的时间配置
+        
+        Args:
+            time_str: HH:MM 格式字符串
+            default: 解析失败时的默认值
+        Returns:
+            (hour, minute) 元组
+        """
+        try:
+            parts = time_str.split(":")
+            hour = int(parts[0])
+            minute = int(parts[1])
+            if 0 <= hour <= 23 and 0 <= minute <= 59:
+                return hour, minute
+        except (ValueError, IndexError):
+            pass
+        return default
+
+    @property
+    def daily_settlement_time(self) -> tuple[int, int]:
+        """每日结算时间 (hour, minute)"""
+        time_str = getattr(self.config, 'daily_settlement_time', '23:30')
+        return self.parse_time_config(time_str, (23, 30))
+
+    @property
+    def daily_report_time(self) -> tuple[int, int]:
+        """群组日报发送时间 (hour, minute)"""
+        time_str = getattr(self.config, 'daily_report_time', '23:00')
+        return self.parse_time_config(time_str, (23, 0))
+
     async def initialize(self):
         global GROUP_ID
-        logger.info("牛马人生插件初始化 - v0.0.11 重构版")
+        logger.info("牛马人生插件初始化 - v0.1.5")
 
         config_file = self._data_dir / "config.json"
         if config_file.exists():
@@ -271,41 +336,98 @@ class NiumaLife(Star):
             except Exception as e:
                 logger.error(f"Tick循环错误: {e}")
 
-    async def _hourly_tick_loop(self):
-        """小时级Tick"""
-        while True:
-            try:
-                await asyncio.sleep(3600)
-                now = datetime.now(timezone.utc)
-                logger.info("小时级Tick触发")
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                logger.error(f"小时Tick错误: {e}")
-
     async def _process_all_free_passive_recovery(self, now: datetime):
         """处理所有空闲用户的被动恢复"""
         users = await self._store.get_all_users()
         for user_id, user in users.items():
-            if user.get("status") == UserStatus.FREE.value:
+            status = user.get("status")
+            if status == UserStatus.HOSPITALIZED.value:
+                await self._process_hospital(user_id, user, now)
+            elif status == UserStatus.FREE.value:
                 await self._process_free_passive_recovery(user_id, user, now)
+
+    async def _process_hospital(self, user_id: str, user: dict, now: datetime):
+        """处理住院状态用户"""
+        from .modules.constants import (
+            HOSPITAL_COST_PER_HOUR, HOSPITAL_HEALTH_PER_HOUR,
+            HOSPITAL_STRENGTH_PER_HOUR, HOSPITAL_ENERGY_PER_HOUR,
+            HOSPITAL_MOOD_TARGET, HOSPITAL_DISCHARGE_THRESHOLD
+        )
+
+        attrs = user.get("attributes", {})
+
+        # 每小时消耗金币
+        cost_per_tick = HOSPITAL_COST_PER_HOUR / TICKS_PER_HOUR
+        user["gold"] = max(0, user.get("gold", 0) - cost_per_tick)
+
+        # 每分钟恢复
+        attrs["health"] = min(100, attrs.get("health", 0) + HOSPITAL_HEALTH_PER_HOUR / TICKS_PER_HOUR)
+        attrs["strength"] = min(100, attrs.get("strength", 0) + HOSPITAL_STRENGTH_PER_HOUR / TICKS_PER_HOUR)
+        attrs["energy"] = min(100, attrs.get("energy", 0) + HOSPITAL_ENERGY_PER_HOUR / TICKS_PER_HOUR)
+
+        # 心情固定在 HOSPITAL_MOOD_TARGET
+        current_mood = attrs.get("mood", 0)
+        if current_mood > HOSPITAL_MOOD_TARGET:
+            attrs["mood"] = max(HOSPITAL_MOOD_TARGET, current_mood - 1 / TICKS_PER_HOUR)
+        elif current_mood < HOSPITAL_MOOD_TARGET:
+            attrs["mood"] = min(HOSPITAL_MOOD_TARGET, current_mood + 1 / TICKS_PER_HOUR)
+
+        user["attributes"] = attrs
+
+        # 检查是否可以出院
+        if attrs.get("health", 0) >= HOSPITAL_DISCHARGE_THRESHOLD:
+            user["status"] = UserStatus.FREE
+            user["current_action"] = None
+            user["action_detail"] = None
+            logger.info(f"用户 {user.get('nickname')} 康复出院")
+
+        await self._store.update_user(user_id, user)
 
     async def _process_free_passive_recovery(self, user_id: str, user: dict, now: datetime):
         """处理单个空闲用户的被动恢复"""
+        from .modules.debuff import (
+            check_and_update_debuffs, calc_debuff_recovery_penalty,
+            apply_debuff_strength_drain, decay_pressure
+        )
+        from .modules.constants import PRESSURE_DECAY_IDLE
+
         residence = user.get("residence", "桥下")
         res_info = RESIDENCES.get(residence, RESIDENCES.get("桥下"))
 
         attrs = user.get("attributes", {})
 
-        # 被动恢复 (每小时基础值)
+        # 检查健康是否 <= 0 → 强制住院
+        if attrs.get("health", 100) <= 0:
+            user["status"] = UserStatus.HOSPITALIZED
+            user["current_action"] = None
+            user["action_detail"] = None
+            await self._store.update_user(user_id, user)
+            logger.info(f"用户 {user.get('nickname')} 健康归零，强制住院")
+            return
+
+        # 检查并更新 debuff
+        debuff_changes = check_and_update_debuffs(user, now)
+
+        # 计算 debuff 恢复惩罚
+        recovery_penalty = calc_debuff_recovery_penalty(user)
+
+        # 被动恢复 (每小时基础值 * 住所加成 * debuff惩罚)
         recovery_per_hour = 2
-        attrs["health"] = min(MAX_ATTRIBUTE, attrs.get("health", 0) + recovery_per_hour)
-        attrs["strength"] = min(MAX_ATTRIBUTE, attrs.get("strength", 0) + res_info.get("strength_recovery", 2))
-        attrs["energy"] = min(MAX_ATTRIBUTE, attrs.get("energy", 0) + res_info.get("energy_recovery", 2))
-        attrs["mood"] = min(MAX_ATTRIBUTE, attrs.get("mood", 0) + res_info.get("mood_recovery", 0))
+        attrs["health"] = min(MAX_ATTRIBUTE, attrs.get("health", 0) + recovery_per_hour * res_info.get("health_recovery", 1) * recovery_penalty)
+        attrs["strength"] = min(MAX_ATTRIBUTE, attrs.get("strength", 0) + recovery_per_hour * res_info.get("strength_recovery", 1) * recovery_penalty)
+        attrs["energy"] = min(MAX_ATTRIBUTE, attrs.get("energy", 0) + recovery_per_hour * res_info.get("energy_recovery", 1) * recovery_penalty)
+        attrs["mood"] = min(MAX_ATTRIBUTE, attrs.get("mood", 0) + recovery_per_hour * res_info.get("mood_recovery", 0) * recovery_penalty)
 
         # 饱食度每分钟消耗
         attrs["satiety"] = max(0, attrs.get("satiety", 0) - SATIETY_CONSUMPTION_RATE)
+
+        # 应用 debuff 体力流失（饥饿等）
+        apply_debuff_strength_drain(attrs, user)
+
+        # 空闲时压力自然衰减（每小时）
+        decay_per_tick = PRESSURE_DECAY_IDLE / TICKS_PER_HOUR
+        decay_pressure(user, "body", decay_per_tick)
+        decay_pressure(user, "mind", decay_per_tick)
 
         user["attributes"] = attrs
         await self._store.update_user(user_id, user)
@@ -350,92 +472,322 @@ class NiumaLife(Star):
         except Exception as e:
             logger.error(f"数据保存失败: {e}")
 
-    async def _daily_settlement_loop(self):
-        """每日结算循环"""
-        while True:
-            try:
-                # 计算距离下次结算的秒数
-                now = datetime.now(timezone.utc)
-                target_hour = DAILY_SETTLEMENT_HOUR
-                target_minute = DAILY_SETTLEMENT_MINUTE
-
-                next_settlement = datetime(now.year, now.month, now.day, target_hour, target_minute, tzinfo=timezone.utc)
-                if now.hour >= target_hour and now.minute >= target_minute:
-                    next_settlement += timedelta(days=1)
-
-                sleep_seconds = (next_settlement - now).total_seconds()
-                sleep_seconds = max(60, min(sleep_seconds, 86400))
-
-                await asyncio.sleep(sleep_seconds)
-                await self._do_daily_settlement()
-
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                logger.error(f"每日结算循环错误: {e}")
-
+    async def _get_group_config(self, group_id: str) -> dict:
+        """获取群组配置"""
+        key = f"{GROUP_CONFIG_PREFIX}{group_id}"
+        config = await self.get_kv_data(key, None)
+        if config is None:
+            config = DEFAULT_GROUP_CONFIG.copy()
+            config["subscribers"] = []
+            await self.put_kv_data(key, config)
+        return config
+    
+    async def _save_group_config(self, group_id: str, config: dict):
+        """保存群组配置"""
+        key = f"{GROUP_CONFIG_PREFIX}{group_id}"
+        await self.put_kv_data(key, config)
+    
+    async def _get_or_create_group_config(self, group_id: str) -> dict:
+        """获取或创建群组配置"""
+        config = await self._get_group_config(group_id)
+        return config
+    
+    # ========================================================
+    # 每日结算
+    # ========================================================
+    
     async def _do_daily_settlement(self):
         """执行每日结算"""
-        global _LAST_SETTLEMENT_DATE, GROUP_ID
 
         now = datetime.now(timezone.utc)
         date_str = now.strftime("%Y-%m-%d")
+        local_now = datetime.now(timezone(timedelta(hours=8)))
+        today_key = local_now.strftime("%Y-%m-%d")
 
-        if _LAST_SETTLEMENT_DATE == date_str:
+        # 从 KV 读取上次结算日期（持久化）
+        last_date = await self.get_kv_data(DAILY_SETTLEMENT_KV_KEY, "")
+        if last_date == date_str:
             logger.info("今日已结算,跳过")
             return
 
         logger.info(f"执行每日结算: {date_str}")
 
-        work_stats = []
-        learn_stats = []
-        rent_deducted = []
-
+        # 收集所有用户数据
         users = await self._store.get_all_users()
+        
+        # 按群组分组用户
+        group_users: dict[str, list] = {}  # group_id -> [(user_id, user), ...]
+        user_groups: dict[str, list] = {}   # user_id -> [group_id, ...]
+        rent_deducted: dict[str, list] = {} # group_id -> [(name, amount, res), ...]
+        group_gold: dict[str, int] = {}     # group_id -> total gold earned today
+        
         for user_id, user in users.items():
             try:
+                # 更新每日统计中的今日金币变动
+                from .modules.user import update_lifetime_stat, update_daily_stat, get_today_key
+                today_stats = user.get("daily_stats", {}).get(get_today_key(), {})
+                gold_work = today_stats.get("gold_work", 0)
+                gold_profit = today_stats.get("gold_stock_profit", 0)
+                gold_loss = today_stats.get("gold_stock_loss", 0)
+                net_gold = gold_work + gold_profit - gold_loss
+                
+                if net_gold > 0:
+                    update_lifetime_stat(user, "total_gold_earned", net_gold)
+                
+                # 处理房租
                 attrs = user.get("attributes", {})
                 residence = user.get("residence", "桥下")
-
                 if residence != "桥下":
                     res_info = RESIDENCES.get(residence)
                     if res_info:
                         daily_rent = res_info.get("daily_rent", 0)
                         if daily_rent > 0 and user.get("gold", 0) >= daily_rent:
                             user["gold"] -= daily_rent
-                            rent_deducted.append((user.get("nickname", "匿名"), daily_rent, residence))
-
+                            # 记录到用户所在群
+                            for gid in user.get("groups", []):
+                                if gid not in rent_deducted:
+                                    rent_deducted[gid] = []
+                                rent_deducted[gid].append((user.get("nickname", "匿名"), daily_rent, residence))
+                            # 累计群金币
+                            for gid in user.get("groups", []):
+                                group_gold[gid] = group_gold.get(gid, 0) + daily_rent
+                
+                # 属性衰减
                 attrs["satiety"] = max(0, attrs.get("satiety", 0) - 20)
-
                 if attrs["satiety"] < 20:
                     attrs["health"] = max(0, attrs["health"] - 5)
                     attrs["mood"] = max(0, attrs["mood"] - 10)
-
+                
+                # 按群组记录用户
+                for gid in user.get("groups", []):
+                    if gid not in group_users:
+                        group_users[gid] = []
+                    group_users[gid].append((user_id, user))
+                
+                # 更新群组累计金币
+                for gid in user.get("groups", []):
+                    if net_gold > 0:
+                        group_gold[gid] = group_gold.get(gid, 0) + int(net_gold)
+                
                 await self._store.update_user(user_id, user)
-
+                
+                # 清理过期每日数据（保留30天）
+                from .modules.user import cleanup_old_daily_stats
+                cleanup_old_daily_stats(user)
+                
             except Exception as e:
                 logger.error(f"结算用户 {user_id} 时出错: {e}")
 
-        _LAST_SETTLEMENT_DATE = date_str
+        # 结算完成写入 KV
+        await self.put_kv_data(DAILY_SETTLEMENT_KV_KEY, date_str)
 
-        if GROUP_ID:
-            report = self._generate_daily_report(work_stats, learn_stats, rent_deducted, date_str)
-            logger.info(f"日报生成: {report[:200]}...")
+        # 发送群组日报
+        for group_id, members in group_users.items():
+            config = await self._get_group_config(group_id)
+            if not config.get("enabled", False):
+                continue
+            # 只发送有订阅者的群
+            subscribers = config.get("subscribers", [])
+            active_in_group = [u for u in members if u[0] in subscribers]
+            if not active_in_group and subscribers:
+                continue
+            
+            report = self._generate_group_daily_report(
+                group_id, members, group_gold.get(group_id, 0),
+                rent_deducted.get(group_id, []), date_str, today_key
+            )
+            try:
+                await StarTools.send_message_by_id(
+                    "GroupMessage", group_id,
+                    MessageChain().message(report)
+                )
+                logger.info(f"群 {group_id} 日报已发送")
+            except Exception as e:
+                logger.error(f"群 {group_id} 日报发送失败: {e}")
 
-    def _generate_daily_report(self, work_stats: list, learn_stats: list, rent_deducted: list, date_str: str) -> str:
-        """生成每日报告"""
+        # 发送个人日报
+        for user_id, user in users.items():
+            settings = user.get("settings", {})
+            if not settings.get("sub_personal_daily", False):
+                continue
+            
+            report = self._generate_personal_report(user, date_str, today_key)
+            try:
+                await StarTools.send_message_by_id(
+                    "PrivateMessage", user_id,
+                    MessageChain().message(report)
+                )
+                logger.info(f"用户 {user_id} 个人日报已发送")
+            except Exception as e:
+                logger.error(f"用户 {user_id} 个人日报发送失败: {e}")
+
+        logger.info(f"日报生成完成")
+
+    async def _generate_group_daily_report(
+        self, group_id: str, members: list, total_group_gold: int,
+        rent_deducted: list, date_str: str, today_key: str
+    ) -> str:
+        """生成群组日报"""
+        from .modules.user import get_today_key
+        from .modules.stock import STOCKS
+        
         lines = [
-            f"━━━━━━━━━━━━━━",
-            f"【 牛马日报 {date_str} 】",
-            f"━━━━━━━━━━━━━━",
+            "━━━━━━━━━━━━━━",
+            f"【 🗞️ 牛马日报 】",
+            f"📅 {date_str}",
+            "━━━━━━━━━━━━━━",
         ]
-
+        
+        # ---- 股市涨跌榜 ----
+        lines.append("")
+        lines.append("📈 股市涨跌榜")
+        lines.append("━━━━━━━━━━━━━━")
+        
+        stock_changes = []
+        for name, info in STOCKS.items():
+            base = info.get("base_price", 100)
+            open_price = await self.get_kv_data(f"stock_open:{name}", base)
+            current_price = await self.get_kv_data(f"stock_price:{name}", base)
+            change = ((current_price - open_price) / open_price * 100) if open_price else 0.0
+            stock_changes.append((name, current_price, change))
+        
+        # 按涨跌幅排序
+        stock_changes.sort(key=lambda x: x[2], reverse=True)
+        
+        rising = [(n, p, c) for n, p, c in stock_changes if c >= 0]
+        falling = [(n, p, c) for n, p, c in stock_changes if c < 0]
+        
+        if rising:
+            lines.append("↑ 涨幅榜:")
+            for name, price, change in rising[:3]:
+                sym = "🔺" if change > 0 else "➖"
+                lines.append(f" {sym} {name} {change:+.2f}% ¥{price:.2f}")
+        if falling:
+            lines.append("↓ 跌幅榜:")
+            for name, price, change in falling[:3]:
+                lines.append(f" 🔻 {name} {change:.2f}% ¥{price:.2f}")
+        
+        # ---- 金币榜 ----
+        lines.append("")
+        lines.append("💰 今日金币榜 (Top5)")
+        lines.append("━━━━━━━━━━━━━━")
+        
+        user_earnings = []
+        for _, user in members:
+            today_stats = user.get("daily_stats", {}).get(today_key, {})
+            work_gold = today_stats.get("gold_work", 0)
+            stock_pnl = today_stats.get("gold_stock_profit", 0) - today_stats.get("gold_stock_loss", 0)
+            total = work_gold + stock_pnl
+            user_earnings.append((user.get("nickname", "匿名"), total))
+        
+        user_earnings.sort(key=lambda x: x[1], reverse=True)
+        medals = ["🥇", "🥈", "🥉", "4.", "5."]
+        for i, (name, gold) in enumerate(user_earnings[:5]):
+            medal = medals[i] if i < 3 else f"{i+1}."
+            sign = "+" if gold >= 0 else ""
+            lines.append(f" {medal} {name} {sign}{gold}金币")
+        
+        # ---- 打工榜 ----
+        lines.append("")
+        lines.append("📊 今日打工榜 (Top3)")
+        lines.append("━━━━━━━━━━━━━━")
+        
+        user_work = []
+        for _, user in members:
+            today_stats = user.get("daily_stats", {}).get(today_key, {})
+            hours = today_stats.get("work_hours", 0)
+            count = today_stats.get("work_count", 0)
+            if hours > 0:
+                user_work.append((user.get("nickname", "匿名"), hours, count))
+        
+        user_work.sort(key=lambda x: x[1], reverse=True)
+        for i, (name, hours, count) in enumerate(user_work[:3]):
+            medal = ["🥇", "🥈", "🥉"][i] if i < 3 else f"{i+1}."
+            lines.append(f" {medal} {name} {hours:.1f}h ({count}次)")
+        
+        # ---- 房租支出 ----
         if rent_deducted:
-            lines.append("📝 房租扣除:")
-            for name, amount, res in rent_deducted:
-                lines.append(f"  {name}: -{amount}金 ({res})")
-
-        lines.append(f"━━━━━━━━━━━━━━")
-        lines.append(f"📋 每日 {DAILY_SETTLEMENT_HOUR}:{DAILY_SETTLEMENT_MINUTE:02d} 自动结算")
-
+            lines.append("")
+            lines.append("📝 今日房租支出")
+            lines.append("━━━━━━━━━━━━━━")
+            for name, amount, res in rent_deducted[:5]:
+                lines.append(f" {name}: -{amount}金 ({res})")
+        
+        # ---- 本群数据 ----
+        lines.append("")
+        lines.append("━━━━━━━━━━━━━━")
+        lines.append(f"🏠 群成员: {len(members)}人")
+        lines.append(f"💰 群累计赚取: {total_group_gold:,}金币")
+        lines.append("━━━━━━━━━━━━━━")
+        report_hour = getattr(self.config, 'daily_report_hour', 23)
+        report_min = getattr(self.config, 'daily_report_minute', 0)
+        lines.append(f"⏰ 每日 {report_hour:02d}:{report_min:02d} 自动生成")
+        
         return "\n".join(lines)
+
+    def _generate_personal_report(self, user: dict, date_str: str, today_key: str) -> str:
+        """生成个人日报"""
+        from .modules.user import get_today_key
+        
+        lines = [
+            "━━━━━━━━━━━━━━",
+            f"【 📋 个人日报 】",
+            f"📅 {date_str}",
+            "━━━━━━━━━━━━━━",
+        ]
+        
+        today = user.get("daily_stats", {}).get(today_key, {})
+        lifetime = user.get("lifetime_stats", {})
+        
+        # 今日收益
+        work_gold = today.get("gold_work", 0)
+        stock_profit = today.get("gold_stock_profit", 0)
+        stock_loss = today.get("gold_stock_loss", 0)
+        spent = today.get("gold_spent", 0)
+        net = work_gold + stock_profit - stock_loss
+        
+        lines.append("")
+        lines.append("💵 今日收支")
+        lines.append("━━━━━━━━━━━━━━")
+        lines.append(f" 工作收入: +{work_gold}金币")
+        lines.append(f" 股票盈亏: {'+' if stock_profit >= 0 else ''}{stock_profit-stock_loss}金币")
+        lines.append(f" 消费支出: -{spent}金币")
+        lines.append(f" 净收益: {'+' if net >= 0 else ''}{net}金币")
+        
+        # 今日活动
+        lines.append("")
+        lines.append("📊 今日活动")
+        lines.append("━━━━━━━━━━━━━━")
+        lines.append(f" 工作: {today.get('work_hours', 0):.1f}h ({today.get('work_count', 0)}次)")
+        lines.append(f" 学习: {today.get('learn_hours', 0):.1f}h")
+        lines.append(f" 娱乐: {today.get('entertain_count', 0)}次")
+        lines.append(f" 股票交易: {today.get('stock_trades', 0)}次")
+        
+        # 持仓状态
+        holdings = user.get("stock_holdings", {})
+        if holdings:
+            lines.append("")
+            lines.append("📈 持仓状况")
+            lines.append("━━━━━━━━━━━━━━")
+            for name, hold in holdings.items():
+                code = STOCKS.get(name, {}).get("code", "?")
+                amount = hold.get("amount", 0)
+                avg = hold.get("avg_price", 0)
+                lines.append(f" {code} {name}: {amount}股 (成本¥{avg:.2f})")
+        
+        # 累计数据
+        lines.append("")
+        lines.append("🏆 累计成就")
+        lines.append("━━━━━━━━━━━━━━")
+        lines.append(f" 累计赚取: {int(lifetime.get('total_gold_earned', 0)):,}金币")
+        lines.append(f" 最高金币: {int(lifetime.get('peak_gold', 0)):,}金币")
+        lines.append(f" 累计工作: {lifetime.get('total_work_hours', 0):.0f}h")
+        lines.append(f" 股票盈亏: {'+' if lifetime.get('total_stock_profit', 0) >= 0 else ''}{int(lifetime.get('total_stock_profit', 0)):,}金币")
+        
+        lines.append("")
+        lines.append("━━━━━━━━━━━━━━")
+        lines.append(f"💳 当前余额: {user.get('gold', 0):,}金币")
+        lines.append("━━━━━━━━━━━━━━")
+        
+        return "\n".join(lines)
+
