@@ -4,6 +4,70 @@
 
 ---
 
+## v0.1.7 (2026-04-28)
+
+### 新增
+
+- **技能系统 v3 - 三阶体系重构**：
+  - 56个技能分 T1（基础）/ T2（专业）/ T3（专精）三阶
+  - 三档经验曲线：fast（速成）/ standard（标准）/ mastery（精修）
+  - 前置条件系统：课程设定了严格的技能前置要求，避免"解锁即弃"
+  - 课程级进阶：同技能进阶课程逐步提升前置要求（如编程进阶要求计算机基础 Lv6）
+
+- **教育机构系统**：
+  - 7所机构：匠心学堂、技能职校、IT学院、商学院、艺体学院、文理学院、专精堂
+  - 机构分层：T1基础层 / T1+T2专业层 / T2+T3专精层
+  - 同技能可在多处学习（不同机构课程名不同、价格/效率不同）
+
+- **学习系统重构**：
+  - `/学习` → 随机推荐3-4所相关机构 + 可学课程
+  - `/学习 查询` → 查看所有机构
+  - `/学习 查询#名称` → 查询机构详情或技能全路径
+  - `/学习 课程名` → 直接开始学习（固定2小时，直接扣费）
+  - 课程自带时长属性，无需玩家选择学习时长
+
+### 重构
+
+- `courses.json` 重写：99门课程统一结构（institution/tier/prerequisites/hours等）
+- `modules/skills.py` 重写：引入三档经验曲线和前置检查函数
+- `modules/institutions.py` 新建：机构推荐、课程查询、关键词搜索
+- `interactive.py` 学习指令完全重写：机构推荐模式 + 查询模式 + 直接选课
+- `modules/tick.py` 学习Tick适配新课程格式
+
+### 修复
+
+- **P0**: `daily_report_hour/minute` 为 None 时导致 `f"{None:02d}"` TypeError 崩溃
+- **P1**: `tick.py` 课程查找失败时静默跳过，无日志
+- **P1**: `courses.json` 旧课程（如 `coding_basic`）缺失 `exp_per_hour` 等字段
+- **P2**: `interactive.py` 双 COURSES 导入（constants 和 institutions），来源不清晰
+
+### 文档
+
+- 更新 README.md 架构图，添加 institutions.json / skills.json / institutions.py 说明
+- 移除 `_meta` 残留字段（skills.json / institutions.json）
+
+---
+
+## v0.1.6 (2026-04-27)
+
+### 修复
+
+- **P0**: `main.py` 导入缺失 `TICKS_PER_HOUR`，启动后1分钟 NameError 崩溃
+- **P1-2**: `migrate_user_data` 的 checkin 迁移会覆盖已有签到数据（streak/active_buffs）
+- **P1-3**: cron 触发器使用 UTC 而非 CST，导致结算/报告时间错误
+- **P1-3**: 股票涨跌幅在日报中硬编码为0
+- **P1-3**: 报告时间戳硬编码为23:00，未读取配置
+- **P1-3**: `daily_report_hour/minute` 配置从未被使用
+
+### 重构
+
+- **P2-6**: `STOCKS` 多处重复加载，统一为 `modules/constants.py` 单一数据源
+- **P2-7**: `buff`/`debuff`/`skills` 等导入分散在函数内部，统一移到模块顶部
+- **P2-8**: `TickType` 类替换为纯常量（`TICK_TYPE_WORK` 等），简化代码
+- **P2-9**: 清理遗留文件 `main.py.bak` 和 `src/commands/legacy/` 死代码
+
+---
+
 ## v0.1.5 (2026-04-25)
 
 ### 新增

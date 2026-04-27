@@ -1,0 +1,562 @@
+{
+  "苦力": {
+    "tier": 1,
+    "category": "体力",
+    "exp_rate": "fast",
+    "emoji": "💪",
+    "desc": "基础体力劳动能力",
+    "prerequisites": {}
+  },
+  "数学": {
+    "tier": 1,
+    "category": "学术",
+    "exp_rate": "fast",
+    "emoji": "📐",
+    "desc": "数量计算与逻辑推理",
+    "prerequisites": {}
+  },
+  "语文": {
+    "tier": 1,
+    "category": "学术",
+    "exp_rate": "fast",
+    "emoji": "📝",
+    "desc": "语言表达与文字运用",
+    "prerequisites": {}
+  },
+  "英语": {
+    "tier": 1,
+    "category": "语言",
+    "exp_rate": "fast",
+    "emoji": "🇬🇧",
+    "desc": "英语听说读写能力",
+    "prerequisites": {}
+  },
+  "物理": {
+    "tier": 1,
+    "category": "学术",
+    "exp_rate": "fast",
+    "emoji": "⚗️",
+    "desc": "物质运动与能量规律",
+    "prerequisites": {}
+  },
+  "化学": {
+    "tier": 1,
+    "category": "学术",
+    "exp_rate": "fast",
+    "emoji": "🧪",
+    "desc": "物质组成与变化规律",
+    "prerequisites": {}
+  },
+  "生物": {
+    "tier": 1,
+    "category": "学术",
+    "exp_rate": "fast",
+    "emoji": "🧬",
+    "desc": "生命现象与规律",
+    "prerequisites": {}
+  },
+  "历史": {
+    "tier": 1,
+    "category": "学术",
+    "exp_rate": "fast",
+    "emoji": "📜",
+    "desc": "人类社会过去的事件",
+    "prerequisites": {}
+  },
+  "地理": {
+    "tier": 1,
+    "category": "学术",
+    "exp_rate": "fast",
+    "emoji": "🌍",
+    "desc": "自然环境与人类活动",
+    "prerequisites": {}
+  },
+  "音乐": {
+    "tier": 1,
+    "category": "艺术",
+    "exp_rate": "fast",
+    "emoji": "🎵",
+    "desc": "声乐与乐器演奏",
+    "prerequisites": {}
+  },
+  "美术": {
+    "tier": 1,
+    "category": "艺术",
+    "exp_rate": "fast",
+    "emoji": "🎨",
+    "desc": "绘画与视觉艺术",
+    "prerequisites": {}
+  },
+  "体育": {
+    "tier": 1,
+    "category": "体质",
+    "exp_rate": "fast",
+    "emoji": "🏃",
+    "desc": "体能锻炼与运动能力",
+    "prerequisites": {}
+  },
+  "办公软件": {
+    "tier": 1,
+    "category": "工具",
+    "exp_rate": "fast",
+    "emoji": "📊",
+    "desc": "Word/Excel/PPT 等办公工具",
+    "prerequisites": {}
+  },
+  "沟通能力": {
+    "tier": 1,
+    "category": "社交",
+    "exp_rate": "fast",
+    "emoji": "💬",
+    "desc": "人际交流与表达技巧",
+    "prerequisites": {}
+  },
+  "驾驶": {
+    "tier": 1,
+    "category": "工具",
+    "exp_rate": "fast",
+    "emoji": "🚗",
+    "desc": "机动车驾驶能力",
+    "prerequisites": {}
+  },
+  "烹饪": {
+    "tier": 1,
+    "category": "生活",
+    "exp_rate": "fast",
+    "emoji": "🍳",
+    "desc": "食物制作与料理技巧",
+    "prerequisites": {}
+  },
+  "理财常识": {
+    "tier": 1,
+    "category": "商业",
+    "exp_rate": "fast",
+    "emoji": "💰",
+    "desc": "个人财务管理与规划",
+    "prerequisites": {}
+  },
+  "计算机基础": {
+    "tier": 1,
+    "category": "技术",
+    "exp_rate": "fast",
+    "emoji": "💻",
+    "desc": "计算机基本操作与原理",
+    "prerequisites": {}
+  },
+  "编程": {
+    "tier": 2,
+    "category": "技术",
+    "exp_rate": "standard",
+    "emoji": "⌨️",
+    "desc": "代码编写与程序设计",
+    "prerequisites": {
+      "计算机基础": 3
+    }
+  },
+  "网络技术": {
+    "tier": 2,
+    "category": "技术",
+    "exp_rate": "standard",
+    "emoji": "🌐",
+    "desc": "网络架构与通信技术",
+    "prerequisites": {
+      "计算机基础": 3
+    }
+  },
+  "数据分析": {
+    "tier": 2,
+    "category": "技术",
+    "exp_rate": "standard",
+    "emoji": "📈",
+    "desc": "数据处理与统计分析",
+    "prerequisites": {
+      "数学": 3,
+      "办公软件": 3
+    }
+  },
+  "会计": {
+    "tier": 2,
+    "category": "商业",
+    "exp_rate": "standard",
+    "emoji": "🧾",
+    "desc": "账务处理与财务报表",
+    "prerequisites": {
+      "数学": 3,
+      "办公软件": 3
+    }
+  },
+  "市场营销": {
+    "tier": 2,
+    "category": "商业",
+    "exp_rate": "standard",
+    "emoji": "📢",
+    "desc": "市场推广与品牌运营",
+    "prerequisites": {
+      "沟通能力": 3,
+      "理财常识": 3
+    }
+  },
+  "销售": {
+    "tier": 2,
+    "category": "商业",
+    "exp_rate": "standard",
+    "emoji": "🤝",
+    "desc": "客户开发与成交技巧",
+    "prerequisites": {
+      "沟通能力": 3
+    }
+  },
+  "翻译": {
+    "tier": 2,
+    "category": "语言",
+    "exp_rate": "standard",
+    "emoji": "🔤",
+    "desc": "中英互译与跨语言沟通",
+    "prerequisites": {
+      "英语": 5
+    }
+  },
+  "法律常识": {
+    "tier": 2,
+    "category": "社科",
+    "exp_rate": "standard",
+    "emoji": "⚖️",
+    "desc": "基础法律知识与权益保护",
+    "prerequisites": {
+      "语文": 3,
+      "历史": 3
+    }
+  },
+  "心理学": {
+    "tier": 2,
+    "category": "社科",
+    "exp_rate": "standard",
+    "emoji": "🧠",
+    "desc": "人类行为与心理机制",
+    "prerequisites": {
+      "语文": 3,
+      "生物": 3
+    }
+  },
+  "物流基础": {
+    "tier": 2,
+    "category": "运营",
+    "exp_rate": "standard",
+    "emoji": "📦",
+    "desc": "仓储运输与供应链管理",
+    "prerequisites": {
+      "驾驶": 3,
+      "地理": 3
+    }
+  },
+  "人力资源": {
+    "tier": 2,
+    "category": "管理",
+    "exp_rate": "standard",
+    "emoji": "👥",
+    "desc": "招聘培训与员工管理",
+    "prerequisites": {
+      "沟通能力": 3,
+      "办公软件": 3
+    }
+  },
+  "电子商务": {
+    "tier": 2,
+    "category": "商业",
+    "exp_rate": "standard",
+    "emoji": "🛒",
+    "desc": "网店运营与网络贸易",
+    "prerequisites": {
+      "市场营销": 3,
+      "网络技术": 3
+    }
+  },
+  "表演": {
+    "tier": 2,
+    "category": "艺术",
+    "exp_rate": "standard",
+    "emoji": "🎭",
+    "desc": "舞台表演与情感表达",
+    "prerequisites": {
+      "音乐": 3
+    }
+  },
+  "播音主持": {
+    "tier": 2,
+    "category": "传媒",
+    "exp_rate": "standard",
+    "emoji": "🎙️",
+    "desc": "广播与节目主持技巧",
+    "prerequisites": {
+      "语文": 5,
+      "英语": 3
+    }
+  },
+  "动画制作": {
+    "tier": 2,
+    "category": "艺术",
+    "exp_rate": "standard",
+    "emoji": "🎬",
+    "desc": "动画设计与制作技术",
+    "prerequisites": {
+      "美术": 5,
+      "计算机基础": 3
+    }
+  },
+  "写作创作": {
+    "tier": 2,
+    "category": "创作",
+    "exp_rate": "standard",
+    "emoji": "✍️",
+    "desc": "文章写作与内容创作",
+    "prerequisites": {
+      "语文": 5
+    }
+  },
+  "农业技术": {
+    "tier": 2,
+    "category": "技术",
+    "exp_rate": "standard",
+    "emoji": "🌾",
+    "desc": "农作物种植与农业管理",
+    "prerequisites": {
+      "化学": 3,
+      "生物": 3
+    }
+  },
+  "机械维修": {
+    "tier": 2,
+    "category": "技术",
+    "exp_rate": "standard",
+    "emoji": "🔧",
+    "desc": "机械设备维护与修理",
+    "prerequisites": {
+      "物理": 3,
+      "体育": 3
+    }
+  },
+  "电工基础": {
+    "tier": 2,
+    "category": "技术",
+    "exp_rate": "standard",
+    "emoji": "⚡",
+    "desc": "电路原理与电工操作",
+    "prerequisites": {
+      "物理": 3
+    }
+  },
+  "医药常识": {
+    "tier": 2,
+    "category": "技术",
+    "exp_rate": "standard",
+    "emoji": "💊",
+    "desc": "药品知识与健康护理",
+    "prerequisites": {
+      "生物": 5,
+      "化学": 3
+    }
+  },
+  "架构师": {
+    "tier": 3,
+    "category": "技术",
+    "exp_rate": "mastery",
+    "emoji": "🏗️",
+    "desc": "系统架构设计与技术决策",
+    "prerequisites": {
+      "编程": 5,
+      "数学": 5
+    }
+  },
+  "网络安全": {
+    "tier": 3,
+    "category": "技术",
+    "exp_rate": "mastery",
+    "emoji": "🔒",
+    "desc": "网络攻防与安全防护",
+    "prerequisites": {
+      "网络技术": 5,
+      "编程": 3
+    }
+  },
+  "人工智能": {
+    "tier": 3,
+    "category": "技术",
+    "exp_rate": "mastery",
+    "emoji": "🤖",
+    "desc": "机器学习与AI算法应用",
+    "prerequisites": {
+      "编程": 5,
+      "数学": 5,
+      "数据分析": 3
+    }
+  },
+  "游戏开发": {
+    "tier": 3,
+    "category": "技术",
+    "exp_rate": "mastery",
+    "emoji": "🎮",
+    "desc": "游戏设计与引擎开发",
+    "prerequisites": {
+      "编程": 5,
+      "动画制作": 3
+    }
+  },
+  "数据科学": {
+    "tier": 3,
+    "category": "技术",
+    "exp_rate": "mastery",
+    "emoji": "🔬",
+    "desc": "大数据分析与建模",
+    "prerequisites": {
+      "数据分析": 5,
+      "数学": 5
+    }
+  },
+  "财务管理": {
+    "tier": 3,
+    "category": "商业",
+    "exp_rate": "mastery",
+    "emoji": "💰",
+    "desc": "企业财务与资本运作",
+    "prerequisites": {
+      "会计": 5,
+      "法律常识": 3
+    }
+  },
+  "战略咨询": {
+    "tier": 3,
+    "category": "商业",
+    "exp_rate": "mastery",
+    "emoji": "💼",
+    "desc": "企业战略与管理咨询",
+    "prerequisites": {
+      "市场营销": 5,
+      "心理学": 3
+    }
+  },
+  "投资银行": {
+    "tier": 3,
+    "category": "商业",
+    "exp_rate": "mastery",
+    "emoji": "🏦",
+    "desc": "融资并购与资本市场",
+    "prerequisites": {
+      "财务管理": 5,
+      "数学": 5
+    }
+  },
+  "项目管理": {
+    "tier": 3,
+    "category": "管理",
+    "exp_rate": "mastery",
+    "emoji": "📋",
+    "desc": "项目规划与团队协调",
+    "prerequisites": {
+      "人力资源": 3,
+      "电子商务": 3
+    }
+  },
+  "产品经理": {
+    "tier": 3,
+    "category": "管理",
+    "exp_rate": "mastery",
+    "emoji": "📱",
+    "desc": "产品设计与管理流程",
+    "prerequisites": {
+      "市场营销": 3,
+      "数据分析": 3,
+      "心理学": 3
+    }
+  },
+  "律师": {
+    "tier": 3,
+    "category": "社科",
+    "exp_rate": "mastery",
+    "emoji": "⚖️",
+    "desc": "法律辩护与诉讼代理",
+    "prerequisites": {
+      "法律常识": 5,
+      "语文": 5
+    }
+  },
+  "心理咨询师": {
+    "tier": 3,
+    "category": "社科",
+    "exp_rate": "mastery",
+    "emoji": "🛋️",
+    "desc": "心理咨询与心理治疗",
+    "prerequisites": {
+      "心理学": 5,
+      "沟通能力": 5
+    }
+  },
+  "导演": {
+    "tier": 3,
+    "category": "艺术",
+    "exp_rate": "mastery",
+    "emoji": "🎬",
+    "desc": "影视导演与创作统筹",
+    "prerequisites": {
+      "表演": 5,
+      "动画制作": 3
+    }
+  },
+  "同声传译": {
+    "tier": 3,
+    "category": "语言",
+    "exp_rate": "mastery",
+    "emoji": "🎧",
+    "desc": "会议同声传译与专业翻译",
+    "prerequisites": {
+      "翻译": 5,
+      "英语": 7
+    }
+  },
+  "医学专家": {
+    "tier": 3,
+    "category": "技术",
+    "exp_rate": "mastery",
+    "emoji": "🩺",
+    "desc": "临床医学与疾病诊治",
+    "prerequisites": {
+      "医药常识": 5,
+      "生物": 5,
+      "化学": 5
+    }
+  },
+  "农业工程": {
+    "tier": 3,
+    "category": "技术",
+    "exp_rate": "mastery",
+    "emoji": "🚜",
+    "desc": "现代农业技术与工程",
+    "prerequisites": {
+      "农业技术": 5,
+      "化学": 5,
+      "生物": 5
+    }
+  },
+  "物流工程": {
+    "tier": 3,
+    "category": "运营",
+    "exp_rate": "mastery",
+    "emoji": "🚚",
+    "desc": "智能物流系统设计与优化",
+    "prerequisites": {
+      "物流基础": 5,
+      "机械维修": 3
+    }
+  },
+  "企业管理": {
+    "tier": 3,
+    "category": "管理",
+    "exp_rate": "mastery",
+    "emoji": "🏢",
+    "desc": "企业运营与战略管理",
+    "prerequisites": {
+      "项目管理": 3,
+      "财务管理": 3,
+      "沟通能力": 5
+    }
+  }
+}

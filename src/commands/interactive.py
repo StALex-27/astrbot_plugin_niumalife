@@ -5,7 +5,7 @@
 核心指令 (11个):
 - /档案 - 查看档案
 - /打工 [工作名] [小时] - 工作
-- /学习 [课程名] [小时] - 学习
+- /学习 [课程名]     - 学习（机构推荐）
 - /娱乐 [名称] [小时] - 娱乐
 - /吃 [食物名] - 吃东西
 - /签到 - 每日签到 (含自动注册)
@@ -20,7 +20,7 @@ import random
 from datetime import datetime, timezone, timedelta
 
 from astrbot.api.event import filter, AstrMessageEvent
-from ...modules.constants import JOBS, COURSES, FOODS, RESIDENCES, ENTERTAINMENTS, MAX_ATTRIBUTE
+from ...modules.constants import JOBS, FOODS, RESIDENCES, ENTERTAINMENTS, MAX_ATTRIBUTE
 from ...modules.user import UserStatus
 from ...modules.tick import ActionDetail, TICK_TYPE_WORK, TICK_TYPE_LEARN, TICK_TYPE_ENTERTAIN
 from ...modules.checkin import get_luck_rating, get_streak_reward, roll_lucky_drop
@@ -33,6 +33,17 @@ from ...modules.item import (
 from ...modules.shop import (
     SHOPS, get_all_shops, get_shop_items, get_global_random_items,
     format_shop_list, format_shop_items, buy_item, is_item_in_shop
+)
+from ...modules.skills import (
+    check_course_available, get_user_skill_level, get_skills_meta
+)
+from ...modules.institutions import (
+    INSTITUTIONS, COURSES,
+    select_institutions_for_user, get_recommended_courses,
+    get_institution, get_courses_by_institution,
+    get_all_institutions, search_courses_by_keyword,
+    get_courses_by_skill, format_course_line,
+    get_skill_progress
 )
 
 
@@ -190,63 +201,197 @@ def register_interactive_commands(plugin):
     async def learn(event: AstrMessageEvent):
         user_id = str(event.get_sender_id())
         user = await plugin._store.get_user(user_id)
-        
+
         if not user:
-            yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
+            yield event.plain_result("📋 你还没有注册！\n先输入 /签到 注册")
             return
-        
+
         if user["status"] != UserStatus.FREE:
-            yield event.plain_result(f"📋 你正在{user['status']}，无法学习\\n先用 /取消 取消当前动作")
+            yield event.plain_result(f"📋 你正在{user['status']}，无法学习\n先用 /取消 取消当前动作")
             return
-        
+
         _, args = plugin._parser.parse(event)
-        
-        course_name = args[0] if len(args) >= 1 else None
-        hours = int(args[1]) if len(args) >= 2 else None
-        
-        if not course_name:
-            yield event.plain_result(f"📚 课程列表:\\n━━━━━━━━━━━━━━\\n{_format_course_list()}\\n━━━━━━━━━━━━━━\\n回复: /学习 课程名 小时数\\n例如: /学习 编程 4")
+
+        # 无参数：显示机构推荐
+        if not args or not args[0]:
+            inst_ids = select_institutions_for_user(user, count=4)
+            if not inst_ids:
+                inst_ids = list(INSTITUTIONS.keys())[:4]
+            user_skills = user.get("skills", {})
+            lines = ["📚 选择就读机构", "━━━━━━━━━━━━━━"]
+            for idx, inst_id in enumerate(inst_ids, 1):
+                inst = get_institution(inst_id)
+                emoji = inst.get("emoji", "🏫")
+                name = inst.get("name", inst_id)
+                courses = get_recommended_courses(inst_id, user, limit=4)
+                if courses:
+                    for c in courses:
+                        skill_lv = user_skills.get(c.get("skill", ""), 0)
+                        total_cost = c.get("cost", 0) * c.get("hours", 2)
+                        tier_emoji = {1: "🔰", 2: "⬆️", 3: "⭐"}.get(c.get("tier", 1), "")
+                        prereqs = c.get("prerequisites", {})
+                        prereq_str = " [需:" + "/".join([f"{k}Lv{v}" for k, v in prereqs.items()]) + "]" if prereqs else ""
+                        lines.append(f"{idx}. {emoji}{name}")
+                        lines.append(f"    {tier_emoji}{c.get('name','')} | 💰{total_cost}金 | {c.get('skill')}Lv{skill_lv}{prereq_str}")
+                else:
+                    lines.append(f"{idx}. {emoji}{name} - 暂无可学习课程")
+            lines.extend(["━━━━━━━━━━━━━━", "回复：课程名 开始学习", "例：/学习 编程入门", "或：/学习 查询  查看全部机构"])
+            yield event.plain_result("\n".join(lines))
             return
-        
-        course = COURSES.get(course_name)
-        if not course:
-            yield event.plain_result(f"📋 不存在该课程：{course_name}")
+
+        first_arg = args[0]
+
+        # 查询模式
+        if first_arg == "查询" or first_arg.startswith("查询#"):
+            query = args[1][1:] if len(args) > 1 and args[1].startswith("#") else (args[1] if len(args) > 1 else "")
+            insts = get_all_institutions()
+            if not query:
+                lines = ["🏫 教育机构一览", "━━━━━━━━━━━━━━"]
+                for inst in insts:
+                    emoji = inst.get("emoji", "🏫")
+                    name = inst.get("name", "")
+                    desc = inst.get("desc", "")
+                    lines.append(f"{emoji} {name}：{desc}")
+                lines.extend(["━━━━━━━━━━━━━━", "回复 /学习 查询#机构名  查看详情", "回复 /学习 查询#技能名  查看技能路径"])
+                yield event.plain_result("\n".join(lines))
+                return
+
+            # 机构详情查询
+            matched_inst = None
+            for inst_id, inst in INSTITUTIONS.items():
+                if query in inst_id or query in inst.get("name", ""):
+                    matched_inst = inst_id
+                    break
+
+            if matched_inst:
+                inst = get_institution(matched_inst)
+                emoji = inst.get("emoji", "🏫")
+                name = inst.get("name", matched_inst)
+                desc = inst.get("desc", "")
+                user_skills = user.get("skills", {})
+                all_courses = get_courses_by_institution(matched_inst)
+                lines = [f"{emoji} {name}", f"  {desc}", "━━━━━━━━━━━━━━"]
+                for tier in [1, 2, 3]:
+                    tier_courses = [c for c in all_courses if c.get("tier") == tier]
+                    if not tier_courses:
+                        continue
+                    lines.append({1: "🔰 T1 基础", 2: "⬆️ T2 专业", 3: "⭐ T3 大师"}[tier])
+                    for c in tier_courses:
+                        skill_lv = user_skills.get(c.get("skill", ""), 0)
+                        total_cost = c.get("cost", 0) * c.get("hours", 2)
+                        prereqs = c.get("prerequisites", {})
+                        prereq_str = " [需:" + "/".join([f"{k}Lv{v}" for k, v in prereqs.items()]) + "]" if prereqs else ""
+                        lines.append(f"✅ {c.get('name','')} | 💰{total_cost}金 | {c.get('skill')}Lv{skill_lv}{prereq_str}")
+                lines.extend(["━━━━━━━━━━━━━━", "回复课程名开始学习"])
+                yield event.plain_result("\n".join(lines))
+                return
+
+            # 技能路径查询
+            skills_meta = get_skills_meta()
+            matched_skill = None
+            for skill_name in skills_meta:
+                if query in skill_name:
+                    matched_skill = skill_name
+                    break
+
+            if matched_skill:
+                courses = get_courses_by_skill(matched_skill, user)
+                progress = get_skill_progress(user, matched_skill)
+                lines = [f"📖 {matched_skill} 技能路径", f"  当前等级：Lv{progress['level']}", "━━━━━━━━━━━━━━"]
+                current_tier = None
+                for c in courses:
+                    tier = c.get("tier", 1)
+                    if tier != current_tier:
+                        lines.append({1: "🔰 T1 基础", 2: "⬆️ T2 专业", 3: "⭐ T3 大师"}[tier])
+                        current_tier = tier
+                    ava = "✅" if c.get("available", False) else "🔒"
+                    total_cost = c.get("cost", 0) * c.get("hours", 2)
+                    prereqs = c.get("prerequisites", {})
+                    prereq_str = " [需:" + "/".join([f"{k}Lv{v}" for k, v in prereqs.items()]) + "]" if prereqs else ""
+                    lines.append(f"{ava} {c.get('institution','')}·{c.get('name','')} | 💰{total_cost}金{prereq_str}")
+                lines.extend(["━━━━━━━━━━━━━━", "回复课程名开始学习"])
+                yield event.plain_result("\n".join(lines))
+                return
+
+            # 关键词搜索
+            results = search_courses_by_keyword(query, user)
+            if not results:
+                yield event.plain_result(f"📋 未找到与「{query}」相关的课程或机构")
+                return
+            lines = [f"🔍 「{query}」搜索结果（共{len(results)}门）", "━━━━━━━━━━━━━━"]
+            for c in results[:15]:
+                ava = "✅" if c.get("available", False) else "🔒"
+                lines.append(f"{ava} {c.get('institution','')}·{c.get('name','')} | {c.get('skill','')} | 💰{c.get('cost',0)*c.get('hours',2)}金")
+            if len(results) > 15:
+                lines.append(f"...还有{len(results)-15}门")
+            lines.extend(["━━━━━━━━━━━━━━", "回复课程名开始学习"])
+            yield event.plain_result("\n".join(lines))
             return
-        
-        if not hours:
-            yield event.plain_result(f"📚 {course_name} | {course.get('cost', 0)}金/时\\n━━━━━━━━━━━━━━\\n请选择时长 (1-8小时)：\\n例如: /学习 {course_name} 4")
+
+        # 直接选择课程
+        course_identifier = first_arg
+        if course_identifier in COURSES:
+            course_id = course_identifier
+            course = COURSES[course_id]
+        else:
+            matches = [(cid, c) for cid, c in COURSES.items() if course_identifier in cid or course_identifier in c.get("name", "")]
+            if not matches:
+                yield event.plain_result(f"📋 未找到课程：{course_identifier}\n可输入 /学习 查询#技能名 查看课程")
+                return
+            if len(matches) == 1:
+                course_id, course = matches[0]
+            else:
+                lines = [f"📋 找到多个匹配课程：", "━━━━━━━━━━━━━━"]
+                for idx, (cid, c) in enumerate(matches[:10], 1):
+                    ok, _ = check_course_available(cid, c, user)
+                    ava = "✅" if ok else "🔒"
+                    total_cost = c.get("cost", 0) * c.get("hours", 2)
+                    lines.append(f"{idx}. {ava} {c.get('institution','')}·{c.get('name','')} | 💰{total_cost}金")
+                lines.extend(["━━━━━━━━━━━━━━", "请输入完整课程名（带机构前缀）"])
+                yield event.plain_result("\n".join(lines))
+                return
+
+        ok, reason = check_course_available(course_id, course, user)
+        if not ok:
+            yield event.plain_result(f"📋 {reason}")
             return
-        
+
+        hours = course.get("hours", 2)
+        total_cost = course.get("cost", 0) * hours
         attrs = user["attributes"]
+        if attrs.get("gold", 0) < total_cost:
+            yield event.plain_result(f"📋 金币不足！需要 {total_cost} 金币，现有 {attrs.get('gold', 0):.0f} 金币")
+            return
         if attrs["strength"] < course.get("consume_strength", 3) * hours * 0.5:
             yield event.plain_result("📋 体力不足，无法学习")
             return
         if attrs["energy"] < course.get("consume_energy", 8) * hours * 0.5:
             yield event.plain_result("📋 精力不足，无法学习")
             return
-        
+
+        attrs["gold"] = attrs.get("gold", 0) - total_cost
         now = datetime.now(LOCAL_TZ)
         detail = ActionDetail.create(
             action_type=TICK_TYPE_LEARN,
             hours=hours,
             start_time=now,
-            course_name=course_name,
+            course_name=course_id,
             exp_per_hour=course.get("exp_per_hour", 10),
             consume_strength=course.get("consume_strength", 3),
             consume_energy=course.get("consume_energy", 8),
             consume_mood=course.get("consume_mood", 5),
             cost=course.get("cost", 0)
         )
-        
         user["status"] = UserStatus.LEARNING
         user["current_action"] = TICK_TYPE_LEARN
         user["action_detail"] = detail
         await plugin._store.update_user(user_id, user)
-        
+
+        course_name_display = f"{course.get('institution','')}·{course.get('name','')}"
         try:
             url = await plugin._renderer.render_entertain_start(
                 user, event,
-                ent_name=course_name,
+                ent_name=course_name_display,
                 ent_emoji="📚",
                 hours=hours,
                 gain_mood=course.get('exp_per_hour', 10) * hours,
@@ -254,8 +399,15 @@ def register_interactive_commands(plugin):
             )
             yield event.image_result(url)
         except Exception:
-            yield event.plain_result(f"✅ 开始学习:\\n━━━━━━━━━━━━━━\\n📚 {course_name} x {hours}小时\\n📚 预计经验: {course.get('exp_per_hour', 10) * hours}\\n━━━━━━━━━━━━━━\\n🎉 开始学习！")
-    
+            yield event.plain_result(
+                f"✅ 开始学习：\n━━━━━━━━━━━━━━\n"
+                f"📚 {course_name_display}\n"
+                f"⏱️ 时长：{hours}小时\n"
+                f"💰 学费：{total_cost}金币（已扣除）\n"
+                f"📈 预计经验：{course.get('exp_per_hour', 10) * hours}\n"
+                f"━━━━━━━━━━━━━━\n🎉 学习愉快！"
+            )
+
     # ========== 娱乐 ==========
     @filter.command("娱乐")
     async def entertain(event: AstrMessageEvent):
@@ -997,7 +1149,10 @@ def register_interactive_commands(plugin):
 例如: /打工 外卖 4
 
 📚 学习
-/学习 [课程名] [小时] - 开始学习
+/学习              - 显示推荐机构
+/学习 查询      - 查看所有机构
+/学习 查询#名称 - 查询机构/技能
+/学习 课程名   - 开始学习
 例如: /学习 编程 4
 
 🎮 娱乐
@@ -1179,8 +1334,22 @@ def _format_job_list() -> str:
     return "\n".join([f"{i}. {'💪' if j.get('type')=='体力' else '🧠'} {n} {j['hourly_wage']}金/时" for i, (n, j) in enumerate(JOBS.items(), 1)])
 
 
+def _get_tier_emoji(tier: int) -> str:
+    return {"1": "🔰", "2": "⬆️", "3": "⭐"}.get(str(tier), "")
+
 def _format_course_list() -> str:
-    return "\n".join([f"{i}. 📚 {n} {c.get('cost', 0)}金/时" for i, (n, c) in enumerate(COURSES.items(), 1)])
+    lines = []
+    skills_meta = get_skills_meta()
+    for i, (course_id, c) in enumerate(COURSES.items(), 1):
+        tier = c.get("tier", 1)
+        emoji = _get_tier_emoji(tier)
+        prereqs = c.get("prerequisites", {})
+        prereq_str = ""
+        if prereqs:
+            prereq_str = " [需:" + "/".join([f"{k}Lv{v}" for k, v in prereqs.items()]) + "]"
+        skill_name = c.get("skill", "")
+        lines.append(f"{i}. {emoji}{skill_name}({c.get('name', '')}) {c.get('cost', 0)}金/时{prereq_str}")
+    return "\n".join(lines[:50])
 
 
 def _format_entertainment_list() -> str:

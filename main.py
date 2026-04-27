@@ -113,7 +113,7 @@ class CommandParser:
     "niumalife",
     "海獭 🦦",
     "牛马人生 - 打工群文字模拟经营游戏",
-    "0.1.5"
+    "0.1.7"
 )
 class NiumaLife(Star):
     def __init__(self, context: Context, config):
@@ -188,7 +188,7 @@ class NiumaLife(Star):
 
     async def initialize(self):
         global GROUP_ID
-        logger.info("牛马人生插件初始化 - v0.1.5")
+        logger.info("牛马人生插件初始化 - v0.1.7")
 
         config_file = self._data_dir / "config.json"
         if config_file.exists():
@@ -317,24 +317,42 @@ class NiumaLife(Star):
                 now = datetime.now(timezone.utc)
 
                 # 处理所有空闲用户的被动恢复
-                await self._process_all_free_passive_recovery(now)
+                try:
+                    await self._process_all_free_passive_recovery(now)
+                except Exception as e:
+                    logger.warning(f"_process_all_free_passive_recovery 异常: {type(e).__name__}: {str(e)}")
 
                 # 检查是否需要自动睡觉
-                await self._check_night_auto_sleep(now)
+                try:
+                    await self._check_night_auto_sleep(now)
+                except Exception as e:
+                    logger.warning(f"_check_night_auto_sleep 异常: {type(e).__name__}: {str(e)}")
 
                 # 触发基于时间的事件（每小时/每日/Cron）
-                await self._tick_manager.trigger_time_based_events(now)
+                try:
+                    await self._tick_manager.trigger_time_based_events(now)
+                except Exception as e:
+                    logger.warning(f"trigger_time_based_events 异常: {type(e).__name__}: {str(e)}")
 
                 # Tick 所有用户动作
-                await self._tick_manager.tick_all_users(now)
+                try:
+                    await self._tick_manager.tick_all_users(now)
+                except Exception as e:
+                    logger.warning(f"tick_all_users 异常: {type(e).__name__}: {str(e)}")
 
                 # 每小时数据保存
-                await self._hourly_data_save(now)
+                try:
+                    await self._hourly_data_save(now)
+                except Exception as e:
+                    logger.warning(f"_hourly_data_save 异常: {type(e).__name__}: {str(e)}")
 
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Tick循环错误: {e}")
+                try:
+                    logger.error(f"Tick循环错误: {e}", exc_info=True)
+                except Exception:
+                    logger.error(f"Tick循环错误: {type(e).__name__}: {str(e)}")
 
     async def _process_all_free_passive_recovery(self, now: datetime):
         """处理所有空闲用户的被动恢复"""

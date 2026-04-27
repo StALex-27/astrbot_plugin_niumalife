@@ -25,7 +25,7 @@ from .buff import (
     BuffManager, BuffLimit,
 )
 from .debuff import calc_debuff_income_penalty, accumulate_pressure, is_exhausted
-from .skills import get_skill_level, exp_to_next_level
+from .skills import get_skill_level, get_user_skill_level, get_skill_exp_rate, check_course_available, exp_to_next_level
 from .stock import STOCKS, update_stock_price, is_trading_hour, init_stock_trend
 
 
@@ -375,6 +375,7 @@ class LearnTickProcessor(TickProcessor):
         course_name = detail.get("data", {}).get("course_name")
         course = COURSES.get(course_name)
         if not course:
+            self.plugin.logger.warning(f"Tick学习: 课程不存在 [{course_name}]，跳过结算")
             return True
         
         ticks_since_last = ActionDetail.get_ticks_since_last_tick(detail, now)
@@ -425,9 +426,10 @@ class LearnTickProcessor(TickProcessor):
                 user.setdefault("skill_exp", {})
                 user["skill_exp"][course_skill] = user["skill_exp"].get(course_skill, 0) + detail["earned_exp"]
                 
-                # 根据总经验计算技能等级
+                # 根据总经验和技能对应的曲线类型计算技能等级
+                exp_rate = get_skill_exp_rate(course_skill)
                 user.setdefault("skills", {})
-                user["skills"][course_skill] = get_skill_level(user["skill_exp"][course_skill])
+                user["skills"][course_skill] = get_skill_level(user["skill_exp"][course_skill], exp_rate)
                 
                 self.plugin.logger.info(
                     f"用户 {user['nickname']} 完成{course_name}学习，"
@@ -584,22 +586,26 @@ class TickManager:
             # 如果是学习动作，写入经验
             if action_type == TICK_TYPE_LEARN:
                 course_name = detail.get("data", {}).get("course_name")
-                course = COURSES.get(course_name, {})
-                course_skill = course.get("skill")
-                if course_skill and detail.get("earned_exp", 0) > 0:
-                    user.setdefault("skill_exp", {})
-                    user["skill_exp"][course_skill] = user["skill_exp"].get(course_skill, 0) + detail["earned_exp"]
-                    user.setdefault("skills", {})
-                    user["skills"][course_skill] = get_skill_level(user["skill_exp"][course_skill])
-                    self.plugin.logger.info(
-                        f"停机恢复: {user['nickname']} {course_skill}技能提升至 Lv.{user['skills'][course_skill]}"
-                    )
-            
-            user["status"] = "空闲"
-            user["current_action"] = None
-            user["action_detail"] = None
-            await self.plugin._store.update_user(user_id, user)
-            return
+                course = COURSES.get(course_name)
+                if not course:
+                    self.plugin.logger.warning(f"停机恢复: 课程不存在 [{course_name}]")
+                else:
+                    course_skill = course.get("skill")
+                    if course_skill and detail.get("earned_exp", 0) > 0:
+                        user.setdefault("skill_exp", {})
+                        user["skill_exp"][course_skill] = user["skill_exp"].get(course_skill, 0) + detail["earned_exp"]
+                        exp_rate = get_skill_exp_rate(course_skill)
+                        user.setdefault("skills", {})
+                        user["skills"][course_skill] = get_skill_level(user["skill_exp"][course_skill], exp_rate)
+                        self.plugin.logger.info(
+                            f"停机恢复: {user['nickname']} {course_skill}技能提升至 Lv.{user['skills'][course_skill]}"
+                        )
+                # 无论课程是否存在都清理动作状态
+                user["status"] = "空闲"
+                user["current_action"] = None
+                user["action_detail"] = None
+                await self.plugin._store.update_user(user_id, user)
+                return
         
         # 正常处理
         try:
@@ -718,6 +724,10 @@ class TickManager:
         last_report = self._cron_states.get(report_key)
         report_hour = getattr(self.plugin.config, 'daily_report_hour', 23)
         report_min = getattr(self.plugin.config, 'daily_report_minute', 0)
+        if report_hour is None:
+            report_hour = 23
+        if report_min is None:
+            report_min = 0
         report_time_str = f"{report_hour:02d}:{report_min:02d}"
 
         if cst.hour == report_hour and cst.minute == report_min:
@@ -748,7 +758,10 @@ class TickManager:
                     await self.plugin.put_kv_data(f"stock_open:{stock_name}", current_price)
                     await self.plugin.put_kv_data(f"stock_high:{stock_name}", current_price)
                     await self.plugin.put_kv_data(f"stock_low:{stock_name}", current_price)
-                    self.plugin.logger.info(f"股票开盘: {stock_name} ¥{current_price:.2f}")
+                    try:
+                        self.plugin.logger.info(f"股票开盘: {stock_name} ¥{current_price:.2f}")
+                    except Exception:
+                        self.plugin.logger.error(f"股票开盘日志格式错误: stock={stock_name}, current_price={current_price!r}")
                 
                 # 加载或初始化趋势
                 trend_key = f"stock_trend:{stock_name}"
@@ -784,9 +797,14 @@ class TickManager:
                     history = history[-48:]
                 await self.plugin.put_kv_data(history_key, history)
                 
-                self.plugin.logger.info(
-                    f"股票更新: {stock_name} ¥{current_price:.2f} -> ¥{new_price:.2f} | {msg}"
-                )
+                try:
+                    self.plugin.logger.info(
+                        f"股票更新: {stock_name} ¥{current_price:.2f} -> ¥{new_price:.2f} | {msg}"
+                    )
+                except Exception as log_err:
+                    self.plugin.logger.error(
+                        f"股票日志格式错误: stock={stock_name}, current_price={current_price!r}, new_price={new_price!r}, msg={msg!r}, err={log_err}"
+                    )
         except Exception as e:
             self.plugin.logger.error(f"股票更新失败: {e}")
 
