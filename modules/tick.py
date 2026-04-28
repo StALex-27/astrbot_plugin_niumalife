@@ -743,8 +743,9 @@ class TickManager:
     
     async def _update_stocks(self, now: datetime):
         """更新股票价格（每小时调用）"""
-        
-        trading = is_trading_hour(now.hour)
+        # UTC hour 转 CST hour：交易时段 CST 08-20 = UTC 00-12
+        cst_hour = (now.hour + 8) % 24
+        trading = is_trading_hour(cst_hour)
         
         try:
             for stock_name, stock_info in STOCKS.items():
@@ -753,8 +754,8 @@ class TickManager:
                 if current_price is None:
                     current_price = stock_info.get("base_price", 100)
                 
-                # 8:00 开盘，重置开盘价和日内高低
-                if now.hour == 8:
+                # CST 8:00 = UTC 0:00 开盘，重置开盘价和日内高低
+                if cst_hour == 8:
                     await self.plugin.put_kv_data(f"stock_open:{stock_name}", current_price)
                     await self.plugin.put_kv_data(f"stock_high:{stock_name}", current_price)
                     await self.plugin.put_kv_data(f"stock_low:{stock_name}", current_price)
