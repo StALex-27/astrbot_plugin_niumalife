@@ -78,6 +78,7 @@ class ActionDetail:
             "planned_ticks": planned_ticks,
             "completed_ticks": 0,
             "last_tick": start_time.isoformat(),  # 上次结算时间
+            "last_hourly_settle": None,  # 上次整点结算时间（格式：HH:MM）
             "earned_gold": 0,  # 已获得金币（累计）
             "earned_exp": 0,   # 已获得经验（累计）
             "data": kwargs,
@@ -159,7 +160,7 @@ class TickProcessor:
 # ============================================================
 
 class WorkTickProcessor(TickProcessor):
-    """工作Tick处理器"""
+    """工作Tick处理器 - 整点结算属性版本"""
     
     def get_action_type(self) -> str:
         return TICK_TYPE_WORK
@@ -167,124 +168,292 @@ class WorkTickProcessor(TickProcessor):
     async def process(
         self, user_id: str, user: dict, detail: dict, now: datetime
     ) -> bool:
-        """处理工作tick"""
+        """处理工作tick - 整点结算属性
+        
+        Args:
+            user_id: 用户ID
+            user: 用户数据
+            detail: 动作详情
+            now: 当前时间
+        
+        Returns:
+            bool: 是否完成
+        """
         
         action_type = detail.get("action_type")
         if action_type != TICK_TYPE_WORK:
             return False
         
-        job_name = detail.get("data", {}).get("job_name")
-        job = JOBS.get(job_name)
-        if not job:
-            return True  # 无效工作，直接结束
+        # 获取工作数据
+        data = detail.get("data", {})
+        job_name = data.get("job_name")
+        job_company = data.get("job_company")
+        base_reward = data.get("base_reward", 0)
+        planned = detail["planned_ticks"]
+        
+        # 尝试从 JOBS 获取消耗配置（如果能匹配到）
+        job = JOBS.get(job_name) if job_name else None
+        if job:
+            consume_strength = job.get("consume_strength", 10)
+            consume_energy = job.get("consume_energy", 10)
+            consume_mood = job.get("consume_mood", 5)
+            consume_health = job.get("consume_health", 2)
+            consume_satiety = job.get("consume_satiety", 10)
+            hourly_wage = job.get("hourly_wage", base_reward / (planned / 60) if planned > 0 else base_reward)
+            pressure_type = JOB_PRESSURE_TYPE.get(job_name, "body")
+            pressure_rate = JOB_PRESSURE_RATE.get(job_name, 3)
+        else:
+            # 新系统：使用默认消耗或从 company 配置获取
+            consume_strength = 10
+            consume_energy = 10
+            consume_mood = 5
+            consume_health = 2
+            consume_satiety = 10
+            # 根据总奖励和工期计算时薪
+            hours = planned / 60 if planned > 0 else 1
+            hourly_wage = base_reward / hours if hours > 0 else base_reward
+            pressure_type = "mind"  # 默认脑力
+            pressure_rate = 5  # 默认压力积累
         
         # 检查是否力竭
-        pressure_type = JOB_PRESSURE_TYPE.get(job_name, "body")
         if is_exhausted(user, pressure_type):
             # 力竭状态，直接取消工作
             return True
         
-        ticks_since_last = ActionDetail.get_ticks_since_last_tick(detail, now)
-        planned = detail["planned_ticks"]
-        completed = detail["completed_ticks"]
+        # ========== 整点结算属性 ==========
+        # 检查是否到达整点，且尚未结算
+        if now.minute == 0:
+            current_hour_str = f"{now.hour:02d}:00"
+            last_settle = detail.get("last_hourly_settle")
+            
+            if last_settle != current_hour_str:
+                # 执行整点结算
+                await self._settle_hourly(
+                    user, user_id, detail, 
+                    consume_strength, consume_energy, consume_mood, consume_health, consume_satiety,
+                    hourly_wage, pressure_type, pressure_rate, now
+                )
+                detail["last_hourly_settle"] = current_hour_str
         
-        # 获取装备效果加成
+        # ========== 检查工作是否完成（每分钟检查）==========
+        # 计算实际经过的时间
+        elapsed_seconds = ActionDetail.get_elapsed_seconds(detail, now)
+        elapsed_ticks = int(elapsed_seconds // 60)
+        
+        if elapsed_ticks >= planned:
+            # 工作完成，执行最终结算
+            return await self._complete_work(
+                user, user_id, detail,
+                consume_strength, consume_energy, consume_mood, consume_health, consume_satiety,
+                hourly_wage, pressure_type, pressure_rate, now
+            )
+        
+        # 更新进度（但不结算属性）
+        detail["completed_ticks"] = elapsed_ticks
+        detail["last_tick"] = now.isoformat()
+        user["action_detail"] = detail
+        await self.plugin._store.update_user(user_id, user)
+        
+        return False
+    
+    async def _settle_hourly(
+        self, user: dict, user_id: str, detail: dict,
+        consume_strength: float, consume_energy: float, consume_mood: float,
+        consume_health: float, consume_satiety: float,
+        hourly_wage: float, pressure_type: str, pressure_rate: float, now: datetime
+    ):
+        """执行整点结算
+        
+        Args:
+            user: 用户数据
+            user_id: 用户ID
+            detail: 动作详情
+            consume_strength: 体力消耗（每小时）
+            consume_energy: 精力消耗（每小时）
+            consume_mood: 心情消耗（每小时）
+            consume_health: 健康消耗（每小时）
+            consume_satiety: 饱食消耗（每小时）
+            hourly_wage: 时薪
+            pressure_type: 压力类型
+            pressure_rate: 压力积累率（每小时）
+            now: 当前时间
+        """
+        last_tick_str = detail.get("last_tick", detail["start_time"])
+        last_tick = datetime.fromisoformat(last_tick_str)
+        if last_tick.tzinfo is None:
+            last_tick = last_tick.replace(tzinfo=timezone.utc)
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=timezone.utc)
+        
+        # 计算距离上次结算的小时数
+        hours_since_last = (now - last_tick).total_seconds() / 3600.0
+        
+        if hours_since_last <= 0:
+            return  # 避免重复结算
+        
+        # 获取装备效果和buff
         effects = calc_equipped_effects(user)
         work_income_bonus = effects.get("work_income_bonus", 0) / 100.0
+        checkin = user.get("checkin", {})
+        active_buffs = checkin.get("active_buffs", [])
+        income_multi = calc_income_multi(active_buffs)
+        cost_multi = calc_cost_multi(active_buffs)
+        fixed_bonus = get_fixed_bonus(active_buffs)
+        debuff_penalty = calc_debuff_income_penalty(user)
         
-        # 获取压力惩罚
+        # 获取当前压力惩罚
         pressure = user.get(f"{pressure_type}_pressure", 0)
         pressure_penalty = 1.0 - get_pressure_penalty(pressure)
         
-        # 每分钟结算
-        while ticks_since_last >= 1.0 and completed < planned:
-            ticks_since_last -= 1.0
-            completed += 1
-            
-            attrs = user["attributes"]
+        attrs = user["attributes"]
+        
+        # 计算效率
+        efficiency = pressure_penalty * debuff_penalty
+        if attrs["satiety"] < 20:
+            efficiency *= 0.7
+        
+        # 结算属性消耗
+        attrs["strength"] = max(0, attrs["strength"] - consume_strength * hours_since_last * cost_multi)
+        attrs["energy"] = max(0, attrs["energy"] - consume_energy * hours_since_last * cost_multi)
+        attrs["mood"] = max(0, attrs["mood"] - consume_mood * hours_since_last)
+        attrs["health"] = max(0, attrs["health"] - consume_health * hours_since_last)
+        attrs["satiety"] = max(0, attrs["satiety"] - consume_satiety * 0.5 * hours_since_last)
+        
+        # 结算金币收入
+        gold_earned = int(hourly_wage * hours_since_last * efficiency * income_multi * (1 + work_income_bonus))
+        gold_earned += int(fixed_bonus * hours_since_last)
+        
+        if gold_earned > 0:
+            detail["earned_gold"] += gold_earned
+            user["gold"] = user.get("gold", 0) + gold_earned
+        
+        # 累积压力
+        accumulate_pressure(user, pressure_type, pressure_rate * hours_since_last)
+        
+        # 更新状态
+        user["attributes"] = attrs
+        detail["last_tick"] = now.isoformat()
+        user["action_detail"] = detail
+        await self.plugin._store.update_user(user_id, user)
+        
+        self.plugin.logger.info(
+            f"整点结算: {user['nickname']} 工作 {job_name} "
+            f"结算 {hours_since_last:.2f} 小时, 金币 +{gold_earned}"
+        )
+    
+    async def _complete_work(
+        self, user: dict, user_id: str, detail: dict,
+        consume_strength: float, consume_energy: float, consume_mood: float,
+        consume_health: float, consume_satiety: float,
+        hourly_wage: float, pressure_type: str, pressure_rate: float, now: datetime
+    ) -> bool:
+        """完成工作，执行最终结算
+        
+        Args:
+            user: 用户数据
+            user_id: 用户ID
+            detail: 动作详情
+            consume_strength: 体力消耗（每小时）
+            consume_energy: 精力消耗（每小时）
+            consume_mood: 心情消耗（每小时）
+            consume_health: 健康消耗（每小时）
+            consume_satiety: 饱食消耗（每小时）
+            hourly_wage: 时薪
+            pressure_type: 压力类型
+            pressure_rate: 压力积累率（每小时）
+            now: 当前时间
+        
+        Returns:
+            bool: 始终返回 True
+        """
+        data = detail.get("data", {})
+        job_name = data.get("job_name", "工作")
+        planned = detail["planned_ticks"]
+        hours = planned / TICKS_PER_HOUR
+        
+        # 如果上次结算后还有剩余时间，先结算剩余属性
+        last_tick_str = detail.get("last_tick", detail["start_time"])
+        last_tick = datetime.fromisoformat(last_tick_str)
+        if last_tick.tzinfo is None:
+            last_tick = last_tick.replace(tzinfo=timezone.utc)
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=timezone.utc)
+        
+        remaining_hours = (now - last_tick).total_seconds() / 3600.0
+        
+        if remaining_hours > 0:
+            # 结算剩余时间的属性和金币
+            effects = calc_equipped_effects(user)
+            work_income_bonus = effects.get("work_income_bonus", 0) / 100.0
             checkin = user.get("checkin", {})
             active_buffs = checkin.get("active_buffs", [])
-            
             income_multi = calc_income_multi(active_buffs)
             cost_multi = calc_cost_multi(active_buffs)
             fixed_bonus = get_fixed_bonus(active_buffs)
             debuff_penalty = calc_debuff_income_penalty(user)
+            pressure = user.get(f"{pressure_type}_pressure", 0)
+            pressure_penalty = 1.0 - get_pressure_penalty(pressure)
+            attrs = user["attributes"]
             
-            # 每分钟消耗（按比例）
-            consume_strength = job.get("consume_strength", 10) / TICKS_PER_HOUR * cost_multi
-            consume_energy = job.get("consume_energy", 10) / TICKS_PER_HOUR * cost_multi
-            consume_mood = job.get("consume_mood", 5) / TICKS_PER_HOUR
-            consume_health = job.get("consume_health", 2) / TICKS_PER_HOUR
-            consume_satiety = job.get("consume_satiety", 10) * 0.5 / TICKS_PER_HOUR
-            
-            attrs["strength"] = max(0, attrs["strength"] - consume_strength)
-            attrs["energy"] = max(0, attrs["energy"] - consume_energy)
-            attrs["mood"] = max(0, attrs["mood"] - consume_mood)
-            attrs["health"] = max(0, attrs["health"] - consume_health)
-            attrs["satiety"] = max(0, attrs["satiety"] - consume_satiety)
-            
-            # 计算效率 = 基础效率 * 压力惩罚 * debuff惩罚
             efficiency = pressure_penalty * debuff_penalty
             if attrs["satiety"] < 20:
                 efficiency *= 0.7
             
-            # 每分钟获得金币
-            gold_per_tick = job.get("hourly_wage", 20) / TICKS_PER_HOUR * efficiency * income_multi * (1 + work_income_bonus)
-            gold_earned = int(gold_per_tick) + int(fixed_bonus / TICKS_PER_HOUR)
-            detail["earned_gold"] += gold_earned
-            user["gold"] += gold_earned
+            # 结算属性
+            attrs["strength"] = max(0, attrs["strength"] - consume_strength * remaining_hours * cost_multi)
+            attrs["energy"] = max(0, attrs["energy"] - consume_energy * remaining_hours * cost_multi)
+            attrs["mood"] = max(0, attrs["mood"] - consume_mood * remaining_hours)
+            attrs["health"] = max(0, attrs["health"] - consume_health * remaining_hours)
+            attrs["satiety"] = max(0, attrs["satiety"] - consume_satiety * 0.5 * remaining_hours)
+            
+            # 结算金币
+            gold_earned = int(hourly_wage * remaining_hours * efficiency * income_multi * (1 + work_income_bonus))
+            gold_earned += int(fixed_bonus * remaining_hours)
+            if gold_earned > 0:
+                detail["earned_gold"] += gold_earned
+                user["gold"] = user.get("gold", 0) + gold_earned
+            
+            # 累积压力
+            accumulate_pressure(user, pressure_type, pressure_rate * remaining_hours)
             
             user["attributes"] = attrs
         
-        # 累积压力（每小时累积一次，按 tick 数均分）
-        pressure_rate_per_tick = JOB_PRESSURE_RATE.get(job_name, 3) / TICKS_PER_HOUR
-        pressure_to_add = pressure_rate_per_tick * ticks_since_last if ticks_since_last >= 1.0 else 0
-        if pressure_to_add > 0:
-            accumulate_pressure(user, pressure_type, pressure_to_add)
+        # 记录
+        user.setdefault("records", []).append({
+            "type": "工作",
+            "detail": f"完成了{job_name}{hours}小时",
+            "gold_change": detail["earned_gold"],
+            "time": now.isoformat(),
+        })
         
-        # 如果超过1分钟没更新，保存一次
-        if ticks_since_last >= 1.0:
-            detail["completed_ticks"] = completed
-            ActionDetail.update_tick(detail, now)
-            user["action_detail"] = detail
-            await self.plugin._store.update_user(user_id, user)
+        # ========== 记录统计数据 ==========
+        gold_earned = detail["earned_gold"]
+        update_daily_stat(user, "gold_work", gold_earned)
+        update_daily_stat(user, "work_hours", hours)
+        update_daily_stat(user, "work_count", 1)
+        update_lifetime_stat(user, "total_gold_earned", gold_earned)
+        update_lifetime_stat(user, "total_work_hours", hours)
+        update_lifetime_stat(user, "total_work_count", 1)
+        # ========== 统计记录完成 ==========
         
-        # 检查是否完成
-        if completed >= planned:
-            hours = planned / TICKS_PER_HOUR
-            user.setdefault("records", []).append({
-                "type": "工作",
-                "detail": f"完成了{job_name}{hours}小时",
-                "gold_change": detail["earned_gold"],
-                "time": now.isoformat(),
-            })
-            
-            # ========== 记录统计数据 ==========
-            gold_earned = detail["earned_gold"]
-            update_daily_stat(user, "gold_work", gold_earned)
-            update_daily_stat(user, "work_hours", hours)
-            update_daily_stat(user, "work_count", 1)
-            update_lifetime_stat(user, "total_gold_earned", gold_earned)
-            update_lifetime_stat(user, "total_work_hours", hours)
-            update_lifetime_stat(user, "total_work_count", 1)
-            # ========== 统计记录完成 ==========
-            
-            # 消耗 job_count 类型的 buff
-            buffs = checkin.get("active_buffs", [])
-            remaining_buffs = []
-            for buff in buffs:
-                if BuffManager.is_expired(buff):
+        # 消耗 job_count 类型的 buff
+        checkin = user.get("checkin", {})
+        buffs = checkin.get("active_buffs", [])
+        remaining_buffs = []
+        for buff in buffs:
+            if BuffManager.is_expired(buff):
+                continue
+            if buff.get("limit") == BuffLimit.JOB_COUNT:
+                if not BuffManager.consume_buff(buff):
                     continue
-                if buff.get("limit") == BuffLimit.JOB_COUNT:
-                    if not BuffManager.consume_buff(buff):
-                        continue
-                remaining_buffs.append(buff)
-            checkin["active_buffs"] = remaining_buffs
-            user["checkin"] = checkin
-            
-            return True
+            remaining_buffs.append(buff)
+        checkin["active_buffs"] = remaining_buffs
+        user["checkin"] = checkin
         
-        return False
+        user["attributes"] = attrs if remaining_hours > 0 else user.get("attributes", {})
+        await self.plugin._store.update_user(user_id, user)
+        
+        return True
 
 
 # ============================================================
@@ -292,7 +461,7 @@ class WorkTickProcessor(TickProcessor):
 # ============================================================
 
 class SleepTickProcessor(TickProcessor):
-    """睡眠Tick处理器"""
+    """睡眠Tick处理器 - 整点结算属性版本"""
     
     def get_action_type(self) -> str:
         return TICK_TYPE_SLEEP
@@ -300,7 +469,17 @@ class SleepTickProcessor(TickProcessor):
     async def process(
         self, user_id: str, user: dict, detail: dict, now: datetime
     ) -> bool:
-        """处理睡眠tick"""
+        """处理睡眠tick - 整点结算属性
+        
+        Args:
+            user_id: 用户ID
+            user: 用户数据
+            detail: 动作详情
+            now: 当前时间
+        
+        Returns:
+            bool: 是否完成
+        """
         
         action_type = detail.get("action_type")
         if action_type != TICK_TYPE_SLEEP:
@@ -310,47 +489,143 @@ class SleepTickProcessor(TickProcessor):
         res_info = RESIDENCES.get(residence, RESIDENCES["桥下"])
         sleep_bonus = res_info.get("sleep_bonus", 1.0)
         
-        ticks_since_last = ActionDetail.get_ticks_since_last_tick(detail, now)
         planned = detail["planned_ticks"]
-        completed = detail["completed_ticks"]
+        
+        # ========== 整点结算属性 ==========
+        # 检查是否到达整点，且尚未结算
+        if now.minute == 0:
+            current_hour_str = f"{now.hour:02d}:00"
+            last_settle = detail.get("last_hourly_settle")
+            
+            if last_settle != current_hour_str:
+                # 执行整点结算
+                await self._settle_hourly(user, user_id, detail, res_info, sleep_bonus, now)
+                detail["last_hourly_settle"] = current_hour_str
+        
+        # ========== 检查睡眠是否完成（每分钟检查）==========
+        elapsed_seconds = ActionDetail.get_elapsed_seconds(detail, now)
+        elapsed_ticks = int(elapsed_seconds // 60)
+        
+        if elapsed_ticks >= planned:
+            # 睡眠完成，执行最终结算
+            return await self._complete_sleep(user, user_id, detail, res_info, sleep_bonus, now)
+        
+        # 更新进度（但不结算属性）
+        detail["completed_ticks"] = elapsed_ticks
+        detail["last_tick"] = now.isoformat()
+        user["action_detail"] = detail
+        await self.plugin._store.update_user(user_id, user)
+        
+        return False
+    
+    async def _settle_hourly(
+        self, user: dict, user_id: str, detail: dict,
+        res_info: dict, sleep_bonus: float, now: datetime
+    ):
+        """执行整点结算
+        
+        Args:
+            user: 用户数据
+            user_id: 用户ID
+            detail: 动作详情
+            res_info: 住所信息
+            sleep_bonus: 睡眠加成
+            now: 当前时间
+        """
+        last_tick_str = detail.get("last_tick", detail["start_time"])
+        last_tick = datetime.fromisoformat(last_tick_str)
+        if last_tick.tzinfo is None:
+            last_tick = last_tick.replace(tzinfo=timezone.utc)
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=timezone.utc)
+        
+        # 计算距离上次结算的小时数
+        hours_since_last = (now - last_tick).total_seconds() / 3600.0
+        
+        if hours_since_last <= 0:
+            return  # 避免重复结算
         
         # 装备效果加成
         effects = calc_equipped_effects(user)
         sleep_strength_bonus = effects.get("sleep_strength_bonus", 0) / 100.0
         sleep_energy_bonus = effects.get("sleep_energy_bonus", 0) / 100.0
         
-        # 每分钟恢复
-        while ticks_since_last >= 1.0 and completed < planned:
-            ticks_since_last -= 1.0
-            completed += 1
+        attrs = user["attributes"]
+        
+        # 结算属性恢复（每小时）
+        strength_rec = res_info.get("strength_recovery", 5) * hours_since_last * sleep_bonus * 1.5 * (1 + sleep_strength_bonus)
+        energy_rec = res_info.get("energy_recovery", 5) * hours_since_last * sleep_bonus * 1.5 * (1 + sleep_energy_bonus)
+        mood_rec = res_info.get("mood_recovery", 2) * hours_since_last * sleep_bonus
+        health_rec = res_info.get("health_recovery", 2) * hours_since_last * sleep_bonus
+        
+        attrs["strength"] = min(MAX_ATTRIBUTE, attrs["strength"] + strength_rec)
+        attrs["energy"] = min(MAX_ATTRIBUTE, attrs["energy"] + energy_rec)
+        attrs["mood"] = min(MAX_ATTRIBUTE, attrs["mood"] + mood_rec)
+        attrs["health"] = min(MAX_ATTRIBUTE, attrs["health"] + health_rec)
+        # 睡眠时饱食消耗减半
+        attrs["satiety"] = max(0, attrs["satiety"] - 5 * 0.5 * hours_since_last)
+        
+        # 更新状态
+        user["attributes"] = attrs
+        detail["last_tick"] = now.isoformat()
+        user["action_detail"] = detail
+        await self.plugin._store.update_user(user_id, user)
+        
+        self.plugin.logger.info(
+            f"整点结算: {user['nickname']} 睡眠 "
+            f"结算 {hours_since_last:.2f} 小时"
+        )
+    
+    async def _complete_sleep(
+        self, user: dict, user_id: str, detail: dict,
+        res_info: dict, sleep_bonus: float, now: datetime
+    ) -> bool:
+        """完成睡眠，执行最终结算
+        
+        Args:
+            user: 用户数据
+            user_id: 用户ID
+            detail: 动作详情
+            res_info: 住所信息
+            sleep_bonus: 睡眠加成
+            now: 当前时间
+        
+        Returns:
+            bool: 始终返回 True
+        """
+        # 如果上次结算后还有剩余时间，先结算剩余属性
+        last_tick_str = detail.get("last_tick", detail["start_time"])
+        last_tick = datetime.fromisoformat(last_tick_str)
+        if last_tick.tzinfo is None:
+            last_tick = last_tick.replace(tzinfo=timezone.utc)
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=timezone.utc)
+        
+        remaining_hours = (now - last_tick).total_seconds() / 3600.0
+        
+        if remaining_hours > 0:
+            # 结算剩余时间的属性
+            effects = calc_equipped_effects(user)
+            sleep_strength_bonus = effects.get("sleep_strength_bonus", 0) / 100.0
+            sleep_energy_bonus = effects.get("sleep_energy_bonus", 0) / 100.0
             
             attrs = user["attributes"]
             
-            # 每分钟恢复（按比例）
-            strength_rec = res_info.get("strength_recovery", 5) / TICKS_PER_HOUR * sleep_bonus * 1.5 * (1 + sleep_strength_bonus)
-            energy_rec = res_info.get("energy_recovery", 5) / TICKS_PER_HOUR * sleep_bonus * 1.5 * (1 + sleep_energy_bonus)
-            mood_rec = res_info.get("mood_recovery", 2) / TICKS_PER_HOUR * sleep_bonus
-            health_rec = res_info.get("health_recovery", 2) / TICKS_PER_HOUR * sleep_bonus
+            strength_rec = res_info.get("strength_recovery", 5) * remaining_hours * sleep_bonus * 1.5 * (1 + sleep_strength_bonus)
+            energy_rec = res_info.get("energy_recovery", 5) * remaining_hours * sleep_bonus * 1.5 * (1 + sleep_energy_bonus)
+            mood_rec = res_info.get("mood_recovery", 2) * remaining_hours * sleep_bonus
+            health_rec = res_info.get("health_recovery", 2) * remaining_hours * sleep_bonus
             
             attrs["strength"] = min(MAX_ATTRIBUTE, attrs["strength"] + strength_rec)
             attrs["energy"] = min(MAX_ATTRIBUTE, attrs["energy"] + energy_rec)
             attrs["mood"] = min(MAX_ATTRIBUTE, attrs["mood"] + mood_rec)
             attrs["health"] = min(MAX_ATTRIBUTE, attrs["health"] + health_rec)
-            # 睡眠时饱食消耗减半
-            attrs["satiety"] = max(0, attrs["satiety"] - 5 * 0.5 / TICKS_PER_HOUR)
+            attrs["satiety"] = max(0, attrs["satiety"] - 5 * 0.5 * remaining_hours)
             
             user["attributes"] = attrs
         
-        if ticks_since_last >= 1.0:
-            detail["completed_ticks"] = completed
-            ActionDetail.update_tick(detail, now)
-            user["action_detail"] = detail
-            await self.plugin._store.update_user(user_id, user)
-        
-        if completed >= planned:
-            return True
-        
-        return False
+        await self.plugin._store.update_user(user_id, user)
+        return True
 
 
 # ============================================================
@@ -382,6 +657,10 @@ class LearnTickProcessor(TickProcessor):
         planned = detail["planned_ticks"]
         completed = detail["completed_ticks"]
         
+        # 记录写入前状态，用于判断是否需要写入
+        old_exp = detail.get("earned_exp", 0)
+        old_attrs = dict(user.get("attributes", {}))
+        
         checkin = user.get("checkin", {})
         active_buffs = checkin.get("active_buffs", [])
         exp_multi = calc_exp_multi(active_buffs)
@@ -409,7 +688,14 @@ class LearnTickProcessor(TickProcessor):
             
             user["attributes"] = attrs
         
-        if ticks_since_last >= 1.0:
+        # 状态变化时写入（而非每分钟都写）
+        # 判断条件：经验变化 或 属性变化
+        new_attrs = user.get("attributes", {})
+        attrs_changed = any(
+            old_attrs.get(k, 0) != new_attrs.get(k, 0)
+            for k in ["strength", "energy", "mood", "satiety"]
+        )
+        if detail.get("earned_exp", 0) != old_exp or attrs_changed:
             detail["completed_ticks"] = completed
             ActionDetail.update_tick(detail, now)
             user["action_detail"] = detail
@@ -482,6 +768,10 @@ class EntertainTickProcessor(TickProcessor):
         planned = detail["planned_ticks"]
         completed = detail["completed_ticks"]
         
+        # 记录写入前状态，用于判断是否需要写入
+        old_gold = user.get("gold", 0)
+        old_attrs = dict(user.get("attributes", {}))
+        
         # 装备效果加成
         effects = calc_equipped_effects(user)
         entertain_mood_bonus = effects.get("entertain_mood_bonus", 0) / 100.0
@@ -528,7 +818,14 @@ class EntertainTickProcessor(TickProcessor):
             
             return True
         
-        if ticks_since_last >= 1.0:
+        # 状态变化时写入（而非每分钟都写）
+        # 判断条件：金币变化 或 属性变化
+        new_attrs = user.get("attributes", {})
+        attrs_changed = any(
+            old_attrs.get(k, 0) != new_attrs.get(k, 0)
+            for k in ["mood", "strength", "energy"]
+        )
+        if user.get("gold", 0) != old_gold or attrs_changed:
             detail["completed_ticks"] = completed
             ActionDetail.update_tick(detail, now)
             user["action_detail"] = detail
@@ -622,6 +919,11 @@ class TickManager:
     async def tick_all_users(self, now: datetime):
         """Tick所有用户"""
         users = await self.plugin._store.get_all_users()
+        
+        # 检查是否到达整点，用于空闲用户结算
+        is_hourly_settle = (now.minute == 0)
+        current_hour_str = f"{now.hour:02d}:00" if is_hourly_settle else None
+        
         for user_id, user in users.items():
             try:
                 await self.process_user_actions(user_id, user, now)
@@ -630,22 +932,84 @@ class TickManager:
                 if user.get("status") == UserStatus.FREE.value:
                     effects = calc_equipped_effects(user)
                     attrs = user.get("attributes", {})
+                    checkin = user.get("checkin", {})
+                    active_buffs = checkin.get("active_buffs", [])
+                    cost_multi = calc_cost_multi(active_buffs)
                     
-                    # 被动心情恢复 (per tick/minute)
-                    passive_mood = effects.get("passive_mood", 0)
-                    if passive_mood > 0:
-                        attrs["mood"] = min(100, attrs.get("mood", 100) + passive_mood)
+                    # ========== 整点结算空闲属性 ==========
+                    if is_hourly_settle and current_hour_str:
+                        last_idle_settle = user.get("last_idle_settle")
+                        if last_idle_settle != current_hour_str:
+                            # 执行整点结算
+                            await self._settle_idle_hourly(user, user_id, effects, attrs, cost_multi, now)
+                            user["last_idle_settle"] = current_hour_str
+                            user["attributes"] = attrs
                     
-                    # 被动金币获取 (per tick/minute)
-                    passive_gold = effects.get("passive_gold", 0)
-                    if passive_gold > 0:
-                        user["gold"] = user.get("gold", 0) + passive_gold
+                    # 非整点时只处理被动效果（但不结算属性变化）
+                    else:
+                        # 被动心情恢复 (per tick/minute)
+                        passive_mood = effects.get("passive_mood", 0)
+                        if passive_mood > 0:
+                            attrs["mood"] = min(100, attrs.get("mood", 100) + passive_mood)
+                        
+                        # 被动金币获取 (per tick/minute)
+                        passive_gold = effects.get("passive_gold", 0)
+                        if passive_gold > 0:
+                            user["gold"] = user.get("gold", 0) + passive_gold
                     
                     user["attributes"] = attrs
                     await self.plugin._store.update_user(user_id, user)
                     
             except Exception as e:
                 self.plugin.logger.error(f"Tick用户{user_id}时出错: {e}")
+    
+    async def _settle_idle_hourly(
+        self, user: dict, user_id: str,
+        effects: dict, attrs: dict, cost_multi: float, now: datetime
+    ):
+        """空闲用户整点结算
+        
+        Args:
+            user: 用户数据
+            user_id: 用户ID
+            effects: 装备效果
+            attrs: 用户属性
+            cost_multi: 消耗倍率
+            now: 当前时间
+        """
+        # 获取上次结算时间
+        last_settle_str = user.get("last_idle_tick") or now.isoformat()
+        last_settle = datetime.fromisoformat(last_settle_str)
+        if last_settle.tzinfo is None:
+            last_settle = last_settle.replace(tzinfo=timezone.utc)
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=timezone.utc)
+        
+        hours_since_last = (now - last_settle).total_seconds() / 3600.0
+        if hours_since_last <= 0:
+            return
+        
+        # 被动心情恢复（每小时）
+        passive_mood = effects.get("passive_mood", 0)
+        if passive_mood > 0:
+            attrs["mood"] = min(100, attrs.get("mood", 100) + passive_mood * hours_since_last)
+        
+        # 被动金币获取（每小时）
+        passive_gold = effects.get("passive_gold", 0)
+        if passive_gold > 0:
+            user["gold"] = user.get("gold", 0) + int(passive_gold * hours_since_last)
+        
+        # 饱食度自然消耗（每小时约5点）
+        natural_satiety_drain = 5 * hours_since_last * cost_multi
+        attrs["satiety"] = max(0, attrs.get("satiety", 100) - natural_satiety_drain)
+        
+        # 更新上次结算时间
+        user["last_idle_tick"] = now.isoformat()
+        
+        self.plugin.logger.info(
+            f"整点结算: {user['nickname']} 空闲 "
+            f"结算 {hours_since_last:.2f} 小时"
+        )
     
     # ========================================================
     # 时间触发器

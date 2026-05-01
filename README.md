@@ -1,6 +1,6 @@
 # 牛马人生 - AstrBot 打工群文字模拟经营游戏
 
-![version](https://img.shields.io/badge/version-0.1.7-blue)
+![version](https://img.shields.io/badge/version-0.1.8-blue)
 ![AstrBot](https://img.shields.io/badge/AstrBot-Plugin-green)
 
 **牛马人生** 是一款嵌入 AstrBot 的群聊文字模拟经营游戏。玩家通过打工、学习、娱乐、饮食等行为体验"牛马"生活，积累金币、提升技能、购置房产，投资股市。
@@ -134,7 +134,7 @@ astrbot_plugin_niumalife/
 
 ## 📌 版本信息
 
-- **版本**: 0.1.7
+- **版本**: 0.1.8
 - **作者**: 海獭 🦦
 - **仓库**: https://github.com/StALex-27/astrbot_plugin_niumalife
 - **状态**: 开发中

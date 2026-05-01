@@ -1,0 +1,783 @@
+{
+  "_comment": "打工系统V2 - 委托模板库",
+  "_version": "1.0",
+  "_description": "每个公司的委托模板，用于程序化生成具体委托",
+
+  "templates": [
+    {
+      "template_id": "labor_move",
+      "company_id": "company_labor",
+      "title_pool": ["货物搬运", "仓库整理", "家具组装", "搬家帮手"],
+      "desc_template": "帮助客户{action}，需要一定的体力",
+      "desc_params": {
+        "action": ["搬运家具", "整理仓库", "搬运行李", "装卸货物"]
+      },
+      "difficulty_range": ["D", "C"],
+      "duration_hours_range": [1, 3],
+      "base_reward_range": [40, 120],
+      "skill_required": {
+        "D": {"苦力": 1},
+        "C": {"苦力": 2, "体育": 1}
+      },
+      "consume_template": {
+        "体力": {"min": 15, "max": 30},
+        "精力": {"min": 5, "max": 10},
+        "心情": {"min": 3, "max": 8},
+        "饱食度": {"min": 5, "max": 12}
+      },
+      "exp_reward_template": {
+        "苦力": {"min": 10, "max": 25}
+      }
+    },
+    {
+      "template_id": "labor_construction",
+      "company_id": "company_labor",
+      "title_pool": ["工地帮工", "装修小工", "房屋清洁", "垃圾清运"],
+      "desc_template": "在{location}从事基础建设工作",
+      "desc_params": {
+        "location": ["建筑工地", "装修现场", "拆迁现场", "清洁区域"]
+      },
+      "difficulty_range": ["C", "B"],
+      "duration_hours_range": [2, 5],
+      "base_reward_range": [80, 200],
+      "skill_required": {
+        "C": {"苦力": 2},
+        "B": {"苦力": 3, "体育": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 25, "max": 45},
+        "精力": {"min": 10, "max": 20},
+        "心情": {"min": 5, "max": 12},
+        "饱食度": {"min": 10, "max": 20}
+      },
+      "exp_reward_template": {
+        "苦力": {"min": 15, "max": 35},
+        "体育": {"min": 10, "max": 20}
+      }
+    },
+
+    {
+      "template_id": "tech_data_entry",
+      "company_id": "company_tech",
+      "title_pool": ["数据录入", "表格整理", "信息录入", "资料数字化"],
+      "desc_template": "为{company}处理{amount}条{type}数据",
+      "desc_params": {
+        "company": ["贝塔科技", "科技公司", "客户公司"],
+        "amount": ["100", "200", "500", "1000"],
+        "type": ["销售", "库存", "客户", "财务"]
+      },
+      "difficulty_range": ["D", "C"],
+      "duration_hours_range": [2, 4],
+      "base_reward_range": [60, 150],
+      "skill_required": {
+        "D": {"计算机基础": 1},
+        "C": {"计算机基础": 2, "数据分析": 1}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 10},
+        "精力": {"min": 15, "max": 30},
+        "心情": {"min": 5, "max": 15},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "计算机基础": {"min": 10, "max": 20},
+        "数据分析": {"min": 8, "max": 18}
+      }
+    },
+    {
+      "template_id": "tech_programming",
+      "company_id": "company_tech",
+      "title_pool": ["编程任务", "代码调试", "功能开发", "网站维护"],
+      "desc_template": "为{client}开发{project}功能模块",
+      "desc_params": {
+        "client": ["企业客户", "创业公司", "科技公司"],
+        "project": ["Web", "移动端", "后台API", "小程序"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [3, 8],
+      "base_reward_range": [150, 400],
+      "skill_required": {
+        "C": {"编程": 2},
+        "B": {"编程": 3, "计算机基础": 2},
+        "A": {"编程": 5, "架构师": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 8, "max": 15},
+        "精力": {"min": 30, "max": 50},
+        "心情": {"min": 10, "max": 25},
+        "饱食度": {"min": 10, "max": 18}
+      },
+      "exp_reward_template": {
+        "编程": {"min": 20, "max": 50}
+      }
+    },
+    {
+      "template_id": "tech_network",
+      "company_id": "company_tech",
+      "title_pool": ["网络维护", "服务器管理", "故障排查", "安全检测"],
+      "desc_template": "负责{location}的{job}工作",
+      "desc_params": {
+        "location": ["公司机房", "客户办公室", "数据中心"],
+        "job": ["网络维护", "故障处理", "安全巡检"]
+      },
+      "difficulty_range": ["B", "A", "S"],
+      "duration_hours_range": [2, 6],
+      "base_reward_range": [200, 500],
+      "skill_required": {
+        "B": {"网络技术": 3, "计算机基础": 2},
+        "A": {"网络安全": 4, "网络技术": 3},
+        "S": {"网络安全": 6, "架构师": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 12},
+        "精力": {"min": 25, "max": 45},
+        "心情": {"min": 8, "max": 20},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "网络技术": {"min": 15, "max": 35},
+        "网络安全": {"min": 20, "max": 40}
+      }
+    },
+    {
+      "template_id": "tech_ai",
+      "company_id": "company_tech",
+      "title_pool": ["AI模型训练", "数据标注", "算法优化", "智能测试"],
+      "desc_template": "参与{project}的{phase}工作",
+      "desc_params": {
+        "project": ["图像识别", "自然语言处理", "推荐系统"],
+        "phase": ["数据预处理", "模型训练", "效果优化"]
+      },
+      "difficulty_range": ["A", "S", "S+"],
+      "duration_hours_range": [4, 10],
+      "base_reward_range": [400, 800],
+      "skill_required": {
+        "A": {"人工智能": 4, "数据科学": 3},
+        "S": {"人工智能": 6, "数据分析": 4},
+        "S+": {"人工智能": 8, "数据科学": 5, "架构师": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 10, "max": 20},
+        "精力": {"min": 40, "max": 60},
+        "心情": {"min": 15, "max": 30},
+        "饱食度": {"min": 12, "max": 20}
+      },
+      "exp_reward_template": {
+        "人工智能": {"min": 30, "max": 60},
+        "数据科学": {"min": 25, "max": 50}
+      }
+    },
+
+    {
+      "template_id": "business_sales",
+      "company_id": "company_business",
+      "title_pool": ["产品销售", "客户拜访", "电话营销", "门店导购"],
+      "desc_template": "向{client}推广{product}",
+      "desc_params": {
+        "client": ["企业客户", "个人客户", "潜在客户"],
+        "product": ["主营产品", "新产品", "套餐服务"]
+      },
+      "difficulty_range": ["D", "C", "B"],
+      "duration_hours_range": [2, 6],
+      "base_reward_range": [80, 250],
+      "skill_required": {
+        "D": {"沟通能力": 1, "销售": 1},
+        "C": {"销售": 2, "沟通能力": 2},
+        "B": {"销售": 3, "沟通能力": 3, "市场营销": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 10, "max": 20},
+        "精力": {"min": 15, "max": 30},
+        "心情": {"min": 8, "max": 20},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "销售": {"min": 15, "max": 30},
+        "沟通能力": {"min": 10, "max": 25}
+      }
+    },
+    {
+      "template_id": "business_hr",
+      "company_id": "company_business",
+      "title_pool": ["简历筛选", "面试安排", "员工培训", "绩效考核"],
+      "desc_template": "协助进行{job}的HR工作",
+      "desc_params": {
+        "job": ["招聘", "培训", "绩效考核"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [2, 5],
+      "base_reward_range": [100, 300],
+      "skill_required": {
+        "C": {"人力资源": 2, "沟通能力": 2},
+        "B": {"人力资源": 3, "沟通能力": 3},
+        "A": {"人力资源": 5, "企业管理": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 12},
+        "精力": {"min": 20, "max": 35},
+        "心情": {"min": 8, "max": 18},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "人力资源": {"min": 15, "max": 35}
+      }
+    },
+    {
+      "template_id": "business_ecommerce",
+      "company_id": "company_business",
+      "title_pool": ["商品上架", "客服售后", "订单处理", "评价管理"],
+      "desc_template": "负责网店的{job}工作",
+      "desc_params": {
+        "job": ["商品上架", "客服回复", "订单管理"]
+      },
+      "difficulty_range": ["D", "C"],
+      "duration_hours_range": [2, 4],
+      "base_reward_range": [60, 150],
+      "skill_required": {
+        "D": {"电子商务": 1},
+        "C": {"电子商务": 2, "沟通能力": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 10},
+        "精力": {"min": 15, "max": 25},
+        "心情": {"min": 5, "max": 12},
+        "饱食度": {"min": 6, "max": 12}
+      },
+      "exp_reward_template": {
+        "电子商务": {"min": 10, "max": 25}
+      }
+    },
+
+    {
+      "template_id": "finance_accounting",
+      "company_id": "company_finance",
+      "title_pool": ["账目录入", "发票整理", "报表制作", "税务申报"],
+      "desc_template": "处理{company}的财务{job}",
+      "desc_params": {
+        "company": ["中小企业", "初创公司", "会计事务所"],
+        "job": ["日常账务", "税务申报", "财务审计"]
+      },
+      "difficulty_range": ["D", "C", "B"],
+      "duration_hours_range": [2, 5],
+      "base_reward_range": [100, 280],
+      "skill_required": {
+        "D": {"会计": 1, "数学": 1},
+        "C": {"会计": 2, "数学": 2},
+        "B": {"会计": 3, "财务管理": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 12},
+        "精力": {"min": 20, "max": 35},
+        "心情": {"min": 5, "max": 15},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "会计": {"min": 15, "max": 30},
+        "数学": {"min": 10, "max": 20}
+      }
+    },
+    {
+      "template_id": "finance_investment",
+      "company_id": "company_finance",
+      "title_pool": ["投资分析", "市场调研", "项目评估", "风险控制"],
+      "desc_template": "参与{project}的{phase}工作",
+      "desc_params": {
+        "project": ["股权投资", "债券投资", "项目融资"],
+        "phase": ["尽职调查", "风险评估", "投资分析"]
+      },
+      "difficulty_range": ["A", "S", "S+"],
+      "duration_hours_range": [4, 10],
+      "base_reward_range": [400, 900],
+      "skill_required": {
+        "A": {"投资银行": 4, "财务管理": 3, "数学": 3},
+        "S": {"投资银行": 6, "理财常识": 4},
+        "S+": {"投资银行": 8, "财务管理": 5, "数学": 5}
+      },
+      "consume_template": {
+        "体力": {"min": 8, "max": 15},
+        "精力": {"min": 35, "max": 55},
+        "心情": {"min": 10, "max": 25},
+        "饱食度": {"min": 10, "max": 18}
+      },
+      "exp_reward_template": {
+        "投资银行": {"min": 30, "max": 60},
+        "财务管理": {"min": 25, "max": 50}
+      }
+    },
+
+    {
+      "template_id": "media_design",
+      "company_id": "company_media",
+      "title_pool": ["海报设计", "Logo设计", "包装设计", "宣传物料"],
+      "desc_template": "为{client}设计{type}",
+      "desc_params": {
+        "client": ["企业客户", "品牌方", "活动主办方"],
+        "type": ["宣传海报", "品牌Logo", "产品包装"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [2, 6],
+      "base_reward_range": [120, 350],
+      "skill_required": {
+        "C": {"美术": 2},
+        "B": {"美术": 3, "写作创作": 2},
+        "A": {"美术": 5, "写作创作": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 10},
+        "精力": {"min": 20, "max": 40},
+        "心情": {"min": 10, "max": 25},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "美术": {"min": 20, "max": 45}
+      }
+    },
+    {
+      "template_id": "media_content",
+      "company_id": "company_media",
+      "title_pool": ["文章撰写", "视频脚本", "文案创作", "内容编辑"],
+      "desc_template": "创作{type}内容",
+      "desc_params": {
+        "type": ["公众号", "短视频", "广告文案", "产品介绍"]
+      },
+      "difficulty_range": ["D", "C", "B"],
+      "duration_hours_range": [2, 5],
+      "base_reward_range": [80, 250],
+      "skill_required": {
+        "D": {"写作创作": 1},
+        "C": {"写作创作": 2, "语文": 2},
+        "B": {"写作创作": 4, "语文": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 10},
+        "精力": {"min": 15, "max": 30},
+        "心情": {"min": 8, "max": 20},
+        "饱食度": {"min": 6, "max": 12}
+      },
+      "exp_reward_template": {
+        "写作创作": {"min": 15, "max": 35}
+      }
+    },
+    {
+      "template_id": "media_music",
+      "company_id": "company_media",
+      "title_pool": ["音乐制作", "音频剪辑", "配音录制", "演出助理"],
+      "desc_template": "参与{project}的{job}",
+      "desc_params": {
+        "project": ["音乐专辑", "音频项目", "演出活动"],
+        "job": ["录制工作", "后期制作", "现场助理"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [2, 6],
+      "base_reward_range": [120, 380],
+      "skill_required": {
+        "C": {"音乐": 2},
+        "B": {"音乐": 4, "表演": 2},
+        "A": {"音乐": 5, "表演": 3, "导演": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 12},
+        "精力": {"min": 20, "max": 35},
+        "心情": {"min": 10, "max": 25},
+        "饱食度": {"min": 6, "max": 12}
+      },
+      "exp_reward_template": {
+        "音乐": {"min": 20, "max": 45}
+      }
+    },
+
+    {
+      "template_id": "edu_tutoring",
+      "company_id": "company_edu",
+      "title_pool": ["家教辅导", "作业批改", "答疑解惑", "学习规划"],
+      "desc_template": "为学生提供{subject}辅导",
+      "desc_params": {
+        "subject": ["数学", "英语", "语文", "理综"]
+      },
+      "difficulty_range": ["D", "C", "B"],
+      "duration_hours_range": [1, 3],
+      "base_reward_range": [60, 180],
+      "skill_required": {
+        "D": {"语文": 1},
+        "C": {"语文": 2, "英语": 2},
+        "B": {"语文": 3, "英语": 3, "数学": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 10},
+        "精力": {"min": 15, "max": 30},
+        "心情": {"min": 8, "max": 18},
+        "饱食度": {"min": 5, "max": 10}
+      },
+      "exp_reward_template": {
+        "语文": {"min": 10, "max": 25},
+        "英语": {"min": 10, "max": 25}
+      }
+    },
+    {
+      "template_id": "edu_translation",
+      "company_id": "company_edu",
+      "title_pool": ["文档翻译", "陪同翻译", "字幕翻译", "论文翻译"],
+      "desc_template": "完成{type}翻译任务",
+      "desc_params": {
+        "type": ["商务文件", "技术文档", "影视字幕", "学术论文"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [2, 6],
+      "base_reward_range": [120, 350],
+      "skill_required": {
+        "C": {"翻译": 2, "英语": 3},
+        "B": {"翻译": 4, "英语": 4},
+        "A": {"同声传译": 5, "翻译": 4, "英语": 5}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 10},
+        "精力": {"min": 25, "max": 45},
+        "心情": {"min": 8, "max": 18},
+        "饱食度": {"min": 6, "max": 12}
+      },
+      "exp_reward_template": {
+        "翻译": {"min": 20, "max": 40},
+        "英语": {"min": 15, "max": 30}
+      }
+    },
+
+    {
+      "template_id": "health_consult",
+      "company_id": "company_health",
+      "title_pool": ["健康咨询", "营养指导", "运动建议", "康复计划"],
+      "desc_template": "为客户提供{type}服务",
+      "desc_params": {
+        "type": ["健康咨询", "运动指导", "营养配餐"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [2, 5],
+      "base_reward_range": [100, 300],
+      "skill_required": {
+        "C": {"心理学": 2, "体育": 2},
+        "B": {"心理学": 3, "医药常识": 2, "体育": 2},
+        "A": {"心理咨询师": 4, "医学专家": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 12},
+        "精力": {"min": 20, "max": 35},
+        "心情": {"min": 10, "max": 22},
+        "饱食度": {"min": 6, "max": 12}
+      },
+      "exp_reward_template": {
+        "心理学": {"min": 15, "max": 30},
+        "体育": {"min": 10, "max": 25}
+      }
+    },
+    {
+      "template_id": "health_medical",
+      "company_id": "company_health",
+      "title_pool": ["医疗协助", "体检助理", "药房工作", "病例整理"],
+      "desc_template": "在{location}协助医疗工作",
+      "desc_params": {
+        "location": ["诊所", "药房", "体检中心"]
+      },
+      "difficulty_range": ["B", "A", "S"],
+      "duration_hours_range": [3, 8],
+      "base_reward_range": [200, 550],
+      "skill_required": {
+        "B": {"医药常识": 3, "生物": 2},
+        "A": {"医学专家": 4, "医药常识": 3},
+        "S": {"医学专家": 6, "生物": 4, "心理学": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 10, "max": 20},
+        "精力": {"min": 25, "max": 45},
+        "心情": {"min": 10, "max": 25},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "医学专家": {"min": 25, "max": 50},
+        "医药常识": {"min": 20, "max": 40}
+      }
+    },
+
+    {
+      "template_id": "logistics_delivery",
+      "company_id": "company_logistics",
+      "title_pool": ["快递配送", "外卖配送", "同城速递", "生鲜配送"],
+      "desc_template": "负责{area}区域的{type}配送",
+      "desc_params": {
+        "area": ["指定", "城区", "园区"],
+        "type": ["快递", "外卖", "文件"]
+      },
+      "difficulty_range": ["D", "C"],
+      "duration_hours_range": [2, 5],
+      "base_reward_range": [60, 150],
+      "skill_required": {
+        "D": {"驾驶": 1, "地理": 1},
+        "C": {"驾驶": 2, "地理": 2, "物流基础": 1}
+      },
+      "consume_template": {
+        "体力": {"min": 20, "max": 35},
+        "精力": {"min": 10, "max": 20},
+        "心情": {"min": 5, "max": 15},
+        "饱食度": {"min": 10, "max": 20}
+      },
+      "exp_reward_template": {
+        "驾驶": {"min": 10, "max": 25},
+        "地理": {"min": 8, "max": 18}
+      }
+    },
+    {
+      "template_id": "logistics_dispatch",
+      "company_id": "company_logistics",
+      "title_pool": ["调度协调", "路线规划", "仓储管理", "库存盘点"],
+      "desc_template": "负责{job}工作",
+      "desc_params": {
+        "job": ["物流调度", "仓储管理", "库存盘点"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [3, 6],
+      "base_reward_range": [120, 320],
+      "skill_required": {
+        "C": {"物流基础": 2, "地理": 2},
+        "B": {"物流工程": 3, "物流基础": 2},
+        "A": {"物流工程": 5, "地理": 3}
+      },
+      "consume_template": {
+        "体力": {"min": 8, "max": 15},
+        "精力": {"min": 20, "max": 35},
+        "心情": {"min": 5, "max": 15},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "物流基础": {"min": 15, "max": 30},
+        "物流工程": {"min": 20, "max": 40}
+      }
+    },
+
+    {
+      "template_id": "food_cooking",
+      "company_id": "company_food",
+      "title_pool": ["厨房帮工", "菜品准备", "面点制作", "小吃制作"],
+      "desc_template": "在{location}从事{job}",
+      "desc_params": {
+        "location": ["连锁餐厅", "食堂", "小吃店"],
+        "job": ["厨房帮工", "菜品制作", "面点制作"]
+      },
+      "difficulty_range": ["D", "C", "B"],
+      "duration_hours_range": [2, 6],
+      "base_reward_range": [60, 180],
+      "skill_required": {
+        "D": {"烹饪": 1},
+        "C": {"烹饪": 2, "化学": 1},
+        "B": {"烹饪": 4, "化学": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 20, "max": 35},
+        "精力": {"min": 10, "max": 20},
+        "心情": {"min": 5, "max": 15},
+        "饱食度": {"min": 15, "max": 30}
+      },
+      "exp_reward_template": {
+        "烹饪": {"min": 15, "max": 35}
+      }
+    },
+
+    {
+      "template_id": "agri_farming",
+      "company_id": "company_agri",
+      "title_pool": ["田间劳作", "果树采摘", "畜牧帮忙", "农产品加工"],
+      "desc_template": "从事{job}工作",
+      "desc_params": {
+        "job": ["农作物管理", "果园采摘", "禽畜喂养", "农产品包装"]
+      },
+      "difficulty_range": ["D", "C", "B"],
+      "duration_hours_range": [3, 7],
+      "base_reward_range": [70, 180],
+      "skill_required": {
+        "D": {"生物": 1},
+        "C": {"农业技术": 2, "生物": 2},
+        "B": {"农业技术": 3, "化学": 2, "生物": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 25, "max": 45},
+        "精力": {"min": 10, "max": 20},
+        "心情": {"min": 5, "max": 15},
+        "饱食度": {"min": 15, "max": 30}
+      },
+      "exp_reward_template": {
+        "农业技术": {"min": 15, "max": 30},
+        "生物": {"min": 10, "max": 25}
+      }
+    },
+    {
+      "template_id": "agri_engineering",
+      "company_id": "company_agri",
+      "title_pool": ["农机操作", "灌溉系统维护", "温室管理", "农业设备维修"],
+      "desc_template": "负责{job}工作",
+      "desc_params": {
+        "job": ["农业机械操作", "灌溉系统维护", "温室大棚管理"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [3, 6],
+      "base_reward_range": [120, 320],
+      "skill_required": {
+        "C": {"农业工程": 2, "地理": 2},
+        "B": {"农业工程": 4, "机械维修": 2},
+        "A": {"农业工程": 5, "地理": 3, "化学": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 15, "max": 30},
+        "精力": {"min": 15, "max": 30},
+        "心情": {"min": 5, "max": 15},
+        "饱食度": {"min": 12, "max": 25}
+      },
+      "exp_reward_template": {
+        "农业工程": {"min": 20, "max": 45}
+      }
+    },
+
+    {
+      "template_id": "legal_consult",
+      "company_id": "company_legal",
+      "title_pool": ["法律咨询", "文书起草", "资料整理", "案例研究"],
+      "desc_template": "协助进行{job}",
+      "desc_params": {
+        "job": ["法律文书起草", "案例分析", "合同审核"]
+      },
+      "difficulty_range": ["C", "B", "A"],
+      "duration_hours_range": [2, 5],
+      "base_reward_range": [150, 400],
+      "skill_required": {
+        "C": {"法律常识": 2, "语文": 2},
+        "B": {"律师": 3, "法律常识": 3, "语文": 3},
+        "A": {"律师": 5, "法律常识": 4, "语文": 4}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 12},
+        "精力": {"min": 25, "max": 45},
+        "心情": {"min": 8, "max": 18},
+        "饱食度": {"min": 6, "max": 12}
+      },
+      "exp_reward_template": {
+        "律师": {"min": 25, "max": 50},
+        "法律常识": {"min": 15, "max": 35}
+      }
+    },
+    {
+      "template_id": "legal_litigation",
+      "company_id": "company_legal",
+      "title_pool": ["诉讼协助", "证据整理", "出庭准备", "调解谈判"],
+      "desc_template": "参与{type}案件工作",
+      "desc_params": {
+        "type": ["民事", "商事", "劳动"]
+      },
+      "difficulty_range": ["A", "S", "S+"],
+      "duration_hours_range": [4, 10],
+      "base_reward_range": [400, 900],
+      "skill_required": {
+        "A": {"律师": 5, "法律常识": 5, "语文": 4},
+        "S": {"律师": 7, "历史": 3},
+        "S+": {"律师": 9, "法律常识": 6, "语文": 5}
+      },
+      "consume_template": {
+        "体力": {"min": 8, "max": 18},
+        "精力": {"min": 35, "max": 55},
+        "心情": {"min": 10, "max": 25},
+        "饱食度": {"min": 8, "max": 15}
+      },
+      "exp_reward_template": {
+        "律师": {"min": 30, "max": 70},
+        "法律常识": {"min": 25, "max": 50}
+      }
+    },
+
+    {
+      "template_id": "freelance_gig",
+      "company_id": "company_freelance",
+      "title_pool": ["临时帮工", "活动协助", "问卷调查", "产品试用"],
+      "desc_template": "完成{job}",
+      "desc_params": {
+        "job": ["临时帮工", "活动协助", "市场问卷", "产品体验"]
+      },
+      "difficulty_range": ["D", "C"],
+      "duration_hours_range": [1, 4],
+      "base_reward_range": [30, 100],
+      "skill_required": {
+        "D": {},
+        "C": {}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 20},
+        "精力": {"min": 5, "max": 15},
+        "心情": {"min": 3, "max": 10},
+        "饱食度": {"min": 5, "max": 15}
+      },
+      "exp_reward_template": {}
+    },
+    {
+      "template_id": "freelance_errand",
+      "company_id": "company_freelance",
+      "title_pool": ["代购服务", "排队代劳", "文件送取", "鲜花配送"],
+      "desc_template": "为客户提供{job}",
+      "desc_params": {
+        "job": ["代购服务", "排队代劳", "文件送取"]
+      },
+      "difficulty_range": ["D", "C"],
+      "duration_hours_range": [1, 3],
+      "base_reward_range": [40, 120],
+      "skill_required": {
+        "D": {},
+        "C": {"沟通能力": 1}
+      },
+      "consume_template": {
+        "体力": {"min": 10, "max": 25},
+        "精力": {"min": 5, "max": 12},
+        "心情": {"min": 3, "max": 10},
+        "饱食度": {"min": 5, "max": 15}
+      },
+      "exp_reward_template": {
+        "沟通能力": {"min": 5, "max": 15}
+      }
+    },
+    {
+      "template_id": "freelance_tech",
+      "company_id": "company_freelance",
+      "title_pool": ["电脑维修", "网络设置", "手机贴膜", "软件安装"],
+      "desc_template": "为客户提供{job}",
+      "desc_params": {
+        "job": ["电脑维修", "网络调试", "系统安装"]
+      },
+      "difficulty_range": ["C", "B"],
+      "duration_hours_range": [1, 4],
+      "base_reward_range": [80, 200],
+      "skill_required": {
+        "C": {"计算机基础": 2},
+        "B": {"计算机基础": 3, "网络技术": 2}
+      },
+      "consume_template": {
+        "体力": {"min": 5, "max": 12},
+        "精力": {"min": 15, "max": 30},
+        "心情": {"min": 5, "max": 15},
+        "饱食度": {"min": 5, "max": 12}
+      },
+      "exp_reward_template": {
+        "计算机基础": {"min": 10, "max": 25}
+      }
+    }
+  ],
+
+  "_template_stats": {
+    "total_templates": 24,
+    "by_company": {
+      "company_labor": 2,
+      "company_tech": 4,
+      "company_business": 3,
+      "company_finance": 2,
+      "company_media": 3,
+      "company_edu": 2,
+      "company_health": 2,
+      "company_logistics": 2,
+      "company_food": 1,
+      "company_agri": 2,
+      "company_legal": 2,
+      "company_freelance": 3
+    }
+  }
+}

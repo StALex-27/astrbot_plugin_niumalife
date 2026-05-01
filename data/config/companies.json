@@ -1,0 +1,401 @@
+{
+  "_comment": "打工系统V2 - 12家公司配置",
+  "_version": "1.0",
+  
+  "company_labor": {
+    "name": "阿尔法劳务",
+    "emoji": "🏗️",
+    "industry": "体力劳动",
+    "difficulty_tier": "T1",
+    "work_type": "physical",
+    "description": "综合性体力劳动公司，提供各类工地和搬运工作",
+    "skill_requirements": ["苦力", "体育"],
+    "favorability_table": {
+      "complete_base": 8,
+      "complete_difficulty_bonus": 4,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["labor_vest", "labor_gloves", "labor_shoes", "labor_helmet"],
+    "shop_tier2_items": ["labor_suit", "labor_exoskeleton"],
+    "available_difficulties": ["D", "C", "B"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_tech": {
+    "name": "贝塔科技",
+    "emoji": "💻",
+    "industry": "IT科技",
+    "difficulty_tier": "T2",
+    "work_type": "mental",
+    "description": "领先的科技公司，提供各类IT和编程相关工作",
+    "skill_requirements": ["计算机基础", "编程", "网络技术", "数据分析", "人工智能", "架构师", "网络安全", "游戏开发", "数据科学"],
+    "favorability_table": {
+      "complete_base": 10,
+      "complete_difficulty_bonus": 5,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["mech_keyboard", "ergonomic_chair", "coffee", "monitor"],
+    "shop_tier2_items": ["standing_desk", "ai_copilot"],
+    "available_difficulties": ["D", "C", "B", "A", "S"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_business": {
+    "name": "伽马商业",
+    "emoji": "💼",
+    "industry": "商业服务",
+    "difficulty_tier": "T2",
+    "work_type": "mental",
+    "description": "专业商业服务公司，提供销售、客服和商务工作",
+    "skill_requirements": ["沟通能力", "销售", "市场营销", "人力资源", "电子商务", "项目管理", "产品经理", "企业管理"],
+    "favorability_table": {
+      "complete_base": 10,
+      "complete_difficulty_bonus": 5,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["business_suit", "name_card", "perfume"],
+    "shop_tier2_items": ["leather_bag", "executive_watch"],
+    "available_difficulties": ["D", "C", "B", "A", "S"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_finance": {
+    "name": "金诚资本",
+    "emoji": "💰",
+    "industry": "金融财会",
+    "difficulty_tier": "T2",
+    "work_type": "mental",
+    "description": "专业金融机构，提供投资、理财和会计工作",
+    "skill_requirements": ["数学", "理财常识", "会计", "财务管理", "投资银行"],
+    "favorability_table": {
+      "complete_base": 12,
+      "complete_difficulty_bonus": 6,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["fin_calc", "briefcase"],
+    "shop_tier2_items": ["luck_charm", "trading_terminal"],
+    "available_difficulties": ["D", "C", "B", "A", "S"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_media": {
+    "name": "艺星传媒",
+    "emoji": "🎨",
+    "industry": "艺术创意",
+    "difficulty_tier": "T2",
+    "work_type": "mental",
+    "description": "创意媒体公司，提供设计、内容创作和表演工作",
+    "skill_requirements": ["音乐", "美术", "动画制作", "写作创作", "表演", "导演"],
+    "favorability_table": {
+      "complete_base": 10,
+      "complete_difficulty_bonus": 5,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["drawing_tablet", "guitar", "inspiration"],
+    "shop_tier2_items": ["camera", "vr_headset"],
+    "available_difficulties": ["D", "C", "B", "A", "S"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_edu": {
+    "name": "智慧学院",
+    "emoji": "📚",
+    "industry": "教育培训",
+    "difficulty_tier": "T2",
+    "work_type": "mental",
+    "description": "教育培训中心，提供教学和辅导工作",
+    "skill_requirements": ["语文", "英语", "翻译", "播音主持", "同声传译"],
+    "favorability_table": {
+      "complete_base": 10,
+      "complete_difficulty_bonus": 5,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["dictionary", "microphone", "glasses"],
+    "shop_tier2_items": ["whiteboard"],
+    "available_difficulties": ["D", "C", "B", "A", "S"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_health": {
+    "name": "康健中心",
+    "emoji": "🏥",
+    "industry": "医疗健康",
+    "difficulty_tier": "T2",
+    "work_type": "both",
+    "description": "医疗健康机构，提供护理和健康咨询工作",
+    "skill_requirements": ["体育", "生物", "医药常识", "心理学", "心理咨询师", "医学专家"],
+    "favorability_table": {
+      "complete_base": 12,
+      "complete_difficulty_bonus": 6,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["sports_gear", "first_aid", "psy_book"],
+    "shop_tier2_items": ["therapy_couch"],
+    "available_difficulties": ["D", "C", "B", "A", "S"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_logistics": {
+    "name": "速运集团",
+    "emoji": "📦",
+    "industry": "物流运输",
+    "difficulty_tier": "T1",
+    "work_type": "physical",
+    "description": "大型物流公司，提供配送和运输工作",
+    "skill_requirements": ["驾驶", "地理", "物流基础", "物流工程"],
+    "favorability_table": {
+      "complete_base": 8,
+      "complete_difficulty_bonus": 4,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["delivery_bag", "gps_navigator", "express_card"],
+    "shop_tier2_items": ["electric_bike"],
+    "available_difficulties": ["D", "C", "B"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_food": {
+    "name": "美食工坊",
+    "emoji": "🍳",
+    "industry": "餐饮服务",
+    "difficulty_tier": "T1",
+    "work_type": "both",
+    "description": "连锁餐饮企业，提供厨师和服务工作",
+    "skill_requirements": ["烹饪", "化学"],
+    "favorability_table": {
+      "complete_base": 8,
+      "complete_difficulty_bonus": 4,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["chef_knife", "recipe_book", "apron", "energy_bar"],
+    "shop_tier2_items": [],
+    "available_difficulties": ["D", "C", "B"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_agri": {
+    "name": "田园牧歌",
+    "emoji": "🌾",
+    "industry": "农林渔牧",
+    "difficulty_tier": "T1",
+    "work_type": "physical",
+    "description": "农业综合企业，提供农林业相关工作",
+    "skill_requirements": ["化学", "生物", "地理", "农业技术", "农业工程"],
+    "favorability_table": {
+      "complete_base": 8,
+      "complete_difficulty_bonus": 4,
+      "fail_penalty": -20,
+      "cancel_penalty": -5,
+      "reject_penalty": -5,
+      "reject_count_threshold": 3,
+      "reject_ban_hours": 2
+    },
+    "shop_tier1_items": ["farm_tools", "seed_pack"],
+    "shop_tier2_items": ["watering_system"],
+    "available_difficulties": ["D", "C", "B"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 3,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_legal": {
+    "name": "明法事务所",
+    "emoji": "⚖️",
+    "industry": "法律服务",
+    "difficulty_tier": "T3",
+    "work_type": "mental",
+    "description": "专业法律咨询机构，提供法律和咨询工作",
+    "skill_requirements": ["语文", "历史", "法律常识", "律师"],
+    "favorability_table": {
+      "complete_base": 15,
+      "complete_difficulty_bonus": 8,
+      "fail_penalty": -25,
+      "cancel_penalty": -8,
+      "reject_penalty": -8,
+      "reject_count_threshold": 2,
+      "reject_ban_hours": 3
+    },
+    "shop_tier1_items": ["law_books", "suit"],
+    "shop_tier2_items": ["consultation_room"],
+    "available_difficulties": ["C", "B", "A", "S", "S+"],
+    "favor_level_for_difficulty": {
+      "D": 3,
+      "C": 4,
+      "B": 5,
+      "A": 7,
+      "S": 9,
+      "S+": 10
+    }
+  },
+
+  "company_freelance": {
+    "name": "零工市场",
+    "emoji": "🎯",
+    "industry": "自由职业",
+    "difficulty_tier": "T1",
+    "work_type": "both",
+    "description": "灵活务工平台，提供各类短期零工",
+    "skill_requirements": [],
+    "favorability_table": {
+      "complete_base": 5,
+      "complete_difficulty_bonus": 3,
+      "fail_penalty": -15,
+      "cancel_penalty": -3,
+      "reject_penalty": -3,
+      "reject_count_threshold": 5,
+      "reject_ban_hours": 1
+    },
+    "shop_tier1_items": ["freelancer_id", "multi_tool"],
+    "shop_tier2_items": ["task_scanner"],
+    "available_difficulties": ["D", "C", "B"],
+    "favor_level_for_difficulty": {
+      "D": 1,
+      "C": 2,
+      "B": 4,
+      "A": 6,
+      "S": 8,
+      "S+": 10
+    },
+    "_comment": "零工市场技能要求为空，表示接受所有技能，门槛最低"
+  },
+
+  "_difficulty_tiers": {
+    "T1": {
+      "description": "初级公司",
+      "available_difficulties": ["D", "C", "B"],
+      "base_reward_multiplier": 1.0
+    },
+    "T2": {
+      "description": "中级公司",
+      "available_difficulties": ["D", "C", "B", "A", "S"],
+      "base_reward_multiplier": 1.2
+    },
+    "T3": {
+      "description": "高级公司",
+      "available_difficulties": ["C", "B", "A", "S", "S+"],
+      "base_reward_multiplier": 1.5
+    }
+  },
+
+  "_difficulty_reward_multiplier": {
+    "D": 0.6,
+    "C": 0.8,
+    "B": 1.0,
+    "A": 1.3,
+    "S": 1.6,
+    "S+": 2.0
+  },
+
+  "_difficulty_consume_multiplier": {
+    "D": 0.8,
+    "C": 1.0,
+    "B": 1.2,
+    "A": 1.5,
+    "S": 2.0,
+    "S+": 2.5
+  }
+}

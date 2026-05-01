@@ -4,6 +4,31 @@
 
 ---
 
+## v0.1.8 (2026-05-02)
+
+### 重构
+
+- **Tick 结算机制重构**：属性消耗改为整点结算
+  - `WorkTickProcessor` / `SleepTickProcessor` 整点触发属性结算
+  - 工作/学习/睡眠状态转换时即时结算剩余时间
+  - 空闲状态每小时结算一次
+
+### 新增
+
+- `action_detail` 数据结构：记录工作/学习时的用户状态快照
+  - `action_detail.job_id` / `action_detail.course_id` - 关联的工作/课程ID
+  - `action_detail.start_time` / `action_detail.total_hours` - 开始时间和总时长
+  - `action_detail.start_stats` - 开始时的用户属性快照
+  - `action_detail.last_hourly_settle` - 上次整点结算时间
+
+### 变更
+
+- `_accept_job` 创建 `action_detail` 并保存用户数据快照
+- `_show_working_status` 实时计算进度并显示当前属性
+- 结算时使用快照属性计算消耗，与显示值一致
+
+---
+
 ## v0.1.7 (2026-04-28)
 
 ### 新增

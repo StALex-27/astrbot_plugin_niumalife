@@ -1,0 +1,813 @@
+{
+  "_comment": "打工系统V2 - 公司商店物品配置",
+  "_version": "1.0",
+  "_description": "各公司商店的物品定义，包含T1普通级和T2高级",
+  
+  "_rarity_colors": {
+    "common": "灰色",
+    "rare": "蓝色",
+    "epic": "紫色",
+    "legendary": "金色",
+    "mythic": "红色"
+  },
+
+  "_rarity_drop_rates": {
+    "common": "60%",
+    "rare": "25%",
+    "epic": "10%",
+    "legendary": "4%",
+    "mythic": "1%"
+  },
+
+  "_shop_unlock_requirements": {
+    "tier1": 6,
+    "tier2": 8
+  },
+
+  "company_labor": {
+    "shop_name": "阿尔法劳务装备店",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "labor_vest",
+          "name": "工装背心",
+          "rarity": "common",
+          "price": 500,
+          "description": "透气工装背心，体力工作时体力消耗-10%",
+          "buff_effect": {
+            "type": "stamina_cost_reduction",
+            "value": 0.10,
+            "applicable_jobs": ["company_labor"]
+          }
+        },
+        {
+          "item_id": "labor_gloves",
+          "name": "防护手套",
+          "rarity": "common",
+          "price": 300,
+          "description": "防滑防护手套，搬砖类工作速度+5%",
+          "buff_effect": {
+            "type": "work_speed_bonus",
+            "value": 0.05,
+            "applicable_jobs": ["company_labor"]
+          }
+        },
+        {
+          "item_id": "labor_shoes",
+          "name": "安全鞋",
+          "rarity": "rare",
+          "price": 800,
+          "description": "防砸安全鞋，体力工作健康损失-15%",
+          "buff_effect": {
+            "type": "health_loss_reduction",
+            "value": 0.15,
+            "applicable_jobs": ["company_labor"]
+          }
+        },
+        {
+          "item_id": "labor_helmet",
+          "name": "安全帽",
+          "rarity": "rare",
+          "price": 600,
+          "description": "标准安全帽，工地工作暴击率+3%",
+          "buff_effect": {
+            "type": "crit_rate",
+            "value": 0.03,
+            "applicable_jobs": ["company_labor"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "labor_suit",
+          "name": "高级工装",
+          "rarity": "epic",
+          "price": 3000,
+          "description": "专业工装套装，体力工作收入+15%，消耗-10%",
+          "buff_effect": {
+            "type": "income_bonus",
+            "value": 0.15,
+            "applicable_jobs": ["company_labor"]
+          }
+        },
+        {
+          "item_id": "labor_exoskeleton",
+          "name": "外骨骼助力",
+          "rarity": "legendary",
+          "price": 15000,
+          "description": "高科技外骨骼，体力工作时体力消耗-40%",
+          "buff_effect": {
+            "type": "stamina_cost_reduction",
+            "value": 0.40,
+            "applicable_jobs": ["company_labor"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_tech": {
+    "shop_name": "贝塔科技商城",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "mech_keyboard",
+          "name": "机械键盘",
+          "rarity": "rare",
+          "price": 800,
+          "description": "红轴机械键盘，编程时精力消耗-15%",
+          "buff_effect": {
+            "type": "energy_cost_reduction",
+            "value": 0.15,
+            "applicable_jobs": ["company_tech"]
+          }
+        },
+        {
+          "item_id": "ergonomic_chair",
+          "name": "人体工学椅",
+          "rarity": "epic",
+          "price": 1200,
+          "description": "舒适工学椅，久坐工作体力消耗-20%",
+          "buff_effect": {
+            "type": "stamina_cost_reduction",
+            "value": 0.20,
+            "applicable_jobs": ["company_tech", "company_business", "company_finance"]
+          }
+        },
+        {
+          "item_id": "coffee",
+          "name": "现磨咖啡",
+          "rarity": "common",
+          "price": 30,
+          "description": "提神咖啡，30分钟内脑力工作奖励+10%",
+          "buff_effect": {
+            "type": "temp_reward_bonus",
+            "value": 0.10,
+            "duration_minutes": 30,
+            "applicable_jobs": ["company_tech", "company_business"]
+          }
+        },
+        {
+          "item_id": "monitor",
+          "name": "外接显示器",
+          "rarity": "rare",
+          "price": 600,
+          "description": "24寸显示器，数据分析效率+8%",
+          "buff_effect": {
+            "type": "work_efficiency",
+            "value": 0.08,
+            "applicable_jobs": ["company_tech"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "standing_desk",
+          "name": "升降桌",
+          "rarity": "legendary",
+          "price": 5000,
+          "description": "电动升降桌，程序员工作时精力恢复+5%/小时",
+          "buff_effect": {
+            "type": "energy_passive_restore",
+            "value": 0.05,
+            "applicable_jobs": ["company_tech"]
+          }
+        },
+        {
+          "item_id": "ai_copilot",
+          "name": "AI编程助手",
+          "rarity": "mythic",
+          "price": 30000,
+          "description": "智能AI助手，编程工作评价+15%，收入+25%",
+          "buff_effect": {
+            "type": "evaluation_bonus",
+            "value": 0.15,
+            "income_bonus": 0.25,
+            "applicable_jobs": ["company_tech"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_business": {
+    "shop_name": "伽马商业广场",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "business_suit",
+          "name": "职业西装",
+          "rarity": "rare",
+          "price": 1000,
+          "description": "得体职业装，销售类工作好感度获取+15%",
+          "buff_effect": {
+            "type": "favorability_bonus",
+            "value": 0.15,
+            "applicable_jobs": ["company_business"]
+          }
+        },
+        {
+          "item_id": "name_card",
+          "name": "定制名片",
+          "rarity": "common",
+          "price": 200,
+          "description": "精美名片，商务谈判成功率+5%",
+          "buff_effect": {
+            "type": "negotiation_bonus",
+            "value": 0.05,
+            "applicable_jobs": ["company_business"]
+          }
+        },
+        {
+          "item_id": "perfume",
+          "name": "商务香水",
+          "rarity": "common",
+          "price": 400,
+          "description": "清新香水，沟通能力工作时精力消耗-10%",
+          "buff_effect": {
+            "type": "energy_cost_reduction",
+            "value": 0.10,
+            "applicable_jobs": ["company_business"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "leather_bag",
+          "name": "真皮公文包",
+          "rarity": "epic",
+          "price": 2500,
+          "description": "高档真皮包，销售类工作收入+20%",
+          "buff_effect": {
+            "type": "income_bonus",
+            "value": 0.20,
+            "applicable_jobs": ["company_business"]
+          }
+        },
+        {
+          "item_id": "executive_watch",
+          "name": "Executive手表",
+          "rarity": "legendary",
+          "price": 15000,
+          "description": "奢华腕表，所有商业活动暴击率+5%，评价+5%",
+          "buff_effect": {
+            "type": "crit_rate",
+            "value": 0.05,
+            "evaluation_bonus": 0.05,
+            "applicable_jobs": ["company_business"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_finance": {
+    "shop_name": "金诚资本商城",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "fin_calc",
+          "name": "金融计算器",
+          "rarity": "rare",
+          "price": 600,
+          "description": "专业财务计算器，会计类工作速度+10%",
+          "buff_effect": {
+            "type": "work_speed_bonus",
+            "value": 0.10,
+            "applicable_jobs": ["company_finance"]
+          }
+        },
+        {
+          "item_id": "briefcase",
+          "name": "真皮公文包",
+          "rarity": "rare",
+          "price": 800,
+          "description": "商务公文包，财务管理类工作奖励+8%",
+          "buff_effect": {
+            "type": "reward_bonus",
+            "value": 0.08,
+            "applicable_jobs": ["company_finance"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "luck_charm",
+          "name": "招财符",
+          "rarity": "epic",
+          "price": 5000,
+          "description": "据说能带来好运，投资类工作暴击率+3%",
+          "buff_effect": {
+            "type": "crit_rate",
+            "value": 0.03,
+            "applicable_jobs": ["company_finance"]
+          }
+        },
+        {
+          "item_id": "trading_terminal",
+          "name": "交易终端",
+          "rarity": "legendary",
+          "price": 20000,
+          "description": "专业交易设备，股市相关工作收入×1.5",
+          "buff_effect": {
+            "type": "income_multiplier",
+            "value": 1.5,
+            "applicable_jobs": ["company_finance"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_media": {
+    "shop_name": "艺星传媒商店",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "drawing_tablet",
+          "name": "数位板",
+          "rarity": "rare",
+          "price": 900,
+          "description": "专业绘画板，美术类工作产出+12%",
+          "buff_effect": {
+            "type": "work_efficiency",
+            "value": 0.12,
+            "applicable_jobs": ["company_media"]
+          }
+        },
+        {
+          "item_id": "guitar",
+          "name": "原声吉他",
+          "rarity": "epic",
+          "price": 1500,
+          "description": "优质吉他，音乐表演收入+15%",
+          "buff_effect": {
+            "type": "income_bonus",
+            "value": 0.15,
+            "applicable_jobs": ["company_media"]
+          }
+        },
+        {
+          "item_id": "inspiration",
+          "name": "灵感药剂",
+          "rarity": "rare",
+          "price": 100,
+          "description": "突发灵感，1小时内创作类工作暴击率+10%",
+          "buff_effect": {
+            "type": "temp_crit_rate",
+            "value": 0.10,
+            "duration_minutes": 60,
+            "applicable_jobs": ["company_media"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "camera",
+          "name": "便携相机",
+          "rarity": "epic",
+          "price": 2000,
+          "description": "高性能相机，影视类工作质量+20%",
+          "buff_effect": {
+            "type": "quality_bonus",
+            "value": 0.20,
+            "applicable_jobs": ["company_media"]
+          }
+        },
+        {
+          "item_id": "vr_headset",
+          "name": "VR头盔",
+          "rarity": "legendary",
+          "price": 12000,
+          "description": "沉浸式VR设备，动画制作效率+30%",
+          "buff_effect": {
+            "type": "work_efficiency",
+            "value": 0.30,
+            "applicable_jobs": ["company_media"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_edu": {
+    "shop_name": "智慧学院书店",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "dictionary",
+          "name": "专业词典",
+          "rarity": "common",
+          "price": 400,
+          "description": "权威专业词典，翻译工作速度+15%",
+          "buff_effect": {
+            "type": "work_speed_bonus",
+            "value": 0.15,
+            "applicable_jobs": ["company_edu"]
+          }
+        },
+        {
+          "item_id": "microphone",
+          "name": "专业麦克风",
+          "rarity": "rare",
+          "price": 800,
+          "description": "电容麦克风，播音主持效果+20%",
+          "buff_effect": {
+            "type": "quality_bonus",
+            "value": 0.20,
+            "applicable_jobs": ["company_edu"]
+          }
+        },
+        {
+          "item_id": "glasses",
+          "name": "护目眼镜",
+          "rarity": "common",
+          "price": 300,
+          "description": "防疲劳眼镜，长时间教学精力消耗-15%",
+          "buff_effect": {
+            "type": "energy_cost_reduction",
+            "value": 0.15,
+            "applicable_jobs": ["company_edu"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "whiteboard",
+          "name": "智能白板",
+          "rarity": "epic",
+          "price": 1800,
+          "description": "互动智能白板，教育类工作收入+18%",
+          "buff_effect": {
+            "type": "income_bonus",
+            "value": 0.18,
+            "applicable_jobs": ["company_edu"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_health": {
+    "shop_name": "康健中心健康店",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "sports_gear",
+          "name": "专业运动装备",
+          "rarity": "rare",
+          "price": 700,
+          "description": "专业运动套装，体育类工作体力消耗-20%",
+          "buff_effect": {
+            "type": "stamina_cost_reduction",
+            "value": 0.20,
+            "applicable_jobs": ["company_health"]
+          }
+        },
+        {
+          "item_id": "first_aid",
+          "name": "急救包",
+          "rarity": "common",
+          "price": 200,
+          "description": "便携急救包，工作受伤时自动恢复",
+          "buff_effect": {
+            "type": "auto_heal",
+            "value": 0.10,
+            "applicable_jobs": ["company_health", "company_labor"]
+          }
+        },
+        {
+          "item_id": "psy_book",
+          "name": "心理学专著",
+          "rarity": "rare",
+          "price": 500,
+          "description": "专业心理学书籍，心理咨询类工作效果+15%",
+          "buff_effect": {
+            "type": "work_efficiency",
+            "value": 0.15,
+            "applicable_jobs": ["company_health"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "therapy_couch",
+          "name": "放松理疗",
+          "rarity": "rare",
+          "price": 3000,
+          "description": "专业理疗服务，消除当天所有负面状态",
+          "buff_effect": {
+            "type": "remove_negative_states",
+            "value": 1,
+            "applicable_jobs": ["company_health"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_logistics": {
+    "shop_name": "速运集团装备站",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "delivery_bag",
+          "name": "快递专用背包",
+          "rarity": "common",
+          "price": 350,
+          "description": "大容量配送包，配送类工作速度+10%",
+          "buff_effect": {
+            "type": "work_speed_bonus",
+            "value": 0.10,
+            "applicable_jobs": ["company_logistics"]
+          }
+        },
+        {
+          "item_id": "gps_navigator",
+          "name": "车载GPS",
+          "rarity": "rare",
+          "price": 500,
+          "description": "精准导航仪，驾驶类工作体力消耗-15%",
+          "buff_effect": {
+            "type": "stamina_cost_reduction",
+            "value": 0.15,
+            "applicable_jobs": ["company_logistics"]
+          }
+        },
+        {
+          "item_id": "express_card",
+          "name": "会员快递卡",
+          "rarity": "common",
+          "price": 100,
+          "description": "快递会员卡，每月免费快递5次",
+          "buff_effect": {
+            "type": "passive_gold",
+            "value": 50,
+            "description": "每月额外获得50金币"
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "electric_bike",
+          "name": "电动车",
+          "rarity": "epic",
+          "price": 2500,
+          "description": "电动配送车，外卖配送速度+25%",
+          "buff_effect": {
+            "type": "work_speed_bonus",
+            "value": 0.25,
+            "applicable_jobs": ["company_logistics"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_food": {
+    "shop_name": "美食工坊厨具店",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "chef_knife",
+          "name": "主厨刀",
+          "rarity": "rare",
+          "price": 600,
+          "description": "锋利主厨刀，烹饪类工作产出+15%",
+          "buff_effect": {
+            "type": "work_efficiency",
+            "value": 0.15,
+            "applicable_jobs": ["company_food"]
+          }
+        },
+        {
+          "item_id": "recipe_book",
+          "name": "秘籍食谱",
+          "rarity": "epic",
+          "price": 400,
+          "description": "珍藏食谱，解锁隐藏菜谱",
+          "buff_effect": {
+            "type": "unlock_special",
+            "value": 1,
+            "applicable_jobs": ["company_food"]
+          }
+        },
+        {
+          "item_id": "apron",
+          "name": "高级围裙",
+          "rarity": "common",
+          "price": 250,
+          "description": "防水围裙，烹饪时心情消耗-20%",
+          "buff_effect": {
+            "type": "mood_cost_reduction",
+            "value": 0.20,
+            "applicable_jobs": ["company_food"]
+          }
+        },
+        {
+          "item_id": "energy_bar",
+          "name": "能量棒",
+          "rarity": "common",
+          "price": 20,
+          "description": "便携能量棒，恢复15饱腹度",
+          "buff_effect": {
+            "type": "restore_satiety",
+            "value": 15
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": []
+    }
+  },
+
+  "company_agri": {
+    "shop_name": "田园牧歌农资店",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "farm_tools",
+          "name": "农具套装",
+          "rarity": "common",
+          "price": 400,
+          "description": "基础农具套装，农业类工作速度+15%",
+          "buff_effect": {
+            "type": "work_speed_bonus",
+            "value": 0.15,
+            "applicable_jobs": ["company_agri"]
+          }
+        },
+        {
+          "item_id": "seed_pack",
+          "name": "优质种子",
+          "rarity": "common",
+          "price": 100,
+          "description": "高产种子，农业产出+10%",
+          "buff_effect": {
+            "type": "work_efficiency",
+            "value": 0.10,
+            "applicable_jobs": ["company_agri"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "watering_system",
+          "name": "灌溉系统",
+          "rarity": "epic",
+          "price": 800,
+          "description": "自动灌溉设备，农场工作效率+25%",
+          "buff_effect": {
+            "type": "work_efficiency",
+            "value": 0.25,
+            "applicable_jobs": ["company_agri"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_legal": {
+    "shop_name": "明法事务所用品店",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "law_books",
+          "name": "法律全书",
+          "rarity": "rare",
+          "price": 1000,
+          "description": "完整法律参考书，法律类工作质量+20%",
+          "buff_effect": {
+            "type": "quality_bonus",
+            "value": 0.20,
+            "applicable_jobs": ["company_legal"]
+          }
+        },
+        {
+          "item_id": "suit",
+          "name": "律师袍",
+          "rarity": "rare",
+          "price": 800,
+          "description": "正式律师袍，出庭时说服力+30%",
+          "buff_effect": {
+            "type": "negotiation_bonus",
+            "value": 0.30,
+            "applicable_jobs": ["company_legal"]
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "consultation_room",
+          "name": "咨询室使用权",
+          "rarity": "epic",
+          "price": 500,
+          "description": "高档咨询室，下次委托成功率+10%",
+          "buff_effect": {
+            "type": "next_success_rate",
+            "value": 0.10,
+            "applicable_jobs": ["company_legal"]
+          }
+        }
+      ]
+    }
+  },
+
+  "company_freelance": {
+    "shop_name": "零工市场杂货铺",
+    "tier1": {
+      "items": [
+        {
+          "item_id": "freelancer_id",
+          "name": "佣兵证件",
+          "rarity": "common",
+          "price": 200,
+          "description": "正规务工证件，所有公司初始好感度+20",
+          "buff_effect": {
+            "type": "initial_favorability",
+            "value": 20,
+            "applicable_all": true
+          }
+        },
+        {
+          "item_id": "multi_tool",
+          "name": "多功能工具",
+          "rarity": "rare",
+          "price": 400,
+          "description": "瑞士多功能刀，跨行业工作适应+10%",
+          "buff_effect": {
+            "type": "cross_job_adaptation",
+            "value": 0.10,
+            "applicable_all": true
+          }
+        }
+      ]
+    },
+    "tier2": {
+      "items": [
+        {
+          "item_id": "task_scanner",
+          "name": "委托扫描仪",
+          "rarity": "epic",
+          "price": 600,
+          "description": "智能扫描设备，可查看更高等级委托",
+          "buff_effect": {
+            "type": "view_higher_difficulty",
+            "value": 1,
+            "description": "可查看比当前好感度等级高1级的委托"
+          }
+        }
+      ]
+    }
+  },
+
+  "_buff_type_definitions": {
+    "income_bonus": "工作收入增加百分比",
+    "reward_bonus": "工作奖励增加百分比",
+    "income_multiplier": "收入倍数（直接相乘）",
+    "stamina_cost_reduction": "体力消耗减少百分比",
+    "energy_cost_reduction": "精力消耗减少百分比",
+    "mood_cost_reduction": "心情消耗减少百分比",
+    "health_loss_reduction": "健康损失减少百分比",
+    "work_speed_bonus": "工作速度增加百分比",
+    "work_efficiency": "工作效率增加百分比",
+    "quality_bonus": "工作质量增加百分比",
+    "evaluation_bonus": "评价加成百分比",
+    "crit_rate": "暴击率增加",
+    "favorability_bonus": "好感度获取增加百分比",
+    "energy_passive_restore": "精力被动恢复/小时",
+    "negotiation_bonus": "谈判/说服成功率增加",
+    "temp_reward_bonus": "临时奖励加成（有时限）",
+    "temp_crit_rate": "临时暴击率（有时限）",
+    "auto_heal": "受伤时自动恢复",
+    "remove_negative_states": "消除负面状态",
+    "passive_gold": "被动金币收入",
+    "restore_satiety": "恢复饱食度",
+    "unlock_special": "解锁特殊内容",
+    "initial_favorability": "初始好感度加成",
+    "cross_job_adaptation": "跨工作适应性",
+    "view_higher_difficulty": "查看更高难度委托",
+    "next_success_rate": "下次成功率加成"
+  }
+}
