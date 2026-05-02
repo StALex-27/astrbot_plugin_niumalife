@@ -32,8 +32,27 @@ from .modules.buff import (
 from .modules.tick import TickManager, ActionDetail, TICK_TYPE_SLEEP
 from .modules.renderer import CardRenderer
 
-# 导入命令模块
-from .src.commands import register_all_commands
+# 导入命令逻辑函数
+from .src.commands import (
+    run_profile_logic,
+    run_work_logic,
+    run_learn_logic,
+    run_entertain_logic,
+    run_eat_logic,
+    run_checkin_logic,
+    run_residence_logic,
+    run_backpack_logic,
+    run_stock_logic,
+    run_cancel_logic,
+    run_help_logic,
+    run_shop_logic,
+    run_equip_logic,
+    run_my_jobs_logic,
+    run_complete_job_logic,
+    run_cancel_job_logic,
+    run_settings_logic,
+)
+from .src.commands.interactive import get_job_mgr, get_favor_mgr
 
 
 # ============================================================
@@ -113,9 +132,13 @@ class CommandParser:
     "niumalife",
     "海獭 🦦",
     "牛马人生 - 打工群文字模拟经营游戏",
-    "0.1.7"
+    "0.1.9"
 )
 class NiumaLife(Star):
+    """牛马人生插件主类
+    
+    所有 @filter.command 命令直接定义在此类上，作为 thin wrapper 调用 run_xxx_logic 函数。
+    """
     def __init__(self, context: Context, config):
         super().__init__(context)
         self.config = config
@@ -137,8 +160,114 @@ class NiumaLife(Star):
         # 商店状态（随机商品刷新）
         self._shop_state = {}
 
-        # 注册所有命令
-        register_all_commands(self)
+    # ========================================================
+    # 命令路由 (thin wrapper)
+    # 所有命令仅调用对应的 run_xxx_logic 函数
+    # ========================================================
+
+    @filter.command("档案")
+    async def profile(self, event: AstrMessageEvent):
+        async for result in run_profile_logic(event, self._store, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("打工")
+    async def work(self, event: AstrMessageEvent):
+        jmgr = get_job_mgr()
+        fmgr = get_favor_mgr()
+        async for result in run_work_logic(event, self._store, self._parser, jmgr, fmgr):
+            yield result
+        event.stop_event()
+
+    @filter.command("学习")
+    async def learn(self, event: AstrMessageEvent):
+        async for result in run_learn_logic(event, self._store, self._parser, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("娱乐")
+    async def entertain(self, event: AstrMessageEvent):
+        async for result in run_entertain_logic(event, self._store, self._parser, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("吃")
+    async def eat(self, event: AstrMessageEvent):
+        async for result in run_eat_logic(event, self._store, self._parser, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("签到")
+    async def checkin(self, event: AstrMessageEvent):
+        async for result in run_checkin_logic(event, self._store, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("住")
+    async def residence_cmd(self, event: AstrMessageEvent):
+        async for result in run_residence_logic(event, self._store, self._parser, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("装备")
+    async def equip_cmd(self, event: AstrMessageEvent):
+        async for result in run_equip_logic(event, self._store, self._parser):
+            yield result
+        event.stop_event()
+
+    @filter.command("背包")
+    async def backpack(self, event: AstrMessageEvent):
+        async for result in run_backpack_logic(event, self._store):
+            yield result
+        event.stop_event()
+
+    @filter.command("商店")
+    async def shop_cmd(self, event: AstrMessageEvent):
+        async for result in run_shop_logic(event, self._store, self._parser):
+            yield result
+        event.stop_event()
+
+    @filter.command("股市")
+    async def stock_cmd(self, event: AstrMessageEvent):
+        async for result in run_stock_logic(event, self._store, self._parser, self.get_kv_data):
+            yield result
+        event.stop_event()
+
+    @filter.command("取消")
+    async def cancel(self, event: AstrMessageEvent):
+        async for result in run_cancel_logic(event, self._store, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("帮助")
+    async def help_cmd(self, event: AstrMessageEvent):
+        async for result in run_help_logic(event, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("我的委托")
+    async def my_jobs(self, event: AstrMessageEvent):
+        async for result in run_my_jobs_logic(event, self._store):
+            yield result
+        event.stop_event()
+
+    @filter.command("完成委托")
+    async def complete_job_cmd(self, event: AstrMessageEvent):
+        async for result in run_complete_job_logic(event, self._store, self._parser):
+            yield result
+        event.stop_event()
+
+    @filter.command("取消委托")
+    async def cancel_job_cmd(self, event: AstrMessageEvent):
+        async for result in run_cancel_job_logic(event, self._store, self._parser):
+            yield result
+        event.stop_event()
+
+    @filter.command("设置")
+    async def settings_cmd(self, event: AstrMessageEvent):
+        async for result in run_settings_logic(event, self._store, self._parser, self._get_group_config, self._save_group_config):
+            yield result
+        event.stop_event()
 
     # ========================================================
     # 配置读取助手
