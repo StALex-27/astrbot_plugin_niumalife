@@ -1413,7 +1413,7 @@ def register_interactive_commands(plugin):
             yield event.plain_result("📋 你还没有注册！\n先输入 /签到 注册")
             return
 
-        jmgr = get_job_manager()
+        jmgr = get_job_mgr()
         in_progress = jmgr.get_player_current_jobs(user)
 
         if not in_progress:
@@ -1458,7 +1458,7 @@ def register_interactive_commands(plugin):
             return
 
         _, args = plugin._parser.parse(event)
-        jmgr = get_job_manager()
+        jmgr = get_job_mgr()
 
         if not args:
             # 显示完成确认
@@ -1537,7 +1537,7 @@ def register_interactive_commands(plugin):
             return
 
         _, args = plugin._parser.parse(event)
-        jmgr = get_job_manager()
+        jmgr = get_job_mgr()
 
         if not args:
             yield event.plain_result("请指定要取消的委托编号\n格式: /取消委托 <编号>")
