@@ -7,7 +7,8 @@ from astrbot.api.event import AstrMessageEvent
 
 from ...modules.user import UserStatus
 from ...modules.tick import ActionDetail, TICK_TYPE_LEARN
-from ...modules.constants import MAX_ATTRIBUTE, INSTITUTIONS, COURSES
+from ...modules.institutions import INSTITUTIONS, COURSES
+from ...modules.constants import MAX_ATTRIBUTE
 from ...modules.institutions import (
     select_institutions_for_user, get_recommended_courses,
     get_institution, get_courses_by_institution,

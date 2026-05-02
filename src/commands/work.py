@@ -63,9 +63,27 @@ async def run_work_show_status_logic(user):
 
 async def run_work_show_pool_logic(user, jmgr, fmgr):
     """显示委托池"""
-    if "job_pool" not in user or not user["job_pool"]:
+    now = datetime.now(LOCAL_TZ)
+    
+    # 检查池是否过期（3小时）
+    pool_age_hours = None
+    if "job_pool_created_at" in user:
+        try:
+            created = datetime.fromisoformat(user["job_pool_created_at"])
+            pool_age_hours = (now - created).total_seconds() / 3600
+        except (ValueError, TypeError):
+            pass
+    
+    should_refresh = (
+        "job_pool" not in user 
+        or not user["job_pool"] 
+        or (pool_age_hours is not None and pool_age_hours >= 3)
+    )
+    
+    if should_refresh:
         pool = jmgr.generate_job_pool(user, count=6)
         user["job_pool"] = [j.to_dict() for j in pool]
+        user["job_pool_created_at"] = now.isoformat()
     
     pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
     favor_data = user.get("company_favorability", {})
@@ -86,7 +104,7 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
                 skills = ", ".join([f"{s}Lv.{l}" for s, l in job.skill_required.items()])
                 skill_str = f"\n   📋 {skills}"
             lines.append(
-                f"\n{i}. {diff_icon} {job.title} ({diff})"
+                f"\n{i}. [{job.job_id}] {diff_icon} {job.title} ({diff})"
                 f"\n   {emoji} 预计{job.duration_hours}h | 💰{job.base_reward}"
                 f"{skill_str}"
             )
@@ -107,8 +125,9 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
             for job in jobs[:2]:
                 diff = job.get("difficulty", "D")
                 diff_icon = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}.get(diff, "⚪")
+                job_id = job.get("job_id", "???")
                 lines.append(
-                    f"  • {diff_icon}{job.get('title', '未知委托')} ({diff}) "
+                    f"  • [{job_id}] {diff_icon}{job.get('title', '未知委托')} ({diff}) "
                     f"{job.get('duration_hours', 1)}h 💰{job.get('base_reward', 0)}"
                 )
     
@@ -136,6 +155,7 @@ async def run_work_refresh_pool_logic(user, jmgr):
     
     pool = jmgr.generate_job_pool(user, count=6)
     user["job_pool"] = [j.to_dict() for j in pool]
+    user["job_pool_created_at"] = datetime.now(LOCAL_TZ).isoformat()
     
     return (
         f"✅ 委托池已刷新！\n今日剩余刷新次数: {3 - user['job_pool_refresh_today']}"
@@ -216,6 +236,14 @@ async def run_work_show_company_detail_logic(user, company_id, fmgr, jmgr):
 async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
     """接受委托"""
     pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
+    
+    if not pool:
+        return (
+            "📋 委托池是空的！\n"
+            "先输入 /打工 查看当前委托池\n"
+            "委托池每3小时自动刷新，或输入 /打工 列表 手动刷新"
+        )
+    
     
     job = None
     job_idx = None
@@ -303,7 +331,12 @@ async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr):
     
     # 空闲状态 - 无参数：显示委托池
     if not cmd:
-        yield event.plain_result(await run_work_show_pool_logic(user, jmgr, fmgr))
+        result = await run_work_show_pool_logic(user, jmgr, fmgr)
+        yield event.plain_result(result)
+        
+        # 如果池刚刷新（刚创建或过期重建），保存用户数据
+        if "job_pool_created_at" in user:
+            await store.update_user(user_id, user)
         return
     
     # 子命令处理
@@ -312,7 +345,9 @@ async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr):
         return
         
     if cmd in ["列表", "list"]:
-        yield event.plain_result(await run_work_refresh_pool_logic(user, jmgr))
+        result = await run_work_refresh_pool_logic(user, jmgr)
+        await store.update_user(user_id, user)
+        yield event.plain_result(result)
         return
         
     # 检查是否是公司名

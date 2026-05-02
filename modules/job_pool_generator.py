@@ -180,7 +180,19 @@ class JobPoolGenerator:
             
     def _instantiate_template(self, template: dict, player_data: dict) -> dict:
         """将模板实例化为具体委托"""
-        job_id = f"job_{uuid.uuid4().hex[:8]}"
+        company_id = template["company_id"]
+        company = self.companies.get(company_id, {})
+        short_code = company.get("short_code", company_id[-1].upper())
+        
+        # 生成公司前缀+3位数字的job_id
+        used_ids = getattr(self, "_used_job_nums", set())
+        while True:
+            num = random.randint(1, 999)
+            job_id = f"{short_code}{num:03d}"
+            if job_id not in used_ids:
+                used_ids.add(job_id)
+                self._used_job_nums = used_ids
+                break
         
         # 随机选择难度
         difficulty = random.choice(template.get("difficulty_range", ["D"]))
