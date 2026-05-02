@@ -319,14 +319,6 @@ class WorkTickProcessor(TickProcessor):
         attrs["health"] = max(0, attrs["health"] - consume_health * hours_since_last)
         attrs["satiety"] = max(0, attrs["satiety"] - consume_satiety * 0.5 * hours_since_last)
         
-        # 结算金币收入
-        gold_earned = int(hourly_wage * hours_since_last * efficiency * income_multi * (1 + work_income_bonus))
-        gold_earned += int(fixed_bonus * hours_since_last)
-        
-        if gold_earned > 0:
-            detail["earned_gold"] += gold_earned
-            user["gold"] = user.get("gold", 0) + gold_earned
-        
         # 累积压力
         accumulate_pressure(user, pressure_type, pressure_rate * hours_since_last)
         
@@ -338,7 +330,7 @@ class WorkTickProcessor(TickProcessor):
         
         self.plugin.logger.info(
             f"整点结算: {user['nickname']} 工作 {job_name} "
-            f"结算 {hours_since_last:.2f} 小时, 金币 +{gold_earned}"
+            f"结算 {hours_since_last:.2f} 小时"
         )
     
     async def _complete_work(
@@ -369,9 +361,9 @@ class WorkTickProcessor(TickProcessor):
         data = detail.get("data", {})
         job_name = data.get("job_name", "工作")
         planned = detail["planned_ticks"]
-        hours = planned / TICKS_PER_HOUR
+        hours = planned / TICKS_PER_HOUR  # 计划总时长（小时）
         
-        # 如果上次结算后还有剩余时间，先结算剩余属性
+        # 如果上次结算后还有剩余时间，先结算剩余属性（不含金币）
         last_tick_str = detail.get("last_tick", detail["start_time"])
         last_tick = datetime.fromisoformat(last_tick_str)
         if last_tick.tzinfo is None:
@@ -382,41 +374,39 @@ class WorkTickProcessor(TickProcessor):
         remaining_hours = (now - last_tick).total_seconds() / 3600.0
         
         if remaining_hours > 0:
-            # 结算剩余时间的属性和金币
-            effects = calc_equipped_effects(user)
-            work_income_bonus = effects.get("work_income_bonus", 0) / 100.0
-            checkin = user.get("checkin", {})
-            active_buffs = checkin.get("active_buffs", [])
-            income_multi = calc_income_multi(active_buffs)
-            cost_multi = calc_cost_multi(active_buffs)
-            fixed_bonus = get_fixed_bonus(active_buffs)
-            debuff_penalty = calc_debuff_income_penalty(user)
-            pressure = user.get(f"{pressure_type}_pressure", 0)
-            pressure_penalty = 1.0 - get_pressure_penalty(pressure)
             attrs = user["attributes"]
-            
-            efficiency = pressure_penalty * debuff_penalty
-            if attrs["satiety"] < 20:
-                efficiency *= 0.7
-            
-            # 结算属性
+            # 结算属性（无金币，整点不发金币）
             attrs["strength"] = max(0, attrs["strength"] - consume_strength * remaining_hours * cost_multi)
             attrs["energy"] = max(0, attrs["energy"] - consume_energy * remaining_hours * cost_multi)
             attrs["mood"] = max(0, attrs["mood"] - consume_mood * remaining_hours)
             attrs["health"] = max(0, attrs["health"] - consume_health * remaining_hours)
             attrs["satiety"] = max(0, attrs["satiety"] - consume_satiety * 0.5 * remaining_hours)
-            
-            # 结算金币
-            gold_earned = int(hourly_wage * remaining_hours * efficiency * income_multi * (1 + work_income_bonus))
-            gold_earned += int(fixed_bonus * remaining_hours)
-            if gold_earned > 0:
-                detail["earned_gold"] += gold_earned
-                user["gold"] = user.get("gold", 0) + gold_earned
-            
             # 累积压力
             accumulate_pressure(user, pressure_type, pressure_rate * remaining_hours)
-            
             user["attributes"] = attrs
+        
+        # ========== 工作完成，结算全部金币（按计划总时长）==========
+        effects = calc_equipped_effects(user)
+        work_income_bonus = effects.get("work_income_bonus", 0) / 100.0
+        checkin = user.get("checkin", {})
+        active_buffs = checkin.get("active_buffs", [])
+        income_multi = calc_income_multi(active_buffs)
+        cost_multi = calc_cost_multi(active_buffs)
+        fixed_bonus = get_fixed_bonus(active_buffs)
+        debuff_penalty = calc_debuff_income_penalty(user)
+        pressure = user.get(f"{pressure_type}_pressure", 0)
+        pressure_penalty = 1.0 - get_pressure_penalty(pressure)
+        attrs = user.get("attributes", {})
+        
+        efficiency = pressure_penalty * debuff_penalty
+        if attrs.get("satiety", 100) < 20:
+            efficiency *= 0.7
+        
+        # 按计划总时长计算金币（不是 remaining_hours）
+        gold_earned = int(hourly_wage * hours * efficiency * income_multi * (1 + work_income_bonus))
+        gold_earned += int(fixed_bonus * hours)
+        detail["earned_gold"] = gold_earned
+        user["gold"] = user.get("gold", 0) + gold_earned
         
         # 记录
         user.setdefault("records", []).append({
