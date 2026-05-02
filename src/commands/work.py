@@ -97,15 +97,16 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
         for i, job in enumerate(pool, 1):
             company = jmgr.get_company_info(job.company_id)
             emoji = company.get("emoji", "") if company else ""
+            company_name = company.get("name", job.company_id) if company else job.company_id
             diff = job.difficulty
             diff_icon = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}.get(diff, "⚪")
             skill_str = ""
             if job.skill_required:
                 skills = ", ".join([f"{s}Lv.{l}" for s, l in job.skill_required.items()])
-                skill_str = f"\n   📋 {skills}"
+                skill_str = f"\n   📋 需要: {skills}"
             lines.append(
-                f"\n{i}. [{job.job_id}] {diff_icon} {job.title} ({diff})"
-                f"\n   {emoji} 预计{job.duration_hours}h | 💰{job.base_reward}"
+                f"\n{i}. [{job.job_id}] {diff_icon} {job.title}"
+                f"\n   🏢 {emoji}{company_name} | 🎯 {job.duration_hours}h | 💰{job.base_reward} | {diff_icon}{diff}"
                 f"{skill_str}"
             )
     else:
@@ -126,9 +127,15 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
                 diff = job.get("difficulty", "D")
                 diff_icon = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}.get(diff, "⚪")
                 job_id = job.get("job_id", "???")
+                skill_str = ""
+                skill_req = job.get("skill_required", {})
+                if skill_req:
+                    skills = ", ".join([f"{s}Lv.{l}" for s, l in skill_req.items()])
+                    skill_str = f"\n   📋 需要: {skills}"
                 lines.append(
-                    f"  • [{job_id}] {diff_icon}{job.get('title', '未知委托')} ({diff}) "
-                    f"{job.get('duration_hours', 1)}h 💰{job.get('base_reward', 0)}"
+                    f"  • [{job_id}] {diff_icon}{job.get('title', '未知委托')}"
+                    f"\n   🎯 {job.get('duration_hours', 1)}h | 💰{job.get('base_reward', 0)} | {diff_icon}{diff}"
+                    f"{skill_str}"
                 )
     
     lines.append("\n═══════════════════════════")
