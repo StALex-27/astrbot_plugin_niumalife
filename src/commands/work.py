@@ -105,11 +105,11 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
             level = fmgr.get_favor_level(favor)
             lines.append(f"\n{emoji} {name} (Lv.{level['level']} {level['name']})")
             for job in jobs[:2]:
-                diff = job.difficulty
+                diff = job.get("difficulty", "D")
                 diff_icon = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}.get(diff, "⚪")
                 lines.append(
-                    f"  • {diff_icon}{job.title} ({diff}) "
-                    f"{job.duration_hours}h 💰{job.base_reward}"
+                    f"  • {diff_icon}{job.get('title', '未知委托')} ({diff}) "
+                    f"{job.get('duration_hours', 1)}h 💰{job.get('base_reward', 0)}"
                 )
     
     lines.append("\n═══════════════════════════")
