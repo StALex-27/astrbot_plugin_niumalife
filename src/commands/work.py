@@ -248,7 +248,7 @@ async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
     job = None
     job_idx = None
     
-    # 按编号查找
+    # 按编号查找（1-based索引，如 /打工 1）
     try:
         idx = int(cmd) - 1
         if 0 <= idx < len(pool):
@@ -256,8 +256,16 @@ async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
             job_idx = idx
     except ValueError:
         pass
-            
-    # 按名称查找
+
+    # 按job_id查找（如 /打工 L231）
+    if not job:
+        for i, j in enumerate(pool):
+            if j.job_id == cmd:
+                job = j
+                job_idx = i
+                break
+
+    # 按名称查找（如 /打工 活动协助）
     if not job:
         for i, j in enumerate(pool):
             if cmd in j.title or cmd in j.description:
