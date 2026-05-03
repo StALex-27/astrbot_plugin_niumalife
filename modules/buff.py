@@ -262,7 +262,7 @@ class BuffManager:
             dict: buff实例，包含剩余次数/时间等运行时数据
         """
         if acquired_at is None:
-            acquired_at = datetime.now(timezone.utc)
+            acquired_at = datetime.now(timezone(timedelta(hours=8)))
         
         buff_def = ALL_BUFFS.get(buff_id)
         if not buff_def:

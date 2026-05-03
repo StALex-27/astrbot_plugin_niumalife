@@ -173,7 +173,7 @@ def should_refresh(last_time: Optional[str], interval: str) -> bool:
     
     try:
         last = datetime.fromisoformat(last_time)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(timezone(timedelta(hours=8)))
         elapsed = (now - last).total_seconds() / 60
         return elapsed >= parse_refresh_interval(interval)
     except:
@@ -221,7 +221,7 @@ def refresh_shop_items(plugin, shop_id: str) -> list:
     state = get_shop_state(plugin)
     state[shop_id] = {
         "random_items": selected,
-        "last_refresh": datetime.now(timezone.utc).isoformat()
+        "last_refresh": datetime.now(timezone(timedelta(hours=8))).isoformat()
     }
     save_shop_state(plugin, state)
     
@@ -275,7 +275,7 @@ def get_global_random_items(plugin, count: int = 3) -> list:
         selected = random.sample(GLOBAL_RANDOM_POOL, min(count, len(GLOBAL_RANDOM_POOL)))
         global_state = {
             "items": selected,
-            "last_refresh": datetime.now(timezone.utc).isoformat()
+            "last_refresh": datetime.now(timezone(timedelta(hours=8))).isoformat()
         }
         state["_global_random"] = global_state
         save_shop_state(plugin, state)

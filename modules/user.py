@@ -83,7 +83,7 @@ class DataStore:
             "user_id": user_id,
             "nickname": nickname,
             "status": UserStatus.FREE,
-            "registered_at": datetime.now(timezone.utc).isoformat(),
+            "registered_at": datetime.now(timezone(timedelta(hours=8))).isoformat(),
             "gold": INITIAL_GOLD,
             "attributes": INITIAL_ATTRIBUTES.copy(),
             "skills": INITIAL_SKILLS.copy(),

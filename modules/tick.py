@@ -90,9 +90,9 @@ class ActionDetail:
         """获取自开始以来的总秒数"""
         start = datetime.fromisoformat(detail["start_time"])
         if start.tzinfo is None:
-            start = start.replace(tzinfo=timezone.utc)
+            pass  # start_time 存的是本地时间
         if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
+            pass  # now 已是本地时间，不做 UTC 转换
         return (now - start).total_seconds()
     
     @staticmethod
@@ -106,9 +106,9 @@ class ActionDetail:
         """获取自上次tick以来的精确 tick 数（可有小数）"""
         last_tick = datetime.fromisoformat(detail.get("last_tick", detail["start_time"]))
         if last_tick.tzinfo is None:
-            last_tick = last_tick.replace(tzinfo=timezone.utc)
+            pass  # last_tick 存的是本地时间
         if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
+            pass  # now 已是本地时间，不做 UTC 转换
         return (now - last_tick).total_seconds() / 60.0
     
     @staticmethod
@@ -281,9 +281,9 @@ class WorkTickProcessor(TickProcessor):
         last_tick_str = detail.get("last_tick", detail["start_time"])
         last_tick = datetime.fromisoformat(last_tick_str)
         if last_tick.tzinfo is None:
-            last_tick = last_tick.replace(tzinfo=timezone.utc)
+            pass  # last_tick 存的是本地时间
         if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
+            pass  # now 已是本地时间，不做 UTC 转换
         
         # 计算距离上次结算的小时数
         hours_since_last = (now - last_tick).total_seconds() / 3600.0
@@ -367,9 +367,9 @@ class WorkTickProcessor(TickProcessor):
         last_tick_str = detail.get("last_tick", detail["start_time"])
         last_tick = datetime.fromisoformat(last_tick_str)
         if last_tick.tzinfo is None:
-            last_tick = last_tick.replace(tzinfo=timezone.utc)
+            pass  # last_tick 存的是本地时间
         if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
+            pass  # now 已是本地时间，不做 UTC 转换
         
         remaining_hours = (now - last_tick).total_seconds() / 3600.0
         
@@ -527,9 +527,9 @@ class SleepTickProcessor(TickProcessor):
         last_tick_str = detail.get("last_tick", detail["start_time"])
         last_tick = datetime.fromisoformat(last_tick_str)
         if last_tick.tzinfo is None:
-            last_tick = last_tick.replace(tzinfo=timezone.utc)
+            pass  # last_tick 存的是本地时间
         if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
+            pass  # now 已是本地时间，不做 UTC 转换
         
         # 计算距离上次结算的小时数
         hours_since_last = (now - last_tick).total_seconds() / 3600.0
@@ -589,9 +589,9 @@ class SleepTickProcessor(TickProcessor):
         last_tick_str = detail.get("last_tick", detail["start_time"])
         last_tick = datetime.fromisoformat(last_tick_str)
         if last_tick.tzinfo is None:
-            last_tick = last_tick.replace(tzinfo=timezone.utc)
+            pass  # last_tick 存的是本地时间
         if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
+            pass  # now 已是本地时间，不做 UTC 转换
         
         remaining_hours = (now - last_tick).total_seconds() / 3600.0
         
@@ -973,9 +973,9 @@ class TickManager:
         last_settle_str = user.get("last_idle_tick") or now.isoformat()
         last_settle = datetime.fromisoformat(last_settle_str)
         if last_settle.tzinfo is None:
-            last_settle = last_settle.replace(tzinfo=timezone.utc)
+            pass  # last_idle_tick 存的是本地时间，不做 UTC 转换
         if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
+            pass  # now 已是本地时间，不做 UTC 转换
         
         hours_since_last = (now - last_settle).total_seconds() / 3600.0
         if hours_since_last <= 0:
@@ -1062,7 +1062,7 @@ class TickManager:
         from datetime import timezone, timedelta
 
         # 将 UTC 时间转为 CST
-        cst = now.replace(tzinfo=timezone.utc).astimezone(timezone(timedelta(hours=8)))
+        cst = now
 
         # 每日结算: 23:30 CST
         cron_key = "daily_settlement"
@@ -1099,8 +1099,8 @@ class TickManager:
     
     async def _update_stocks(self, now: datetime):
         """更新股票价格（每小时调用）"""
-        # UTC hour 转 CST hour：交易时段 CST 08-20 = UTC 00-12
-        cst_hour = (now.hour + 8) % 24
+        # now 已是本地时间(CST)，直接使用
+        cst_hour = now.hour
         trading = is_trading_hour(cst_hour)
         
         try:

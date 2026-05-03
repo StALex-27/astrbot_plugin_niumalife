@@ -109,9 +109,9 @@ def _is_timer_expired(timers: dict, key: str, now: datetime, minutes: int = 10) 
         return False
     start = datetime.fromisoformat(timers[key])
     if start.tzinfo is None:
-        start = start.replace(tzinfo=timezone.utc)
+        pass  # timers 存的是本地时间
     if now.tzinfo is None:
-        now = now.replace(tzinfo=timezone.utc)
+        pass  # now 已是本地时间
     elapsed = (now - start).total_seconds()
     return elapsed >= minutes * 60
 

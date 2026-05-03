@@ -9,6 +9,8 @@ from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
+LOCAL_TZ = timezone(timedelta(hours=8))
+
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star, register, StarTools
 from astrbot.api import logger
@@ -154,8 +156,8 @@ class NiumaLife(Star):
         self._tick_manager = TickManager(self)
         self._renderer = CardRenderer()
 
-        self._last_hourly_tick = datetime.now(timezone.utc)
-        self._last_daily_tick = datetime.now(timezone.utc)
+        self._last_hourly_tick = datetime.now(LOCAL_TZ)
+        self._last_daily_tick = datetime.now(LOCAL_TZ)
         
         # 商店状态（随机商品刷新）
         self._shop_state = {}
@@ -443,7 +445,7 @@ class NiumaLife(Star):
         while True:
             try:
                 await asyncio.sleep(self._tick_interval)
-                now = datetime.now(timezone.utc)
+                now = datetime.now()
 
                 # 处理所有空闲用户的被动恢复
                 try:
@@ -646,10 +648,9 @@ class NiumaLife(Star):
     async def _do_daily_settlement(self):
         """执行每日结算"""
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(LOCAL_TZ)
         date_str = now.strftime("%Y-%m-%d")
-        local_now = datetime.now(timezone(timedelta(hours=8)))
-        today_key = local_now.strftime("%Y-%m-%d")
+        today_key = date_str
 
         # 从 KV 读取上次结算日期（持久化）
         last_date = await self.get_kv_data(DAILY_SETTLEMENT_KV_KEY, "")
