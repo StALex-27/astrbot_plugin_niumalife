@@ -15,12 +15,12 @@ async def run_cancel_logic(event: AstrMessageEvent, store, renderer):
         yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
         return
     
-    if user["status"] == UserStatus.FREE:
+    if user["status"] == UserStatus.FREE.value:
         yield event.plain_result("📋 你当前没有进行任何动作")
         return
     
     old_status = user.get("status", "动作")
-    user["status"] = UserStatus.FREE
+    user["status"] = UserStatus.FREE.value
     user["locked_until"] = None
     user["current_action"] = None
     user["action_detail"] = None

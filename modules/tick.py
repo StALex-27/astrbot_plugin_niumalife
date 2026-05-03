@@ -373,6 +373,11 @@ class WorkTickProcessor(TickProcessor):
         
         remaining_hours = (now - last_tick).total_seconds() / 3600.0
         
+        # 计算 cost_multi（供 remaining_hours 结算使用）
+        checkin = user.get("checkin", {})
+        active_buffs = checkin.get("active_buffs", [])
+        cost_multi = calc_cost_multi(active_buffs)
+        
         if remaining_hours > 0:
             attrs = user["attributes"]
             # 结算属性（无金币，整点不发金币）
@@ -388,10 +393,7 @@ class WorkTickProcessor(TickProcessor):
         # ========== 工作完成，结算全部金币（按计划总时长）==========
         effects = calc_equipped_effects(user)
         work_income_bonus = effects.get("work_income_bonus", 0) / 100.0
-        checkin = user.get("checkin", {})
-        active_buffs = checkin.get("active_buffs", [])
         income_multi = calc_income_multi(active_buffs)
-        cost_multi = calc_cost_multi(active_buffs)
         fixed_bonus = get_fixed_bonus(active_buffs)
         debuff_penalty = calc_debuff_income_penalty(user)
         pressure = user.get(f"{pressure_type}_pressure", 0)

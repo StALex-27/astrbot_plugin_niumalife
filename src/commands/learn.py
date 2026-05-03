@@ -30,7 +30,7 @@ async def run_learn_logic(event: AstrMessageEvent, store, parser, renderer):
         yield event.plain_result("📋 你还没有注册！\n先输入 /签到 注册")
         return
 
-    if user["status"] != UserStatus.FREE:
+    if user["status"] != UserStatus.FREE.value:
         yield event.plain_result(f"📋 你正在{user['status']}，无法学习\n先用 /取消 取消当前动作")
         return
 
@@ -206,7 +206,7 @@ async def run_learn_logic(event: AstrMessageEvent, store, parser, renderer):
         consume_mood=course.get("consume_mood", 5),
         cost=course.get("cost", 0)
     )
-    user["status"] = UserStatus.LEARNING
+    user["status"] = UserStatus.LEARNING.value
     user["current_action"] = TICK_TYPE_LEARN
     user["action_detail"] = detail
     await store.update_user(user_id, user)

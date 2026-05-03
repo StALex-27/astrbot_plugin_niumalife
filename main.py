@@ -523,7 +523,7 @@ class NiumaLife(Star):
 
         # 检查是否可以出院
         if attrs.get("health", 0) >= HOSPITAL_DISCHARGE_THRESHOLD:
-            user["status"] = UserStatus.FREE
+            user["status"] = UserStatus.FREE.value
             user["current_action"] = None
             user["action_detail"] = None
             logger.info(f"用户 {user.get('nickname')} 康复出院")
@@ -545,7 +545,7 @@ class NiumaLife(Star):
 
         # 检查健康是否 <= 0 → 强制住院
         if attrs.get("health", 100) <= 0:
-            user["status"] = UserStatus.HOSPITALIZED
+            user["status"] = UserStatus.HOSPITALIZED.value
             user["current_action"] = None
             user["action_detail"] = None
             await self._store.update_user(user_id, user)
@@ -607,7 +607,7 @@ class NiumaLife(Star):
             residence=residence
         )
 
-        user["status"] = UserStatus.SLEEPING
+        user["status"] = UserStatus.SLEEPING.value
         user["current_action"] = TICK_TYPE_SLEEP
         user["action_detail"] = detail
         await self._store.update_user(user_id, user)
