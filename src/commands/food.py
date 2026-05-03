@@ -34,7 +34,7 @@ async def run_entertain_logic(event: AstrMessageEvent, store, parser, renderer):
         yield event.plain_result("📋 你还没有注册！\\n先输入 /签到 注册")
         return
     
-    if user["status"] != UserStatus.FREE.value:
+    if user["status"] != UserStatus.FREE:
         yield event.plain_result(f"📋 你正在{user['status']}，无法娱乐")
         return
     
@@ -72,7 +72,7 @@ async def run_entertain_logic(event: AstrMessageEvent, store, parser, renderer):
         consume_energy=entertainment.get("consume_energy", 0)
     )
     
-    user["status"] = UserStatus.ENTERTAINING.value
+    user["status"] = UserStatus.ENTERTAINING
     user["current_action"] = TICK_TYPE_ENTERTAIN
     user["action_detail"] = detail
     await store.update_user(user_id, user)

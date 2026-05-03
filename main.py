@@ -488,9 +488,9 @@ class NiumaLife(Star):
         users = await self._store.get_all_users()
         for user_id, user in users.items():
             status = user.get("status")
-            if status == UserStatus.HOSPITALIZED.value:
+            if status == UserStatus.HOSPITALIZED:
                 await self._process_hospital(user_id, user, now)
-            elif status == UserStatus.FREE.value:
+            elif status == UserStatus.FREE:
                 await self._process_free_passive_recovery(user_id, user, now)
 
     async def _process_hospital(self, user_id: str, user: dict, now: datetime):
@@ -523,7 +523,7 @@ class NiumaLife(Star):
 
         # 检查是否可以出院
         if attrs.get("health", 0) >= HOSPITAL_DISCHARGE_THRESHOLD:
-            user["status"] = UserStatus.FREE.value
+            user["status"] = UserStatus.FREE
             user["current_action"] = None
             user["action_detail"] = None
             logger.info(f"用户 {user.get('nickname')} 康复出院")
@@ -545,7 +545,7 @@ class NiumaLife(Star):
 
         # 检查健康是否 <= 0 → 强制住院
         if attrs.get("health", 100) <= 0:
-            user["status"] = UserStatus.HOSPITALIZED.value
+            user["status"] = UserStatus.HOSPITALIZED
             user["current_action"] = None
             user["action_detail"] = None
             await self._store.update_user(user_id, user)
@@ -586,7 +586,7 @@ class NiumaLife(Star):
         if hour >= 0 and hour < 8:
             users = await self._store.get_all_users()
             for user_id, user in users.items():
-                if user.get("status") == UserStatus.FREE.value:
+                if user.get("status") == UserStatus.FREE:
                     await self._start_sleep_auto(user_id, user, now)
 
     async def _start_sleep_auto(self, user_id: str, user: dict, now: datetime):
@@ -607,7 +607,7 @@ class NiumaLife(Star):
             residence=residence
         )
 
-        user["status"] = UserStatus.SLEEPING.value
+        user["status"] = UserStatus.SLEEPING
         user["current_action"] = TICK_TYPE_SLEEP
         user["action_detail"] = detail
         await self._store.update_user(user_id, user)

@@ -921,7 +921,7 @@ class TickManager:
                 await self.process_user_actions(user_id, user, now)
                 
                 # 被动效果：仅对空闲状态用户生效
-                if user.get("status") == UserStatus.FREE.value:
+                if user.get("status") == UserStatus.FREE:
                     effects = calc_equipped_effects(user)
                     attrs = user.get("attributes", {})
                     checkin = user.get("checkin", {})

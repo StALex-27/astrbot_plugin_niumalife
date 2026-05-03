@@ -303,7 +303,7 @@ async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
         job_company=job.company_id,
         base_reward=job.base_reward,
     )
-    user["status"] = UserStatus.WORKING.value
+    user["status"] = UserStatus.WORKING
     user["current_action"] = TICK_TYPE_WORK
     user["action_detail"] = detail
     
@@ -340,7 +340,7 @@ async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr):
     cmd = args[0] if args else None
     
     # 工作状态：显示当前进度
-    if user["status"] == UserStatus.WORKING.value:
+    if user["status"] == UserStatus.WORKING:
         yield event.plain_result(await run_work_show_status_logic(user))
         return
     
