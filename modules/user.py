@@ -4,7 +4,7 @@
 重构: 使用 AstrBot KV 存储替代 JSON 文件，解决并发竞态问题
 """
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -21,6 +21,7 @@ class UserStatus:
     LEARNING = "学习中"
     ENTERTAINING = "娱乐中"
     HOSPITALIZED = "住院中"
+    FISHING = "钓鱼中"
 
 
 # KV 存储键名前缀
@@ -295,6 +296,16 @@ def migrate_user_data(user_data: dict) -> dict:
     # 迁移装备栏位系统
     if "equipped_items" not in user_data:
         user_data["equipped_items"] = {}
+    # 钓鱼系统迁移 v1.x
+    if "fishing" not in user_data or not isinstance(user_data.get("fishing"), dict):
+        user_data["fishing"] = {
+            "fish_caught": {},
+            "fish_records": [],
+            "total_fishing_count": 0,
+            "total_fishing_value": 0,
+            "biggest_catch": {},
+            "fish_title": "",
+        }
     if "skills" not in user_data or not isinstance(user_data.get("skills"), dict):
         user_data["skills"] = INITIAL_SKILLS.copy()
     if "residence" not in user_data:

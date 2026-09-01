@@ -1,8 +1,4 @@
-"""
-数据访问层
-"""
+"""data 子包：用户数据访问"""
+from .user_repository import UserRepository
 
-from .json_store import JSONStore
-from .user_dao import UserDAO
-
-__all__ = ['JSONStore', 'UserDAO']
+__all__ = ["UserRepository"]

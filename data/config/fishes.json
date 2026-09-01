@@ -1,0 +1,102 @@
+{
+  "_comment": "鱼类数据 - 钓鱼系统 v1.0",
+  "_rarity_weight": {"common": 1.0, "uncommon": 0.4, "rare": 0.12, "epic": 0.03, "legendary": 0.005},
+
+  "小鲫鱼": {
+    "name": "小鲫鱼", "emoji": "🐟",
+    "category": "fish", "rarity": "common", "tier": 1,
+    "habitat": ["pond", "river"],
+    "weight_range": [0.1, 0.4],
+    "base_price": 8,
+    "satiety_restore": 15,
+    "mood_restore": 1,
+    "exp_reward": 5,
+    "size_labels": ["指头长", "巴掌大", "手臂粗"],
+    "size_thresholds": [0.15, 0.25, 0.35],
+    "desc": "最常见的淡水鱼"
+  },
+  "草鱼": {
+    "name": "草鱼", "emoji": "🐟",
+    "category": "fish", "rarity": "common", "tier": 1,
+    "habitat": ["pond", "river", "reservoir"],
+    "weight_range": [0.5, 2.0],
+    "base_price": 18,
+    "satiety_restore": 25, "mood_restore": 2,
+    "exp_reward": 10,
+    "size_labels": ["小条", "中条", "大条", "巨条"],
+    "size_thresholds": [0.8, 1.3, 1.7],
+    "desc": "四大家鱼之一"
+  },
+  "鲤鱼": {
+    "name": "鲤鱼", "emoji": "🐠",
+    "category": "fish", "rarity": "uncommon", "tier": 2,
+    "habitat": ["pond", "river"],
+    "weight_range": [0.3, 1.5],
+    "base_price": 35,
+    "satiety_restore": 20, "mood_restore": 3,
+    "exp_reward": 15,
+    "size_labels": ["小鲤", "中鲤", "大鲤"],
+    "size_thresholds": [0.6, 1.0],
+    "desc": "寓意吉祥"
+  },
+  "鲶鱼": {
+    "name": "鲶鱼", "emoji": "🐡",
+    "category": "fish", "rarity": "uncommon", "tier": 2,
+    "habitat": ["river", "reservoir"],
+    "weight_range": [0.5, 3.0],
+    "base_price": 60,
+    "satiety_restore": 30, "mood_restore": 2,
+    "exp_reward": 20,
+    "size_labels": ["小鲶", "中鲶", "大鲶", "巨鲶"],
+    "size_thresholds": [1.0, 2.0, 2.7],
+    "desc": "无鳞凶猛"
+  },
+  "黑鱼": {
+    "name": "黑鱼", "emoji": "🐟",
+    "category": "fish", "rarity": "rare", "tier": 3,
+    "habitat": ["river", "reservoir"],
+    "weight_range": [0.8, 4.0],
+    "base_price": 150,
+    "satiety_restore": 35, "mood_restore": 5,
+    "exp_reward": 50,
+    "size_labels": ["小斑", "中斑", "大斑", "斑王"],
+    "size_thresholds": [1.5, 2.5, 3.5],
+    "desc": "滋补上品"
+  },
+  "鳜鱼": {
+    "name": "鳜鱼", "emoji": "🐟",
+    "category": "fish", "rarity": "rare", "tier": 3,
+    "habitat": ["reservoir"],
+    "weight_range": [0.3, 2.0],
+    "base_price": 220,
+    "satiety_restore": 25, "mood_restore": 8,
+    "exp_reward": 60,
+    "size_labels": ["小鳜", "中鳜", "大鳜"],
+    "size_thresholds": [0.8, 1.4],
+    "desc": "淡水鱼中的贵族"
+  },
+  "虹鳟": {
+    "name": "虹鳟", "emoji": "🐠",
+    "category": "fish", "rarity": "epic", "tier": 4,
+    "habitat": ["reservoir"],
+    "weight_range": [1.0, 5.0],
+    "base_price": 800,
+    "satiety_restore": 40, "mood_restore": 10,
+    "exp_reward": 150,
+    "size_labels": ["小虹", "中虹", "大虹", "虹王"],
+    "size_thresholds": [2.0, 3.5, 4.5],
+    "desc": "颜值与美味并存"
+  },
+  "黄金锦鲤": {
+    "name": "黄金锦鲤", "emoji": "🐡",
+    "category": "fish", "rarity": "legendary", "tier": 5,
+    "habitat": ["pond"],
+    "weight_range": [1.5, 4.0],
+    "base_price": 3000,
+    "satiety_restore": 50, "mood_restore": 30,
+    "exp_reward": 500,
+    "size_labels": ["罕见大鱼", "稀世巨物"],
+    "size_thresholds": [2.5],
+    "desc": "传说能带来好运"
+  }
+}

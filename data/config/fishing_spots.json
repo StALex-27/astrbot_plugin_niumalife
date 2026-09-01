@@ -1,0 +1,31 @@
+{
+  "_comment": "钓鱼水域数据",
+
+  "村口池塘": {
+    "name": "村口池塘", "emoji": "🪣",
+    "tier": 1, "unlock_level": 1,
+    "success_rate": 0.50,
+    "habitat_tags": ["pond"],
+    "duration_ticks": 30,
+    "desc": "老家的池塘,鱼多易上钩",
+    "license_fee": 0
+  },
+  "城郊河边": {
+    "name": "城郊河边", "emoji": "🏞️",
+    "tier": 2, "unlock_level": 3,
+    "success_rate": 0.30,
+    "habitat_tags": ["pond", "river"],
+    "duration_ticks": 30,
+    "desc": "城里人周末最爱去的地方",
+    "license_fee": 50
+  },
+  "深山水库": {
+    "name": "深山水库", "emoji": "🌊",
+    "tier": 3, "unlock_level": 6,
+    "success_rate": 0.15,
+    "habitat_tags": ["river", "reservoir"],
+    "duration_ticks": 30,
+    "desc": "深藏不露的宝库,但要小心大鱼",
+    "license_fee": 200
+  }
+}

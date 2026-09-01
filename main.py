@@ -18,7 +18,10 @@ from astrbot.core.message.message_event_result import MessageChain
 
 # 导入自定义模块
 from .modules.constants import ITEMS, STOCKS, FOODS, RESIDENCES, JOBS, COURSES, ENTERTAINMENTS, MAX_ATTRIBUTE, INITIAL_GOLD, INITIAL_ATTRIBUTES, INITIAL_SKILLS, TICKS_PER_HOUR
+from .modules import constants as _constants_module
 from .modules.user import DataStore, UserStatus, migrate_user_data
+from .src.data.user_repository import UserRepository
+from .src.reports.daily_report import DailyReportGenerator
 from .modules.status import StatusTransition
 from .modules.skills import get_skill_level, exp_to_next_level
 from .modules.checkin import (
@@ -33,6 +36,9 @@ from .modules.buff import (
 )
 from .modules.tick import TickManager, ActionDetail, TICK_TYPE_SLEEP
 from .modules.renderer import CardRenderer
+from .modules.messenger import Messenger
+from .modules.keyword_trigger import KeywordRouter
+from .modules.keyword_routes import get_keyword_router
 
 # 导入命令逻辑函数
 from .src.commands import (
@@ -53,6 +59,8 @@ from .src.commands import (
     run_complete_job_logic,
     run_cancel_job_logic,
     run_settings_logic,
+    run_fishing_logic,
+    run_fish_dex_logic,
 )
 from .src.commands.interactive import get_job_mgr, get_favor_mgr
 
@@ -72,20 +80,8 @@ SATIETY_CONSUMPTION_RATE = 0.05
 
 GROUP_ID = ""
 
-# KV Storage Keys
-GROUP_CONFIG_PREFIX = "group_config:"
-GROUP_DAILY_PREFIX = "group_daily:"
-
-# 群组默认配置
-DEFAULT_GROUP_CONFIG = {
-    "enabled": False,
-    "daily_report_hour": 23,
-    "daily_report_minute": 0,
-    "subscribers": [],
-    "total_gold_earned": 0,
-    "total_members": 0,
-}
-DAILY_SETTLEMENT_KV_KEY = "__daily_settlement__:last_date"
+# 注意: GROUP_CONFIG_PREFIX / DEFAULT_GROUP_CONFIG / DAILY_SETTLEMENT_KV_KEY
+# 已迁至 src/reports/daily_report.py（保持 KV key 不变，向后兼容）
 
 
 # ============================================================
@@ -147,7 +143,8 @@ class NiumaLife(Star):
         self.context = context
 
         self._data_dir = StarTools.get_data_dir("niumalife")
-        self._store = DataStore(self)
+        self._store = UserRepository(self)
+        self._daily_report = DailyReportGenerator(self, self._store, _constants_module)
         self._parser = CommandParser()
         self.logger = logger
 
@@ -155,12 +152,124 @@ class NiumaLife(Star):
         self._tick_interval = 60
         self._tick_manager = TickManager(self)
         self._renderer = CardRenderer()
+        self._messenger = Messenger(self)
+        self._keyword_router = get_keyword_router()
+        self._keyword_handlers = self._build_keyword_handlers()
 
         self._last_hourly_tick = datetime.now(LOCAL_TZ)
         self._last_daily_tick = datetime.now(LOCAL_TZ)
-        
+
         # 商店状态（随机商品刷新）
         self._shop_state = {}
+
+        # === 通知基础设施（方案G） ===
+        # tick 等非命令上下文需要发消息时，把 (user_id, MessageChain) 扔进这个队列。
+        # 后台 _notification_consumer task 拿出后通过缓存的最近 event.send() 发送，
+        # 走 AstrBot 内部路径，完全不碰 StarTools.send_message / platform_id。
+        self._notify_queue: asyncio.Queue = asyncio.Queue()
+        self._recent_event: dict[str, "AstrMessageEvent"] = {}  # user_id -> 最近 event
+        self._event_max_age_seconds = 3600  # event 超过1小时视为过期
+
+    def _cache_event(self, event) -> None:
+        """由所有 @filter.command wrapper 调用，缓存最近事件用于后台通知。"""
+        try:
+            user_id = str(event.get_sender_id())
+            self._recent_event[user_id] = event
+        except Exception:
+            pass
+
+    async def _notification_consumer(self) -> None:
+        """后台消费 _notify_queue，通过缓存的 event 发消息。
+
+        完全不构造 MessageSession —— 走 event.send(MessageChain) 路径，
+        AstrBot 内部处理 session/平台匹配，无需 platform_id。
+        """
+        while True:
+            try:
+                user_id, msg_chain = await self._notify_queue.get()
+                event = self._recent_event.get(user_id)
+                if event is None:
+                    self.logger.warning(
+                        f"[NiumaLife] 通知丢弃: 用户 {user_id} 无最近 event"
+                    )
+                    continue
+                try:
+                    await event.send(msg_chain)
+                except Exception as e:
+                    self.logger.error(
+                        f"[NiumaLife] 通知发送失败 (user={user_id}): {e}"
+                    )
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                self.logger.error(f"[NiumaLife] _notification_consumer 异常: {e}")
+
+    # ========================================================
+    # 关键词触发层（支持群聊中不使用 @ 直接触发）
+    # ========================================================
+
+    def _build_keyword_handlers(self) -> dict:
+        """建立 action -> 方法名的映射，供 on_keyword_msg 调用"""
+        return {
+            "profile": self.profile,
+            "work": self.work,
+            "learn": self.learn,
+            "entertain": self.entertain,
+            "eat": self.eat,
+            "checkin": self.checkin,
+            "residence_cmd": self.residence_cmd,
+            "equip_cmd": self.equip_cmd,
+            "backpack": self.backpack,
+            "shop_cmd": self.shop_cmd,
+            "stock_cmd": self.stock_cmd,
+            "cancel": self.cancel,
+            "help_cmd": self.help_cmd,
+            "my_jobs": self.my_jobs,
+            "complete_job_cmd": self.complete_job_cmd,
+            "cancel_job_cmd": self.cancel_job_cmd,
+            "settings_cmd": self.settings_cmd,
+            "fishing_cmd": self.fishing_cmd,
+            "fish_dex_cmd": self.fish_dex_cmd,
+        }
+
+    @filter.event_message_type(filter.EventMessageType.ALL)
+    async def on_keyword_msg(self, event: AstrMessageEvent):
+        """监听所有消息，在群聊中通过纯文触发指令（不需要 @）
+
+        如果消息是 @ 触发的（is_at_or_wake_command=True），则跳过，
+        交给 @filter.command 层处理。
+        如果消息是普通文本，则走这里通过 KeywordRouter 匹配并执行。
+        """
+        self._cache_event(event)
+        # 1. 如果是 @ 触发或私聊，走 @filter.command，跳过这里
+        if event.is_at_or_wake_command or event.is_private_chat():
+            return
+
+        message_str = event.message_str
+        if not message_str:
+            return
+
+        # 2. 用 KeywordRouter 匹配（支持 /打工、打工 等）
+        route = self._keyword_router.match_command_route(message_str)
+        if route is None:
+            return
+
+        # 3. 找到对应的 handler 并执行
+        handler = self._keyword_handlers.get(route.action)
+        if handler is None:
+            logger.warning(f"[NiumaLife] 未找到 action 对应的 handler: {route.action}")
+            return
+
+        logger.info(f"[NiumaLife] 关键词触发: {route.keyword} -> {route.action}")
+        try:
+            async for result in handler(event):
+                yield result
+            event.stop_event()
+        except TypeError:
+            result = await handler(event)
+            if result:
+                yield result
+            event.stop_event()
 
     # ========================================================
     # 命令路由 (thin wrapper)
@@ -169,105 +278,143 @@ class NiumaLife(Star):
 
     @filter.command("档案")
     async def profile(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_profile_logic(event, self._store, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("打工")
     async def work(self, event: AstrMessageEvent):
+        self._cache_event(event)
         jmgr = get_job_mgr()
         fmgr = get_favor_mgr()
-        async for result in run_work_logic(event, self._store, self._parser, jmgr, fmgr):
+        async for result in run_work_logic(event, self._store, self._parser, jmgr, fmgr, self._renderer):
+            yield result
+        event.stop_event()
+
+    @filter.command("完成委托")
+    async def complete_job(self, event: AstrMessageEvent):
+        self._cache_event(event)
+        async for result in run_complete_job_logic(event, self._store, self._parser, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("学习")
     async def learn(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_learn_logic(event, self._store, self._parser, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("娱乐")
     async def entertain(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_entertain_logic(event, self._store, self._parser, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("吃")
     async def eat(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_eat_logic(event, self._store, self._parser, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("签到")
     async def checkin(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_checkin_logic(event, self._store, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("住")
     async def residence_cmd(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_residence_logic(event, self._store, self._parser, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("装备")
     async def equip_cmd(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_equip_logic(event, self._store, self._parser):
             yield result
         event.stop_event()
 
     @filter.command("背包")
     async def backpack(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_backpack_logic(event, self._store):
             yield result
         event.stop_event()
 
     @filter.command("商店")
     async def shop_cmd(self, event: AstrMessageEvent):
-        async for result in run_shop_logic(event, self._store, self._parser):
+        self._cache_event(event)
+        async for result in run_shop_logic(event, self._store, self._parser, self):
             yield result
         event.stop_event()
 
     @filter.command("股市")
     async def stock_cmd(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_stock_logic(event, self._store, self._parser, self.get_kv_data):
             yield result
         event.stop_event()
 
     @filter.command("取消")
     async def cancel(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_cancel_logic(event, self._store, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("帮助")
     async def help_cmd(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_help_logic(event, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("我的委托")
     async def my_jobs(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_my_jobs_logic(event, self._store):
             yield result
         event.stop_event()
 
     @filter.command("完成委托")
     async def complete_job_cmd(self, event: AstrMessageEvent):
-        async for result in run_complete_job_logic(event, self._store, self._parser):
+        self._cache_event(event)
+        async for result in run_complete_job_logic(event, self._store, self._parser, self._renderer):
             yield result
         event.stop_event()
 
     @filter.command("取消委托")
     async def cancel_job_cmd(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_cancel_job_logic(event, self._store, self._parser):
             yield result
         event.stop_event()
 
     @filter.command("设置")
     async def settings_cmd(self, event: AstrMessageEvent):
+        self._cache_event(event)
         async for result in run_settings_logic(event, self._store, self._parser, self._get_group_config, self._save_group_config):
+            yield result
+        event.stop_event()
+
+    @filter.command("钓鱼")
+    async def fishing_cmd(self, event: AstrMessageEvent):
+        self._cache_event(event)
+        async for result in run_fishing_logic(event, self._store):
+            yield result
+        event.stop_event()
+
+    @filter.command("鱼塘")
+    async def fish_dex_cmd(self, event: AstrMessageEvent):
+        self._cache_event(event)
+        async for result in run_fish_dex_logic(event, self._store, self._renderer):
             yield result
         event.stop_event()
 
@@ -335,6 +482,10 @@ class NiumaLife(Star):
         # 启动主循环
         task1 = asyncio.create_task(self._tick_loop())
         self._background_tasks.append(task1)
+
+        # 启动通知 consumer（方案G：tick 发消息走这里）
+        task2 = asyncio.create_task(self._notification_consumer())
+        self._background_tasks.append(task2)
 
         logger.info("Tick系统已启动 (基于时间触发)")
 
@@ -445,7 +596,7 @@ class NiumaLife(Star):
         while True:
             try:
                 await asyncio.sleep(self._tick_interval)
-                now = datetime.now()
+                now = datetime.now(LOCAL_TZ)
 
                 # 处理所有空闲用户的被动恢复
                 try:
@@ -500,26 +651,17 @@ class NiumaLife(Star):
         from .modules.constants import (
             HOSPITAL_COST_PER_HOUR, HOSPITAL_HEALTH_PER_HOUR,
             HOSPITAL_STRENGTH_PER_HOUR, HOSPITAL_ENERGY_PER_HOUR,
-            HOSPITAL_MOOD_TARGET, HOSPITAL_DISCHARGE_THRESHOLD
+            HOSPITAL_MOOD_PER_HOUR, HOSPITAL_DISCHARGE_THRESHOLD
         )
 
         attrs = user.get("attributes", {})
 
-        # 每小时消耗金币
-        cost_per_tick = HOSPITAL_COST_PER_HOUR / TICKS_PER_HOUR
-        user["gold"] = max(0, user.get("gold", 0) - cost_per_tick)
-
-        # 每分钟恢复
-        attrs["health"] = min(100, attrs.get("health", 0) + HOSPITAL_HEALTH_PER_HOUR / TICKS_PER_HOUR)
-        attrs["strength"] = min(100, attrs.get("strength", 0) + HOSPITAL_STRENGTH_PER_HOUR / TICKS_PER_HOUR)
-        attrs["energy"] = min(100, attrs.get("energy", 0) + HOSPITAL_ENERGY_PER_HOUR / TICKS_PER_HOUR)
-
-        # 心情固定在 HOSPITAL_MOOD_TARGET
-        current_mood = attrs.get("mood", 0)
-        if current_mood > HOSPITAL_MOOD_TARGET:
-            attrs["mood"] = max(HOSPITAL_MOOD_TARGET, current_mood - 1 / TICKS_PER_HOUR)
-        elif current_mood < HOSPITAL_MOOD_TARGET:
-            attrs["mood"] = min(HOSPITAL_MOOD_TARGET, current_mood + 1 / TICKS_PER_HOUR)
+        # 免费住院，不扣金币
+        # 每小时恢复四项属性
+        attrs["health"] = max(0, min(100, attrs.get("health", 0) + HOSPITAL_HEALTH_PER_HOUR / TICKS_PER_HOUR))
+        attrs["strength"] = max(0, min(100, attrs.get("strength", 0) + HOSPITAL_STRENGTH_PER_HOUR / TICKS_PER_HOUR))
+        attrs["energy"] = max(0, min(100, attrs.get("energy", 0) + HOSPITAL_ENERGY_PER_HOUR / TICKS_PER_HOUR))
+        attrs["mood"] = max(0, min(100, attrs.get("mood", 0) + HOSPITAL_MOOD_PER_HOUR / TICKS_PER_HOUR))
 
         user["attributes"] = attrs
 
@@ -560,15 +702,15 @@ class NiumaLife(Star):
         # 计算 debuff 恢复惩罚
         recovery_penalty = calc_debuff_recovery_penalty(user)
 
-        # 被动恢复 (每小时基础值 * 住所加成 * debuff惩罚)
-        recovery_per_hour = 2
-        attrs["health"] = min(MAX_ATTRIBUTE, attrs.get("health", 0) + recovery_per_hour * res_info.get("health_recovery", 1) * recovery_penalty)
-        attrs["strength"] = min(MAX_ATTRIBUTE, attrs.get("strength", 0) + recovery_per_hour * res_info.get("strength_recovery", 1) * recovery_penalty)
-        attrs["energy"] = min(MAX_ATTRIBUTE, attrs.get("energy", 0) + recovery_per_hour * res_info.get("energy_recovery", 1) * recovery_penalty)
-        attrs["mood"] = min(MAX_ATTRIBUTE, attrs.get("mood", 0) + recovery_per_hour * res_info.get("mood_recovery", 0) * recovery_penalty)
+        # 被动恢复 (每小时基础值 / 60 = 每分钟恢复量 * 住所加成 * debuff惩罚)
+        recovery_per_minute = 2 / 60
+        attrs["health"] = min(MAX_ATTRIBUTE, attrs.get("health", 0) + recovery_per_minute * res_info.get("health_recovery", 1) * recovery_penalty)
+        attrs["strength"] = min(MAX_ATTRIBUTE, attrs.get("strength", 0) + recovery_per_minute * res_info.get("strength_recovery", 1) * recovery_penalty)
+        attrs["energy"] = min(MAX_ATTRIBUTE, attrs.get("energy", 0) + recovery_per_minute * res_info.get("energy_recovery", 1) * recovery_penalty)
+        attrs["mood"] = min(MAX_ATTRIBUTE, attrs.get("mood", 0) + recovery_per_minute * res_info.get("mood_recovery", 0) * recovery_penalty)
 
-        # 饱食度每分钟消耗
-        attrs["satiety"] = max(0, attrs.get("satiety", 0) - SATIETY_CONSUMPTION_RATE)
+        # 饱食度消耗已禁用
+        # attrs["satiety"] = max(0, attrs.get("satiety", 0) - SATIETY_CONSUMPTION_RATE)
 
         # 应用 debuff 体力流失（饥饿等）
         apply_debuff_strength_drain(attrs, user)
@@ -622,320 +764,22 @@ class NiumaLife(Star):
             logger.error(f"数据保存失败: {e}")
 
     async def _get_group_config(self, group_id: str) -> dict:
-        """获取群组配置"""
-        key = f"{GROUP_CONFIG_PREFIX}{group_id}"
-        config = await self.get_kv_data(key, None)
-        if config is None:
-            config = DEFAULT_GROUP_CONFIG.copy()
-            config["subscribers"] = []
-            await self.put_kv_data(key, config)
-        return config
-    
+        """获取群组配置（thin wrapper，委托给 DailyReportGenerator）。"""
+        return await self._daily_report.get_group_config(group_id)
+
     async def _save_group_config(self, group_id: str, config: dict):
-        """保存群组配置"""
-        key = f"{GROUP_CONFIG_PREFIX}{group_id}"
-        await self.put_kv_data(key, config)
-    
+        """保存群组配置（thin wrapper，委托给 DailyReportGenerator）。"""
+        await self._daily_report.save_group_config(group_id, config)
+
     async def _get_or_create_group_config(self, group_id: str) -> dict:
-        """获取或创建群组配置"""
-        config = await self._get_group_config(group_id)
-        return config
-    
+        """获取或创建群组配置（保留兼容）。"""
+        return await self._get_group_config(group_id)
+
     # ========================================================
-    # 每日结算
+    # 每日结算（thin wrapper）
     # ========================================================
-    
+
     async def _do_daily_settlement(self):
-        """执行每日结算"""
-
-        now = datetime.now(LOCAL_TZ)
-        date_str = now.strftime("%Y-%m-%d")
-        today_key = date_str
-
-        # 从 KV 读取上次结算日期（持久化）
-        last_date = await self.get_kv_data(DAILY_SETTLEMENT_KV_KEY, "")
-        if last_date == date_str:
-            logger.info("今日已结算,跳过")
-            return
-
-        logger.info(f"执行每日结算: {date_str}")
-
-        # 收集所有用户数据
-        users = await self._store.get_all_users()
-        
-        # 按群组分组用户
-        group_users: dict[str, list] = {}  # group_id -> [(user_id, user), ...]
-        user_groups: dict[str, list] = {}   # user_id -> [group_id, ...]
-        rent_deducted: dict[str, list] = {} # group_id -> [(name, amount, res), ...]
-        group_gold: dict[str, int] = {}     # group_id -> total gold earned today
-        
-        for user_id, user in users.items():
-            try:
-                # 更新每日统计中的今日金币变动
-                from .modules.user import update_lifetime_stat, update_daily_stat, get_today_key
-                today_stats = user.get("daily_stats", {}).get(get_today_key(), {})
-                gold_work = today_stats.get("gold_work", 0)
-                gold_profit = today_stats.get("gold_stock_profit", 0)
-                gold_loss = today_stats.get("gold_stock_loss", 0)
-                net_gold = gold_work + gold_profit - gold_loss
-                
-                if net_gold > 0:
-                    update_lifetime_stat(user, "total_gold_earned", net_gold)
-                
-                # 处理房租
-                attrs = user.get("attributes", {})
-                residence = user.get("residence", "桥下")
-                if residence != "桥下":
-                    res_info = RESIDENCES.get(residence)
-                    if res_info:
-                        daily_rent = res_info.get("daily_rent", 0)
-                        if daily_rent > 0 and user.get("gold", 0) >= daily_rent:
-                            user["gold"] -= daily_rent
-                            # 记录到用户所在群
-                            for gid in user.get("groups", []):
-                                if gid not in rent_deducted:
-                                    rent_deducted[gid] = []
-                                rent_deducted[gid].append((user.get("nickname", "匿名"), daily_rent, residence))
-                            # 累计群金币
-                            for gid in user.get("groups", []):
-                                group_gold[gid] = group_gold.get(gid, 0) + daily_rent
-                
-                # 属性衰减
-                attrs["satiety"] = max(0, attrs.get("satiety", 0) - 20)
-                if attrs["satiety"] < 20:
-                    attrs["health"] = max(0, attrs["health"] - 5)
-                    attrs["mood"] = max(0, attrs["mood"] - 10)
-                
-                # 按群组记录用户
-                for gid in user.get("groups", []):
-                    if gid not in group_users:
-                        group_users[gid] = []
-                    group_users[gid].append((user_id, user))
-                
-                # 更新群组累计金币
-                for gid in user.get("groups", []):
-                    if net_gold > 0:
-                        group_gold[gid] = group_gold.get(gid, 0) + int(net_gold)
-                
-                await self._store.update_user(user_id, user)
-                
-                # 清理过期每日数据（保留30天）
-                from .modules.user import cleanup_old_daily_stats
-                cleanup_old_daily_stats(user)
-                
-            except Exception as e:
-                logger.error(f"结算用户 {user_id} 时出错: {e}")
-
-        # 结算完成写入 KV
-        await self.put_kv_data(DAILY_SETTLEMENT_KV_KEY, date_str)
-
-        # 发送群组日报
-        for group_id, members in group_users.items():
-            config = await self._get_group_config(group_id)
-            if not config.get("enabled", False):
-                continue
-            # 只发送有订阅者的群
-            subscribers = config.get("subscribers", [])
-            active_in_group = [u for u in members if u[0] in subscribers]
-            if not active_in_group and subscribers:
-                continue
-            
-            report = self._generate_group_daily_report(
-                group_id, members, group_gold.get(group_id, 0),
-                rent_deducted.get(group_id, []), date_str, today_key
-            )
-            try:
-                await StarTools.send_message_by_id(
-                    "GroupMessage", group_id,
-                    MessageChain().message(report)
-                )
-                logger.info(f"群 {group_id} 日报已发送")
-            except Exception as e:
-                logger.error(f"群 {group_id} 日报发送失败: {e}")
-
-        # 发送个人日报
-        for user_id, user in users.items():
-            settings = user.get("settings", {})
-            if not settings.get("sub_personal_daily", False):
-                continue
-            
-            report = self._generate_personal_report(user, date_str, today_key)
-            try:
-                await StarTools.send_message_by_id(
-                    "PrivateMessage", user_id,
-                    MessageChain().message(report)
-                )
-                logger.info(f"用户 {user_id} 个人日报已发送")
-            except Exception as e:
-                logger.error(f"用户 {user_id} 个人日报发送失败: {e}")
-
-        logger.info(f"日报生成完成")
-
-    async def _generate_group_daily_report(
-        self, group_id: str, members: list, total_group_gold: int,
-        rent_deducted: list, date_str: str, today_key: str
-    ) -> str:
-        """生成群组日报"""
-        from .modules.user import get_today_key
-        from .modules.constants import STOCKS
-        
-        lines = [
-            "━━━━━━━━━━━━━━",
-            f"【 🗞️ 牛马日报 】",
-            f"📅 {date_str}",
-            "━━━━━━━━━━━━━━",
-        ]
-        
-        # ---- 股市涨跌榜 ----
-        lines.append("")
-        lines.append("📈 股市涨跌榜")
-        lines.append("━━━━━━━━━━━━━━")
-        
-        stock_changes = []
-        for name, info in STOCKS.items():
-            base = info.get("base_price", 100)
-            open_price = await self.get_kv_data(f"stock_open:{name}", base)
-            current_price = await self.get_kv_data(f"stock_price:{name}", base)
-            change = ((current_price - open_price) / open_price * 100) if open_price else 0.0
-            stock_changes.append((name, current_price, change))
-        
-        # 按涨跌幅排序
-        stock_changes.sort(key=lambda x: x[2], reverse=True)
-        
-        rising = [(n, p, c) for n, p, c in stock_changes if c >= 0]
-        falling = [(n, p, c) for n, p, c in stock_changes if c < 0]
-        
-        if rising:
-            lines.append("↑ 涨幅榜:")
-            for name, price, change in rising[:3]:
-                sym = "🔺" if change > 0 else "➖"
-                lines.append(f" {sym} {name} {change:+.2f}% ¥{price:.2f}")
-        if falling:
-            lines.append("↓ 跌幅榜:")
-            for name, price, change in falling[:3]:
-                lines.append(f" 🔻 {name} {change:.2f}% ¥{price:.2f}")
-        
-        # ---- 金币榜 ----
-        lines.append("")
-        lines.append("💰 今日金币榜 (Top5)")
-        lines.append("━━━━━━━━━━━━━━")
-        
-        user_earnings = []
-        for _, user in members:
-            today_stats = user.get("daily_stats", {}).get(today_key, {})
-            work_gold = today_stats.get("gold_work", 0)
-            stock_pnl = today_stats.get("gold_stock_profit", 0) - today_stats.get("gold_stock_loss", 0)
-            total = work_gold + stock_pnl
-            user_earnings.append((user.get("nickname", "匿名"), total))
-        
-        user_earnings.sort(key=lambda x: x[1], reverse=True)
-        medals = ["🥇", "🥈", "🥉", "4.", "5."]
-        for i, (name, gold) in enumerate(user_earnings[:5]):
-            medal = medals[i] if i < 3 else f"{i+1}."
-            sign = "+" if gold >= 0 else ""
-            lines.append(f" {medal} {name} {sign}{gold}金币")
-        
-        # ---- 打工榜 ----
-        lines.append("")
-        lines.append("📊 今日打工榜 (Top3)")
-        lines.append("━━━━━━━━━━━━━━")
-        
-        user_work = []
-        for _, user in members:
-            today_stats = user.get("daily_stats", {}).get(today_key, {})
-            hours = today_stats.get("work_hours", 0)
-            count = today_stats.get("work_count", 0)
-            if hours > 0:
-                user_work.append((user.get("nickname", "匿名"), hours, count))
-        
-        user_work.sort(key=lambda x: x[1], reverse=True)
-        for i, (name, hours, count) in enumerate(user_work[:3]):
-            medal = ["🥇", "🥈", "🥉"][i] if i < 3 else f"{i+1}."
-            lines.append(f" {medal} {name} {hours:.1f}h ({count}次)")
-        
-        # ---- 房租支出 ----
-        if rent_deducted:
-            lines.append("")
-            lines.append("📝 今日房租支出")
-            lines.append("━━━━━━━━━━━━━━")
-            for name, amount, res in rent_deducted[:5]:
-                lines.append(f" {name}: -{amount}金 ({res})")
-        
-        # ---- 本群数据 ----
-        lines.append("")
-        lines.append("━━━━━━━━━━━━━━")
-        lines.append(f"🏠 群成员: {len(members)}人")
-        lines.append(f"💰 群累计赚取: {total_group_gold:,}金币")
-        lines.append("━━━━━━━━━━━━━━")
-        report_hour = getattr(self.config, 'daily_report_hour', 23)
-        report_min = getattr(self.config, 'daily_report_minute', 0)
-        lines.append(f"⏰ 每日 {report_hour:02d}:{report_min:02d} 自动生成")
-        
-        return "\n".join(lines)
-
-    def _generate_personal_report(self, user: dict, date_str: str, today_key: str) -> str:
-        """生成个人日报"""
-        from .modules.user import get_today_key
-        
-        lines = [
-            "━━━━━━━━━━━━━━",
-            f"【 📋 个人日报 】",
-            f"📅 {date_str}",
-            "━━━━━━━━━━━━━━",
-        ]
-        
-        today = user.get("daily_stats", {}).get(today_key, {})
-        lifetime = user.get("lifetime_stats", {})
-        
-        # 今日收益
-        work_gold = today.get("gold_work", 0)
-        stock_profit = today.get("gold_stock_profit", 0)
-        stock_loss = today.get("gold_stock_loss", 0)
-        spent = today.get("gold_spent", 0)
-        net = work_gold + stock_profit - stock_loss
-        
-        lines.append("")
-        lines.append("💵 今日收支")
-        lines.append("━━━━━━━━━━━━━━")
-        lines.append(f" 工作收入: +{work_gold}金币")
-        lines.append(f" 股票盈亏: {'+' if stock_profit >= 0 else ''}{stock_profit-stock_loss}金币")
-        lines.append(f" 消费支出: -{spent}金币")
-        lines.append(f" 净收益: {'+' if net >= 0 else ''}{net}金币")
-        
-        # 今日活动
-        lines.append("")
-        lines.append("📊 今日活动")
-        lines.append("━━━━━━━━━━━━━━")
-        lines.append(f" 工作: {today.get('work_hours', 0):.1f}h ({today.get('work_count', 0)}次)")
-        lines.append(f" 学习: {today.get('learn_hours', 0):.1f}h")
-        lines.append(f" 娱乐: {today.get('entertain_count', 0)}次")
-        lines.append(f" 股票交易: {today.get('stock_trades', 0)}次")
-        
-        # 持仓状态
-        holdings = user.get("stock_holdings", {})
-        if holdings:
-            lines.append("")
-            lines.append("📈 持仓状况")
-            lines.append("━━━━━━━━━━━━━━")
-            for name, hold in holdings.items():
-                code = STOCKS.get(name, {}).get("code", "?")
-                amount = hold.get("amount", 0)
-                avg = hold.get("avg_price", 0)
-                lines.append(f" {code} {name}: {amount}股 (成本¥{avg:.2f})")
-        
-        # 累计数据
-        lines.append("")
-        lines.append("🏆 累计成就")
-        lines.append("━━━━━━━━━━━━━━")
-        lines.append(f" 累计赚取: {int(lifetime.get('total_gold_earned', 0)):,}金币")
-        lines.append(f" 最高金币: {int(lifetime.get('peak_gold', 0)):,}金币")
-        lines.append(f" 累计工作: {lifetime.get('total_work_hours', 0):.0f}h")
-        lines.append(f" 股票盈亏: {'+' if lifetime.get('total_stock_profit', 0) >= 0 else ''}{int(lifetime.get('total_stock_profit', 0)):,}金币")
-        
-        lines.append("")
-        lines.append("━━━━━━━━━━━━━━")
-        lines.append(f"💳 当前余额: {user.get('gold', 0):,}金币")
-        lines.append("━━━━━━━━━━━━━━")
-        
-        return "\n".join(lines)
+        """执行每日结算（委托给 DailyReportGenerator）。"""
+        await self._daily_report.settle()
 

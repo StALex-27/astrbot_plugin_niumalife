@@ -13,6 +13,10 @@ from typing import Optional
 import asyncio
 import math
 
+from astrbot.api import logger
+from astrbot.api.star import StarTools
+from astrbot.core.message.message_event_result import MessageChain
+
 from .constants import (
     TICKS_PER_HOUR, COURSES, JOBS, JOB_PRESSURE_TYPE, JOB_PRESSURE_RATE,
     get_pressure_penalty, RESIDENCES, MAX_ATTRIBUTE, ENTERTAINMENTS,
@@ -37,6 +41,7 @@ TICK_TYPE_WORK = "工作"
 TICK_TYPE_SLEEP = "睡眠"
 TICK_TYPE_LEARN = "学习"
 TICK_TYPE_ENTERTAIN = "娱乐"
+TICK_TYPE_FISHING = "钓鱼"
 
 
 # ============================================================
@@ -214,10 +219,18 @@ class WorkTickProcessor(TickProcessor):
             hourly_wage = base_reward / hours if hours > 0 else base_reward
             pressure_type = "mind"  # 默认脑力
             pressure_rate = 5  # 默认压力积累
+            job_name = data.get("job_name", "工作")
         
         # 检查是否力竭
         if is_exhausted(user, pressure_type):
-            # 力竭状态，直接取消工作
+            # 力竭状态，直接取消工作，同时清理 jobs_in_progress
+            job_id = data.get("job_id") or job_name
+            jobs_in_progress = user.get("jobs_in_progress", [])
+            for i, j in enumerate(jobs_in_progress):
+                if j.get("job_id") == job_id or j.get("title") == job_name:
+                    jobs_in_progress.pop(i)
+                    break
+            user["jobs_in_progress"] = jobs_in_progress
             return True
         
         # ========== 整点结算属性 ==========
@@ -443,13 +456,31 @@ class WorkTickProcessor(TickProcessor):
         user["checkin"] = checkin
         
         user["attributes"] = attrs if remaining_hours > 0 else user.get("attributes", {})
+
+        # 清理 jobs_in_progress 中的对应记录
+        job_id = data.get("job_id") or job_name
+        jobs_in_progress = user.get("jobs_in_progress", [])
+        for i, j in enumerate(jobs_in_progress):
+            if j.get("job_id") == job_id or j.get("title") == job_name:
+                jobs_in_progress.pop(i)
+                break
+        user["jobs_in_progress"] = jobs_in_progress
+
         await self.plugin._store.update_user(user_id, user)
+        
+        # 发送工作完成通知
+        try:
+            messenger = self.plugin._messenger
+            await messenger.notify_work_complete(
+                user_id,
+                job_name=job_name,
+                earned_gold=gold_earned,
+            )
+        except Exception as e:
+            self.plugin.logger.error(f"工作完成通知发送失败: {e}")
         
         return True
 
-
-# ============================================================
-# SleepTickProcessor - 睡眠处理器
 # ============================================================
 
 class SleepTickProcessor(TickProcessor):
@@ -550,10 +581,10 @@ class SleepTickProcessor(TickProcessor):
         mood_rec = res_info.get("mood_recovery", 2) * hours_since_last * sleep_bonus
         health_rec = res_info.get("health_recovery", 2) * hours_since_last * sleep_bonus
         
-        attrs["strength"] = min(MAX_ATTRIBUTE, attrs["strength"] + strength_rec)
-        attrs["energy"] = min(MAX_ATTRIBUTE, attrs["energy"] + energy_rec)
-        attrs["mood"] = min(MAX_ATTRIBUTE, attrs["mood"] + mood_rec)
-        attrs["health"] = min(MAX_ATTRIBUTE, attrs["health"] + health_rec)
+        attrs["strength"] = max(0, min(MAX_ATTRIBUTE, attrs["strength"] + strength_rec))
+        attrs["energy"] = max(0, min(MAX_ATTRIBUTE, attrs["energy"] + energy_rec))
+        attrs["mood"] = max(0, min(MAX_ATTRIBUTE, attrs["mood"] + mood_rec))
+        attrs["health"] = max(0, min(MAX_ATTRIBUTE, attrs["health"] + health_rec))
         # 睡眠时饱食消耗减半
         attrs["satiety"] = max(0, attrs["satiety"] - 5 * 0.5 * hours_since_last)
         
@@ -608,15 +639,34 @@ class SleepTickProcessor(TickProcessor):
             mood_rec = res_info.get("mood_recovery", 2) * remaining_hours * sleep_bonus
             health_rec = res_info.get("health_recovery", 2) * remaining_hours * sleep_bonus
             
-            attrs["strength"] = min(MAX_ATTRIBUTE, attrs["strength"] + strength_rec)
-            attrs["energy"] = min(MAX_ATTRIBUTE, attrs["energy"] + energy_rec)
-            attrs["mood"] = min(MAX_ATTRIBUTE, attrs["mood"] + mood_rec)
-            attrs["health"] = min(MAX_ATTRIBUTE, attrs["health"] + health_rec)
+            attrs["strength"] = max(0, min(MAX_ATTRIBUTE, attrs["strength"] + strength_rec))
+            attrs["energy"] = max(0, min(MAX_ATTRIBUTE, attrs["energy"] + energy_rec))
+            attrs["mood"] = max(0, min(MAX_ATTRIBUTE, attrs["mood"] + mood_rec))
+            attrs["health"] = max(0, min(MAX_ATTRIBUTE, attrs["health"] + health_rec))
             attrs["satiety"] = max(0, attrs["satiety"] - 5 * 0.5 * remaining_hours)
             
             user["attributes"] = attrs
         
         await self.plugin._store.update_user(user_id, user)
+        
+        # 发送睡眠完成通知
+        try:
+            messenger = self.plugin._messenger
+            hours = planned / TICKS_PER_HOUR
+            await messenger.push(
+                user_id,
+                messenger.MessageType.NOTIFY_SLEEP_COMPLETE,
+                {
+                    "plain_text": (
+                        f"😴 睡眠 {hours:.0f} 小时完成！\n"
+                        f"体力 +{int(res_info.get('strength_recovery', 5) * hours * sleep_bonus * 1.5)} "
+                        f"精力 +{int(res_info.get('energy_recovery', 5) * hours * sleep_bonus * 1.5)}"
+                    )
+                }
+            )
+        except Exception as e:
+            self.plugin.logger.error(f"睡眠完成通知发送失败: {e}")
+        
         return True
 
 
@@ -727,6 +777,17 @@ class LearnTickProcessor(TickProcessor):
             update_lifetime_stat(user, "total_learn_hours", hours)
             # ========== 统计记录完成 ==========
             
+            # 发送学习完成通知
+            try:
+                messenger = self.plugin._messenger
+                await messenger.notify_learn_complete(
+                    user_id,
+                    skill_name=course_name,
+                    earned_exp=detail.get("earned_exp", 0),
+                )
+            except Exception as e:
+                self.plugin.logger.error(f"学习完成通知发送失败: {e}")
+            
             return True
         
         return False
@@ -808,6 +869,18 @@ class EntertainTickProcessor(TickProcessor):
             update_lifetime_stat(user, "total_entertain_count", 1)
             # ========== 统计记录完成 ==========
             
+            # 发送娱乐完成通知
+            try:
+                messenger = self.plugin._messenger
+                mood_gain = int(entertainment.get("restore_mood", 15) * hours)
+                await messenger.notify_entertain_complete(
+                    user_id,
+                    ent_name=entertainment_name,
+                    mood_gain=mood_gain,
+                )
+            except Exception as e:
+                self.plugin.logger.error(f"娱乐完成通知发送失败: {e}")
+            
             return True
         
         # 状态变化时写入（而非每分钟都写）
@@ -822,8 +895,164 @@ class EntertainTickProcessor(TickProcessor):
             ActionDetail.update_tick(detail, now)
             user["action_detail"] = detail
             await self.plugin._store.update_user(user_id, user)
-        
+
         return False
+
+
+class FishingTickProcessor(TickProcessor):
+    """钓鱼Tick处理器
+
+    每个 tick 调用 roll_catch 概率判中鱼（PER_TICK_CATCH_BASE = 5%）。
+    中鱼后：写 fish_caught/records/biggest_catch + 加技能经验 + 发卡片通知 + 自动结束。
+    若超过 planned_ticks 仍未中鱼，自动结束（竿子收线）。
+    """
+    def get_action_type(self) -> str:
+        return TICK_TYPE_FISHING
+
+    async def process(self, user_id, user, detail, now):
+        if detail.get("action_type") != TICK_TYPE_FISHING:
+            return False
+
+        from ..src.fishing.fishing_manager import (
+            roll_catch, apply_catch, check_fish_title, get_fishing_skill_level,
+        )
+        from ..modules.constants import ITEMS
+
+        data = detail.get("data", {})
+        spot_id = data.get("spot_id", "")
+        rod_id = data.get("rod_id", "竹竿")
+        bait_id = data.get("bait_id", "蚯蚓")
+
+        rod = ITEMS.get(rod_id, {}).get("effects", {})
+        bait = ITEMS.get(bait_id, {}).get("effects", {})
+
+        # 1. 尝试中鱼
+        catch = roll_catch(user, spot_id, rod, bait)
+
+        if catch:
+            # 写入用户数据
+            apply_catch(user, catch, now.isoformat())
+            # 加钓鱼技能经验
+            fish = catch["fish"]
+            exp_gain = fish.get("exp_reward", 0)
+            skill_exp = user.setdefault("skill_exp", {})
+            skill_exp["钓鱼"] = skill_exp.get("钓鱼", 0) + exp_gain
+            user.setdefault("skills", {})["钓鱼"] = get_fishing_skill_level(user)
+            # 检查称号
+            new_title = check_fish_title(user)
+            user["fishing"]["last_catch"] = {
+                "fish": catch["fish_id"],
+                "weight": catch["weight"],
+                "size_label": catch["size_label"],
+                "estimated_price": catch["estimated_price"],
+                "spot": spot_id,
+                "time": now.isoformat(),
+                "title_unlocked": new_title,
+            }
+
+            # 通知用户（私聊 + 群 @）
+            try:
+                await self._notify_catch(user_id, user, catch, new_title, detail)
+            except Exception as e:
+                self.plugin.logger.error(f"钓鱼结果通知失败: {e}")
+
+            # 自动结束钓鱼动作
+            user["status"] = "空闲"
+            user["current_action"] = None
+            user["action_detail"] = None
+            await self.plugin._store.update_user(user_id, user)
+            return True
+
+        # 2. 检查是否超过最长时间（没中鱼也得收竿）
+        elapsed = ActionDetail.get_elapsed_ticks(detail, now)
+        planned = detail["planned_ticks"]
+        if elapsed >= planned:
+            try:
+                await self._notify_empty(user_id, user, spot_id)
+            except Exception as e:
+                self.plugin.logger.error(f"钓鱼空竿通知失败: {e}")
+            user["status"] = "空闲"
+            user["current_action"] = None
+            user["action_detail"] = None
+            await self.plugin._store.update_user(user_id, user)
+            return True
+
+        # 3. 每 tick 更新进度（轻量：不调 store 写盘）
+        detail["completed_ticks"] = elapsed
+        ActionDetail.update_tick(detail, now)
+        user["action_detail"] = detail
+        return False
+
+    async def _notify_catch(self, user_id, user, catch, new_title, detail):
+        """把中鱼通知扔进 plugin 的通知队列（方案G）。
+
+        consumer task 会通过缓存的最近 event.send() 发消息，
+        完全不构造 MessageSession —— 走 AstrBot 内部路径，
+        无需 platform_id，无需 MessageSession.from_str。
+        """
+        try:
+            fish = catch["fish"]
+            nickname = user.get("nickname", "钓手")
+            text = (
+                f"🎣 叮！上钩了！\n\n"
+                f"{fish['emoji']} **{fish['name']}**\n"
+                f"⚖️ 重量: {catch['weight']} kg\n"
+                f"📏 尺寸: {catch['size_label']}\n"
+                f"💰 估值: {catch['estimated_price']} 金币\n"
+                f"📊 钓鱼技能 +{fish.get('exp_reward', 0)} EXP"
+            )
+            if new_title:
+                text += f"\n\n🏅 解锁称号: {new_title}"
+
+            # 尝试渲染卡片
+            image_url = None
+            try:
+                renderer = getattr(self.plugin, "_renderer", None)
+                if renderer:
+                    image_url = await renderer.render_fishing_catch(user, catch, new_title)
+            except Exception as e:
+                self.plugin.logger.debug(f"钓鱼卡片渲染失败（降级纯文本）: {e}")
+
+            # at() 签名：.at(name, qq)
+            try:
+                qq = int(user_id) if user_id.isdigit() else user_id
+            except (ValueError, AttributeError):
+                qq = user_id
+
+            # 构造 chain，扔进队列。consumer 会用 event.send() 发。
+            from astrbot.core.message.message_event_result import MessageChain
+            chain = MessageChain().at(name=nickname, qq=qq).message(text)
+            if image_url:
+                chain = chain.url_image(image_url)
+
+            q = getattr(self.plugin, "_notify_queue", None)
+            if q is None:
+                self.plugin.logger.error("plugin._notify_queue 未初始化")
+                return
+            # put_nowait 同步入队，consumer 异步消费
+            q.put_nowait((user_id, chain))
+        except Exception as e:
+            self.plugin.logger.error(f"构造钓鱼通知失败: {e}")
+
+    async def _notify_empty(self, user_id, user, spot_id):
+        """超时未中鱼通知：扔进通知队列。"""
+        try:
+            nickname = user.get("nickname", "钓手")
+            text = f"🎣 在 {spot_id} 钓了一整天，一条都没上……先收竿吧。"
+            try:
+                qq = int(user_id) if user_id.isdigit() else user_id
+            except (ValueError, AttributeError):
+                qq = user_id
+
+            from astrbot.core.message.message_event_result import MessageChain
+            chain = MessageChain().at(name=nickname, qq=qq).message(text)
+
+            q = getattr(self.plugin, "_notify_queue", None)
+            if q is None:
+                return
+            q.put_nowait((user_id, chain))
+        except Exception as e:
+            self.plugin.logger.error(f"构造空竿通知失败: {e}")
 
 
 # ============================================================
@@ -840,6 +1069,7 @@ class TickManager:
             TICK_TYPE_SLEEP: SleepTickProcessor(plugin),
             TICK_TYPE_LEARN: LearnTickProcessor(plugin),
             TICK_TYPE_ENTERTAIN: EntertainTickProcessor(plugin),
+            TICK_TYPE_FISHING: FishingTickProcessor(plugin),
         }
         
         # 时间触发器状态
@@ -942,12 +1172,12 @@ class TickManager:
                         # 被动心情恢复 (per tick/minute)
                         passive_mood = effects.get("passive_mood", 0)
                         if passive_mood > 0:
-                            attrs["mood"] = min(100, attrs.get("mood", 100) + passive_mood)
+                            attrs["mood"] = max(0, min(100, attrs.get("mood", 100) + passive_mood))
                         
                         # 被动金币获取 (per tick/minute)
                         passive_gold = effects.get("passive_gold", 0)
                         if passive_gold > 0:
-                            user["gold"] = user.get("gold", 0) + passive_gold
+                            user["gold"] = max(0, user.get("gold", 0) + passive_gold)
                     
                     user["attributes"] = attrs
                     await self.plugin._store.update_user(user_id, user)
@@ -984,16 +1214,16 @@ class TickManager:
         # 被动心情恢复（每小时）
         passive_mood = effects.get("passive_mood", 0)
         if passive_mood > 0:
-            attrs["mood"] = min(100, attrs.get("mood", 100) + passive_mood * hours_since_last)
+            attrs["mood"] = max(0, min(100, attrs.get("mood", 100) + passive_mood * hours_since_last))
         
         # 被动金币获取（每小时）
         passive_gold = effects.get("passive_gold", 0)
         if passive_gold > 0:
-            user["gold"] = user.get("gold", 0) + int(passive_gold * hours_since_last)
+            user["gold"] = max(0, user.get("gold", 0) + int(passive_gold * hours_since_last))
         
-        # 饱食度自然消耗（每小时约5点）
-        natural_satiety_drain = 5 * hours_since_last * cost_multi
-        attrs["satiety"] = max(0, attrs.get("satiety", 100) - natural_satiety_drain)
+        # 饱食度自然消耗（每小时约5点）- 已禁用，避免长时间不操作导致资产清零
+        # natural_satiety_drain = 5 * hours_since_last * cost_multi
+        # attrs["satiety"] = max(0, attrs.get("satiety", 100) - natural_satiety_drain)
         
         # 更新上次结算时间
         user["last_idle_tick"] = now.isoformat()

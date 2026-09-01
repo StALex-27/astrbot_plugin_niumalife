@@ -575,5 +575,68 @@
     "price": 28000,
     "effects": {"passive_mood": 1, "health_bonus": 1.5, "entertain_mood_bonus": 20},
     "desc": "钛金属边框，顶配旗舰机皇"
+  },
+  "竹竿": {
+    "name": "竹竿",
+    "category": "tool", "subcategory": "fishing_rod", "tier": 1,
+    "price": 50, "stackable": false, "consumable": false,
+    "effects": {"fishing_bonus": 0.0, "rare_bonus": 0.0, "min_size_bonus": 0.0, "duration_reduce": 0},
+    "desc": "新手鱼竿,凑合能用"
+  },
+  "碳素竿": {
+    "name": "碳素竿",
+    "category": "tool", "subcategory": "fishing_rod", "tier": 2,
+    "price": 500, "stackable": false, "consumable": false,
+    "effects": {"fishing_bonus": 0.10, "rare_bonus": 0.0, "min_size_bonus": 0.0, "duration_reduce": 1},
+    "desc": "轻量坚固,入门首选"
+  },
+  "海竿套装": {
+    "name": "海竿套装",
+    "category": "tool", "subcategory": "fishing_rod", "tier": 3,
+    "price": 3000, "stackable": false, "consumable": false,
+    "effects": {"fishing_bonus": 0.18, "rare_bonus": 0.05, "min_size_bonus": 0.0, "duration_reduce": 2},
+    "desc": "近海利器,能钓大家伙"
+  },
+  "电轮竿": {
+    "name": "电轮竿",
+    "category": "tool", "subcategory": "fishing_rod", "tier": 4,
+    "price": 15000, "stackable": false, "consumable": false,
+    "effects": {"fishing_bonus": 0.25, "rare_bonus": 0.10, "min_size_bonus": 0.05, "duration_reduce": 3},
+    "desc": "电动绕线,高端玩家标配"
+  },
+  "传说鱼竿": {
+    "name": "传说鱼竿",
+    "category": "tool", "subcategory": "fishing_rod", "tier": 5,
+    "price": 80000, "stackable": false, "consumable": false,
+    "effects": {"fishing_bonus": 0.35, "rare_bonus": 0.18, "min_size_bonus": 0.15, "duration_reduce": 4},
+    "desc": "渔具中的王者,传说是用龙骨做的"
+  },
+  "蚯蚓": {
+    "name": "蚯蚓",
+    "category": "consumable", "subcategory": "bait", "tier": 1,
+    "price": 2, "stackable": true, "consumable": true,
+    "effects": {"rare_bonus": 0.02, "habitat_filter": ["pond", "river"]},
+    "desc": "万能饵料,小鱼的最爱"
+  },
+  "商品饵": {
+    "name": "商品饵",
+    "category": "consumable", "subcategory": "bait", "tier": 2,
+    "price": 10, "stackable": true, "consumable": true,
+    "effects": {"rare_bonus": 0.05, "habitat_filter": ["pond", "river", "reservoir"]},
+    "desc": "精心配比,广谱诱鱼"
+  },
+  "活虾": {
+    "name": "活虾",
+    "category": "consumable", "subcategory": "bait", "tier": 3,
+    "price": 30, "stackable": true, "consumable": true,
+    "effects": {"rare_bonus": 0.08, "habitat_filter": ["river", "reservoir"]},
+    "desc": "活物诱惑,大鱼难挡"
+  },
+  "拟饵": {
+    "name": "拟饵",
+    "category": "consumable", "subcategory": "bait", "tier": 4,
+    "price": 100, "stackable": true, "consumable": true,
+    "effects": {"rare_bonus": 0.12, "duration_reduce": 1, "habitat_filter": ["reservoir"]},
+    "desc": "仿真拟饵,路亚专用"
   }
 }

@@ -558,5 +558,22 @@
       "财务管理": 3,
       "沟通能力": 5
     }
+  },
+  "钓鱼": {
+    "tier": 1,
+    "category": "休闲",
+    "exp_rate": "medium",
+    "emoji": "🎣",
+    "level_thresholds": [0, 50, 150, 350, 700, 1400, 2800, 5600, 11000, 22000, 45000],
+    "level_unlocks": {
+      "3": ["reservoir"],
+      "5": ["epic"],
+      "8": ["legendary"]
+    },
+    "effects_per_level": {
+      "rare_bonus": 0.01,
+      "value_bonus": 0.005
+    },
+    "desc": "从鱼塘到深海的进阶之路"
   }
 }
