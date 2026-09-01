@@ -3,11 +3,6 @@
 保留模块级辅助函数和单例管理器，供命令逻辑模块调用。
 """
 
-from datetime import datetime, timezone, timedelta
-
-
-LOCAL_TZ = timezone(timedelta(hours=8))
-
 # 打工系统V2管理器单例
 _job_manager = None
 _favor_manager = None

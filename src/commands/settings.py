@@ -29,6 +29,7 @@ async def run_settings_logic(event: AstrMessageEvent, store, parser, get_group_c
         "daily_report_hour": 23,
         "daily_report_minute": 0,
         "notification_enabled": True,
+        "notification_card_mode": "smart",  # "smart" | "always" | "never"
     })
     
     if not args:
@@ -37,6 +38,9 @@ async def run_settings_logic(event: AstrMessageEvent, store, parser, get_group_c
         hour = settings.get("daily_report_hour", 23)
         minute = settings.get("daily_report_minute", 0)
         notif = "📳 开启" if settings.get("notification_enabled") else "🔕 关闭"
+        card_mode = settings.get("notification_card_mode", "smart")
+        card_mode_map = {"smart": "🟡 智能", "always": "🟢 始终卡片", "never": "🔴 纯文本"}
+        card_mode_label = card_mode_map.get(card_mode, f"? ({card_mode})")
         
         lines = [
             "━━━━━━━━━━━━━━",
@@ -46,6 +50,7 @@ async def run_settings_logic(event: AstrMessageEvent, store, parser, get_group_c
             f"📋 个人日报订阅: {sub_personal}",
             f"⏰ 日报时间: {hour:02d}:{minute:02d}",
             f"🔔 通知: {notif}",
+            f"🖼 通知样式: {card_mode_label}",
             "━━━━━━━━━━━━━━",
             "━━━━━━━━━━━━━━",
             "📖 指令说明:",
@@ -54,7 +59,8 @@ async def run_settings_logic(event: AstrMessageEvent, store, parser, get_group_c
             "/设置 订阅个人日报 - 开启个人日报",
             "/设置 取消订阅个人日报",
             "/设置 日报时间 HH:MM - 自定义时间",
-            "/设置 通知开/关",
+            "/设置 通知开 / 通知关",
+            "/设置 通知样式 smart|always|never",
             "━━━━━━━━━━━━━━",
         ]
         
@@ -142,6 +148,25 @@ async def run_settings_logic(event: AstrMessageEvent, store, parser, get_group_c
         settings["notification_enabled"] = False
         await store.update_user(user_id, user)
         yield event.plain_result("🔕 通知已关闭")
+    
+    elif action == "通知样式":
+        if len(args) < 2:
+            yield event.plain_result(
+                "📋 通知样式选项：\n"
+                "🟡 smart - 智能（默认，后台通知发文本，命令发卡片）\n"
+                "🟢 always - 始终卡片（所有消息都渲染卡片图片）\n"
+                "🔴 never - 纯文本（所有消息都发文本，速度快）\n\n"
+                "例如: /设置 通知样式 always"
+            )
+            return
+        mode = args[1]
+        if mode not in ("smart", "always", "never"):
+            yield event.plain_result("📋 无效样式！可选: smart / always / never")
+            return
+        settings["notification_card_mode"] = mode
+        await store.update_user(user_id, user)
+        labels = {"smart": "🟡 智能", "always": "🟢 始终卡片", "never": "🔴 纯文本"}
+        yield event.plain_result(f"✅ 通知样式已设为: {labels[mode]}")
     
     else:
         yield event.plain_result("📋 无效设置指令！\n━━━━━━━━━━━━━━\n📖 /设置 订阅群日报\n📖 /设置 取消订阅群日报\n📖 /设置 订阅个人日报\n📖 /设置 取消订阅个人日报\n📖 /设置 日报时间 HH:MM\n━━━━━━━━━━━━━━")

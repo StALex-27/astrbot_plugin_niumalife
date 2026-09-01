@@ -48,6 +48,12 @@ async def run_help_logic(event: AstrMessageEvent, renderer):
 /股市 - 股市行情
 /取消 - 取消当前动作
 
+⚙️ 设置
+/设置 - 查看当前设置
+/设置 通知开 / 通知关
+/设置 通知样式 smart|always|never
+/设置 订阅个人日报 - 开启个人日报
+
 💡 提示: 0点-8点空闲时自动睡眠
 ━━━━━━━━━━━━━━
 """)

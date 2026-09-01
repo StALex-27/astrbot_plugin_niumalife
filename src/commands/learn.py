@@ -213,13 +213,15 @@ async def run_learn_logic(event: AstrMessageEvent, store, parser, renderer):
 
     course_name_display = f"{course.get('institution','')}·{course.get('name','')}"
     try:
-        url = await renderer.render_entertain_start(
+        url = await renderer.render_course_start(
             user, event,
-            ent_name=course_name_display,
-            ent_emoji="📚",
+            course_name=course_name_display,
+            course_emoji="📚",
             hours=hours,
-            gain_mood=course.get('exp_per_hour', 10) * hours,
-            consume_satiety=int(course.get('consume_strength', 3) * hours)
+            gain_exp=course.get('exp_per_hour', 10) * hours,
+            consume_strength=course.get('consume_strength', 3) * hours,
+            consume_energy=course.get('consume_energy', 8) * hours,
+            consume_mood=course.get('consume_mood', 5) * hours,
         )
         yield event.image_result(url)
     except Exception:

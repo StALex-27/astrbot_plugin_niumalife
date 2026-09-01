@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 
 from astrbot.api.event import AstrMessageEvent
 
-from ...modules.checkin import get_luck_rating, get_streak_reward, roll_lucky_drop
+from ...modules.checkin import get_luck_rating, get_streak_reward, roll_lucky_drop, get_checkin_grade
 from ...modules.constants import MAX_ATTRIBUTE
 
 
@@ -99,15 +99,24 @@ async def run_checkin_logic(event: AstrMessageEvent, store, renderer):
         "active_buffs": checkin_data.get("active_buffs", []),
         "luck_history": luck_history,
     }
+    
+    # 更新累计签到天数
+    from ...modules.user import update_lifetime_stat
+    update_lifetime_stat(user, "checkin_days", 1)
+    
     await store.update_user(user_id, user)
     
     try:
+        # 新版品级 + 签文
+        grade_info, fortune_text = get_checkin_grade(luck_value)
         result = {
             "luck_value": luck_value,
             "total_gold": total_gold,
             "streak_bonus": streak_bonus,
             "drop_info": drop_info,
             "is_new_user": is_new_user,
+            "grade_info": grade_info,
+            "fortune": fortune_text,
         }
         url = await renderer.render_checkin(user, event, result, already_checked=False)
         yield event.image_result(url)

@@ -6,7 +6,7 @@ from astrbot.api.event import AstrMessageEvent
 from ...src.commands.interactive import get_job_mgr
 
 
-async def run_complete_job_logic(event: AstrMessageEvent, store, parser):
+async def run_complete_job_logic(event: AstrMessageEvent, store, parser, renderer):
     """完成委托并获取评价"""
     user_id = str(event.get_sender_id())
     user = await store.get_user(user_id)
@@ -52,28 +52,33 @@ async def run_complete_job_logic(event: AstrMessageEvent, store, parser):
     eval_result = result.get("evaluation", {})
     rewards = result.get("rewards", {})
 
-    grade = eval_result.get("grade", "B")
-    grade_name = {"S": "完美", "A": "优秀", "B": "良好", "C": "合格", "D": "较差", "F": "失败"}.get(grade, grade)
+    try:
+        url = await renderer.render_job_complete(user, event, eval_result, rewards)
+        yield event.image_result(url)
+    except Exception:
+        # 降级回纯文字
+        grade = eval_result.get("grade", "B")
+        grade_name = {"S": "完美", "A": "优秀", "B": "良好", "C": "合格", "D": "较差", "F": "失败"}.get(grade, grade)
 
-    lines = ["═══════════════════════════", "    「 委 托 完 成 」", "═══════════════════════════"]
-    lines.append(f"\n  评价: {grade} ({grade_name})")
-    lines.append(f"  综合分: {eval_result.get('score', 0)}")
-    lines.append(f"\n  💰 获得金币: {rewards.get('gold', 0)}")
+        lines = ["═══════════════════════════", "    「 委 托 完 成 」", "═══════════════════════════"]
+        lines.append(f"\n  评价: {grade} ({grade_name})")
+        lines.append(f"  综合分: {eval_result.get('score', 0)}")
+        lines.append(f"\n  💰 获得金币: {rewards.get('gold', 0)}")
 
-    if rewards.get("exp"):
-        exp_str = ", ".join([f"{k}+{v}" for k, v in rewards.get("exp", {}).items()])
-        lines.append(f"  📈 获得经验: {exp_str}")
+        if rewards.get("exp"):
+            exp_str = ", ".join([f"{k}+{v}" for k, v in rewards.get("exp", {}).items()])
+            lines.append(f"  📈 获得经验: {exp_str}")
 
-    lines.append(f"  ❤️ 好感度: {rewards.get('favor_change', 0):+d}")
+        lines.append(f"  ❤️ 好感度: {rewards.get('favor_change', 0):+d}")
 
-    lines.append("\n─── 六维评价 ───")
-    lines.append(f"  效率: {eval_result.get('efficiency', 0)}")
-    lines.append(f"  质量: {eval_result.get('quality', 0)}")
-    lines.append(f"  压力: {eval_result.get('stress_bonus', 0):+d}")
-    lines.append(f"  心情: {eval_result.get('mood_bonus', 0):+d}")
-    lines.append(f"  技能: {eval_result.get('skill_bonus', 0):+d}")
-    lines.append(f"  Buff: {eval_result.get('buff_bonus', 0):+d}")
+        lines.append("\n─── 六维评价 ───")
+        lines.append(f"  效率: {eval_result.get('efficiency', 0)}")
+        lines.append(f"  质量: {eval_result.get('quality', 0)}")
+        lines.append(f"  压力: {eval_result.get('stress_bonus', 0):+d}")
+        lines.append(f"  心情: {eval_result.get('mood_bonus', 0):+d}")
+        lines.append(f"  技能: {eval_result.get('skill_bonus', 0):+d}")
+        lines.append(f"  Buff: {eval_result.get('buff_bonus', 0):+d}")
 
-    lines.append("\n═══════════════════════════")
+        lines.append("\n═══════════════════════════")
 
-    yield event.plain_result("\n".join(lines))
+        yield event.plain_result("\n".join(lines))

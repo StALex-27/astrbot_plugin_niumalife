@@ -3,28 +3,15 @@
 """
 from datetime import datetime, timezone, timedelta
 
+LOCAL_TZ = timezone(timedelta(hours=8))
+
 from astrbot.api.event import AstrMessageEvent
 
 from ...modules.user import UserStatus
 from ...modules.tick import ActionDetail, TICK_TYPE_WORK
 from ...modules.jobs import Job
-from ...modules.company_favorability import CompanyFavorability
-from ...modules.jobs import JobManager
-
-
-LOCAL_TZ = timezone(timedelta(hours=8))
-
-
-def get_job_mgr():
-    """获取打工管理器单例"""
-    from ...src.commands.interactive import get_job_mgr as _get
-    return _get()
-
-
-def get_favor_mgr():
-    """获取好感度管理器单例"""
-    from ...src.commands.interactive import get_favor_mgr as _get
-    return _get()
+from ...src.commands.interactive import get_job_mgr, get_favor_mgr
+from ...modules.renderer import CardRenderer
 
 
 async def run_work_show_status_logic(user):
@@ -283,7 +270,9 @@ async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
     if not job:
         return f"❌ 未找到委托: {cmd}\n可用 /打工 查看委托池"
         
-    # 检查进行中委托数量
+    # 检查进行中委托数量（状态不一致时自动清理残留）
+    if user.get("status") != "打工中" and user.get("jobs_in_progress"):
+        user["jobs_in_progress"] = []
     in_progress = jmgr.get_player_current_jobs(user)
     if len(in_progress) >= 3:
         return "进行中的委托已达上限（3个），请先完成或取消现有委托"
@@ -327,7 +316,7 @@ async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
     )
 
 
-async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr):
+async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr, renderer: CardRenderer):
     """打工命令逻辑"""
     user_id = str(event.get_sender_id())
     user = await store.get_user(user_id)
@@ -341,35 +330,116 @@ async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr):
     
     # 工作状态：显示当前进度
     if user["status"] == UserStatus.WORKING:
-        yield event.plain_result(await run_work_show_status_logic(user))
+        msg = await run_work_show_status_logic(user)
+        try:
+            url = await renderer.render_status(user, event)
+            yield event.image_result(url)
+        except Exception:
+            yield event.plain_result(msg)
         return
-    
+
     # 空闲状态 - 无参数：显示委托池
     if not cmd:
-        result = await run_work_show_pool_logic(user, jmgr, fmgr)
-        yield event.plain_result(result)
-        
-        # 如果池刚刷新（刚创建或过期重建），保存用户数据
+        # 确保池已生成
+        now = datetime.now(LOCAL_TZ)
+        pool_age_hours = None
         if "job_pool_created_at" in user:
+            try:
+                created = datetime.fromisoformat(user["job_pool_created_at"])
+                pool_age_hours = (now - created).total_seconds() / 3600
+            except (ValueError, TypeError):
+                pass
+
+        should_refresh = (
+            "job_pool" not in user
+            or not user["job_pool"]
+            or (pool_age_hours is not None and pool_age_hours >= 3)
+        )
+        if should_refresh:
+            pool = jmgr.generate_job_pool(user, count=6)
+            user["job_pool"] = [j.to_dict() for j in pool]
+            user["job_pool_created_at"] = now.isoformat()
             await store.update_user(user_id, user)
+
+        pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
+        favor_data = user.get("company_favorability", {})
+        recommended = jmgr.pool_generator.get_company_recommended_jobs(user, max_per_company=2)
+
+        try:
+            url = await renderer.render_job_pool(user, pool, recommended, fmgr, jmgr, event)
+            yield event.image_result(url)
+        except Exception as e:
+            # 降级回纯文字
+            result = await run_work_show_pool_logic(user, jmgr, fmgr)
+            yield event.plain_result(result)
         return
-    
+
     # 子命令处理
     if cmd == "公司":
-        yield event.plain_result(await run_work_show_companies_logic(user, fmgr, jmgr))
+        result = await run_work_show_companies_logic(user, fmgr, jmgr)
+        yield event.plain_result(result)
         return
-        
+
     if cmd in ["列表", "list"]:
         result = await run_work_refresh_pool_logic(user, jmgr)
         await store.update_user(user_id, user)
         yield event.plain_result(result)
         return
-        
+
     # 检查是否是公司名
     company = jmgr.get_company_info(cmd)
     if company:
-        yield event.plain_result(await run_work_show_company_detail_logic(user, cmd, fmgr, jmgr))
+        result = await run_work_show_company_detail_logic(user, cmd, fmgr, jmgr)
+        yield event.plain_result(result)
         return
-    
+
     # 尝试匹配委托（按编号或名称）
-    yield event.plain_result(await run_work_accept_job_logic(user, cmd, args, jmgr, store))
+    result = await run_work_accept_job_logic(user, cmd, args, jmgr, store)
+    if "✅" in result:
+        # 接受成功 → 渲染卡片
+        try:
+            pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
+            job = None
+            # 按编号
+            try:
+                idx = int(cmd) - 1
+                if 0 <= idx < len(pool):
+                    job = pool[idx]
+            except ValueError:
+                pass
+            # 按job_id
+            if not job:
+                for j in pool:
+                    if j.job_id == cmd:
+                        job = j
+                        break
+            # 按名称
+            if not job:
+                for j in pool:
+                    if cmd in j.title or cmd in j.description:
+                        job = j
+                        break
+
+            if job:
+                company_info = jmgr.get_company_info(job.company_id)
+                # 从job.consume获取实际消耗值
+                consume = job.consume or {}
+                url = await renderer.render_job_start(
+                    user=user,
+                    event=event,
+                    job_name=job.title,
+                    job_emoji=company_info.get("emoji", "📋") if company_info else "📋",
+                    hours=job.duration_hours,
+                    expected_gold=job.base_reward,
+                    expected_exp=0,
+                    consume_strength=consume.get("strength", 0),
+                    consume_energy=consume.get("energy", 0),
+                    consume_satiety=consume.get("satiety", 0),
+                )
+                yield event.image_result(url)
+            else:
+                yield event.plain_result(result)
+        except Exception:
+            yield event.plain_result(result)
+    else:
+        yield event.plain_result(result)

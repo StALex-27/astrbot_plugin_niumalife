@@ -6,9 +6,10 @@ from datetime import datetime, timezone, timedelta
 from astrbot.api.event import AstrMessageEvent
 
 from ...modules.stock import STOCKS, STOCK_CODE_TO_NAME, is_trading_hour
-
+from ...modules.renderer import CardRenderer
 
 LOCAL_TZ_STOCK = timezone(timedelta(hours=8))
+_card_renderer = CardRenderer()
 
 
 async def run_stock_logic(event: AstrMessageEvent, store, parser, get_kv_data):
@@ -27,10 +28,6 @@ async def run_stock_logic(event: AstrMessageEvent, store, parser, get_kv_data):
         trading = is_trading_hour(now.hour)
         status = "📈 交易中" if trading else "⏸️ 休盘中"
         
-        lines = ["═══════════════════════════", f"【 股市行情 】{status}", "═══════════════════════════"]
-        lines.append(f"{'代码':<8} {'名称':<8} {'价格':>8}  {'涨跌幅':>8}")
-        lines.append("-" * 42)
-        
         stocks_data = []
         for name, info in STOCKS.items():
             code = info["code"]
@@ -47,17 +44,32 @@ async def run_stock_logic(event: AstrMessageEvent, store, parser, get_kv_data):
             else:
                 change_str = f"➖ 0.00%"
             
-            stocks_data.append((abs(change), name, code, current_price, change_str))
+            stocks_data.append({
+                "name": name,
+                "code": code,
+                "price": f"{current_price:.2f}",
+                "change_str": change_str,
+                "change_val": change,
+            })
         
-        stocks_data.sort(key=lambda x: x[0], reverse=True)
+        stocks_data.sort(key=lambda x: x["change_val"], reverse=True)
         
-        for _, name, code, price, change_str in stocks_data:
-            lines.append(f"{code:<8} {name:<8} ¥{price:>7.2f}  {change_str}")
+        for s in stocks_data:
+            del s["change_val"]
         
-        lines.append("═══════════════════════════")
-        lines.append("操作: /股市 买/卖 代码 数量")
-        yield event.plain_result("\n".join(lines))
-        return
+        try:
+            card_url = await _card_renderer.render_stock_market(stocks_data, user, event, status)
+            yield event.image_result(card_url)
+        except RuntimeError as e:
+            if "All endpoints failed" in str(e):
+                lines = [f"📈 {user.get('nickname', '未知')} 的股票行情"]
+                for s in stocks_data:
+                    lines.append(f"{s['name']}({s['code']}) ¥{s['price']} {s['change_str']}")
+                lines.append(f"\n💰 金币: {int(user.get('gold', 0))}")
+                lines.append("使用 /股市 买/卖 代码 数量")
+                yield event.plain_result("\n".join(lines))
+            else:
+                raise
     
     action = args[0]
     code = args[1].upper() if len(args) > 1 else None
@@ -90,9 +102,16 @@ async def run_stock_logic(event: AstrMessageEvent, store, parser, get_kv_data):
     elif action == "持股":
         holdings = user.get("stock_holdings", {})
         if not holdings:
-            yield event.plain_result("📋 你目前没有持股")
+            try:
+                card_url = await _card_renderer.render_stock_holdings([], user, event, 0)
+                yield event.image_result(card_url)
+            except RuntimeError as e:
+                if "All endpoints failed" in str(e):
+                    yield event.plain_result("📊 你目前没有持股")
+                else:
+                    raise
         else:
-            lines = ["═══════════════════════════", "【 我的持股 】", "═══════════════════════════"]
+            holdings_data = []
             total_profit = 0
             for name, info in holdings.items():
                 code = STOCKS[name]["code"]
@@ -108,12 +127,32 @@ async def run_stock_logic(event: AstrMessageEvent, store, parser, get_kv_data):
                 profit_str = f"+{profit:.0f}" if profit >= 0 else f"{profit:.0f}"
                 change_str = f"+{change:.1f}%" if change >= 0 else f"{change:.1f}%"
                 total_profit += profit
-                lines.append(f"{code} {name}: {info['amount']}股")
-                lines.append(f"  成本¥{info['avg_price']:.2f} | 现价¥{current_price:.2f} | 今日{change_str}")
-                lines.append(f"  盈亏: {profit_str}({profit_pct:+.1f}%)")
-            lines.append("═══════════════════════════")
-            total_str = f"+{total_profit:.0f}" if total_profit >= 0 else f"{total_profit:.0f}"
-            lines.append(f"📊 总盈亏: {total_str}金币")
-            yield event.plain_result("\n".join(lines))
+                
+                holdings_data.append({
+                    "name": name,
+                    "code": code,
+                    "amount": info["amount"],
+                    "cost_price": f"{info['avg_price']:.2f}",
+                    "current_price": f"{current_price:.2f}",
+                    "profit": profit,
+                    "profit_str": profit_str,
+                    "profit_pct_str": f"{profit_pct:+.1f}%",
+                    "today_change": change,
+                    "today_change_str": change_str,
+                })
+            
+            try:
+                card_url = await _card_renderer.render_stock_holdings(holdings_data, user, event, int(total_profit))
+                yield event.image_result(card_url)
+            except RuntimeError as e:
+                if "All endpoints failed" in str(e):
+                    lines = ["📊 你的持股："]
+                    for h in holdings_data:
+                        lines.append(f"{h['name']}({h['code']}) x{h['amount']} 成本¥{h['cost_price']} 当前¥{h['current_price']} 盈亏:{h['profit_str']}({h['profit_pct_str']})")
+                    profit_str = f"+{total_profit:.0f}" if total_profit >= 0 else f"{total_profit:.0f}"
+                    lines.append(f"总盈亏: {profit_str}")
+                    yield event.plain_result("\n".join(lines))
+                else:
+                    raise
     else:
         yield event.plain_result("📈 股市操作:\n═══════════════════════════\n• /股市 - 查看行情\n• /股市 买 代码 数量\n• /股市 卖 代码 数量\n• /股市 持股\n═══════════════════════════")

@@ -137,7 +137,8 @@ async def run_eat_logic(event: AstrMessageEvent, store, parser, renderer):
             restore_health=food.get("restore_health", 0),
             restore_strength=food.get("restore_strength", 0),
             restore_energy=food.get("restore_energy", 0),
-            restore_mood=food.get("restore_mood", 0)
+            restore_mood=food.get("restore_mood", 0),
+            restore_satiety=food.get("restore_satiety", 0)
         )
         yield event.image_result(url)
     except Exception:

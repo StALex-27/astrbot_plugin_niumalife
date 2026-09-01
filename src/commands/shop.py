@@ -5,6 +5,9 @@ from astrbot.api.event import AstrMessageEvent
 
 from ...modules.shop import SHOPS, get_shop_items, buy_item
 from ...modules.item import ITEMS
+from ...modules.renderer import CardRenderer
+
+_card_renderer = CardRenderer()
 
 
 def format_food_effects(effects: dict) -> str:
@@ -131,7 +134,7 @@ async def run_shop_show_company_logic(user, company_id):
     return "\n".join(lines)
 
 
-async def run_shop_logic(event: AstrMessageEvent, store, parser):
+async def run_shop_logic(event: AstrMessageEvent, store, parser, plugin=None):
     """商店命令逻辑"""
     user_id = str(event.get_sender_id())
     user = await store.get_user(user_id)
@@ -168,32 +171,43 @@ async def run_shop_logic(event: AstrMessageEvent, store, parser):
     if sub_cmd in SHOPS:
         shop_id = sub_cmd
         shop = SHOPS.get(shop_id)
-        fixed, random_items = get_shop_items(store, shop_id)
-        
-        lines = ["═══════════════════════════", f"{shop.get('emoji', '🏪')} 【 {shop.get('name', shop_id)} 】", f"{shop.get('desc', '')}", "═══════════════════════════"]
-        
-        if fixed:
-            lines.append("【 常驻商品 】")
-            for item_id in fixed:
-                item = ITEMS.get(item_id, {})
-                price = item.get('price', 0)
-                effects = item.get('effects', {})
-                effect_str = format_food_effects(effects)
-                lines.append(f"• {item.get('name', item_id)} §e{price}金§r {effect_str}")
-        
-        if random_items:
-            lines.append("【 限时商品 】")
-            for item_id in random_items:
-                item = ITEMS.get(item_id, {})
-                price = item.get('price', 0)
-                effects = item.get('effects', {})
-                effect_str = format_food_effects(effects)
-                lines.append(f"★ {item.get('name', item_id)} §e{price}金§r {effect_str}")
-        
-        lines.append("═══════════════════════════")
-        lines.append("购买: /商店 买 <物品名> [数量]")
-        
-        yield event.plain_result("\n".join(lines))
+        fixed, random_items = get_shop_items(plugin, shop_id)
+
+        fixed_formatted = []
+        for item_id in fixed:
+            item = ITEMS.get(item_id, {})
+            price = item.get('price', 0)
+            effects = item.get('effects', {})
+            fixed_formatted.append({
+                "name": item.get('name', item_id),
+                "emoji": item.get('emoji', '📦'),
+                "price": price,
+                "type": item.get('type', '物品'),
+                "effect_str": format_food_effects(effects),
+            })
+
+        random_formatted = []
+        for item_id in random_items:
+            item = ITEMS.get(item_id, {})
+            price = item.get('price', 0)
+            effects = item.get('effects', {})
+            random_formatted.append({
+                "name": item.get('name', item_id),
+                "emoji": item.get('emoji', '📦'),
+                "price": price,
+                "type": item.get('type', '物品'),
+                "effect_str": format_food_effects(effects),
+            })
+
+        card_url = await _card_renderer.render_shop(
+            shop.get('name', shop_id),
+            fixed_formatted,
+            random_formatted,
+            user,
+            event,
+            section_title=shop.get('desc', ''),
+        )
+        yield event.image_result(card_url)
         return
     
     # 购买指令
