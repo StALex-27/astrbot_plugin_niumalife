@@ -180,11 +180,11 @@ DEBUFF_DEFINITIONS = {
 # 医院系统配置
 # ============================================================
 
-HOSPITAL_COST_PER_HOUR = 30          # 每小时消耗金币
-HOSPITAL_HEALTH_PER_HOUR = 5         # 每小时恢复健康
-HOSPITAL_STRENGTH_PER_HOUR = 2      # 每小时恢复体力
-HOSPITAL_ENERGY_PER_HOUR = 2        # 每小时恢复精力
-HOSPITAL_MOOD_TARGET = 20            # 心情固定值
+HOSPITAL_COST_PER_HOUR = 0           # 每小时消耗金币（免费）
+HOSPITAL_HEALTH_PER_HOUR = 10        # 每小时恢复健康
+HOSPITAL_STRENGTH_PER_HOUR = 10      # 每小时恢复体力
+HOSPITAL_ENERGY_PER_HOUR = 10        # 每小时恢复精力
+HOSPITAL_MOOD_PER_HOUR = 10          # 每小时恢复心情
 HOSPITAL_DISCHARGE_THRESHOLD = 50    # 出院需要健康 >= 此值
 
 

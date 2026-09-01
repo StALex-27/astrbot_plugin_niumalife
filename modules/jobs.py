@@ -158,6 +158,11 @@ class JobManager:
         Returns:
             (是否成功, 消息)
         """
+        # 状态一致性修复：如果当前不是打工中，但 jobs_in_progress 有残留，
+        # 说明之前的工作记录未被正确清理，此时清空残留记录，允许接受新委托
+        if user_data.get("status") != "打工中" and user_data.get("jobs_in_progress"):
+            user_data["jobs_in_progress"] = []
+
         # 检查是否已有进行中的委托
         in_progress = self.get_player_current_jobs(user_data)
         if len(in_progress) >= 3:

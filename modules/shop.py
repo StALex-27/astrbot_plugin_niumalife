@@ -3,7 +3,7 @@
 包含商店配置、商品管理、购买逻辑
 """
 import random
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from .constants import ITEMS
