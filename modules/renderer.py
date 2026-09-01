@@ -19,7 +19,8 @@ class CardRenderer:
     
     # 渲染尺寸配置
     DEFAULT_WIDTH = 380
-    DEFAULT_HEIGHT = 400
+    DEFAULT_HEIGHT = 500
+    MAX_HEIGHT = 800
     
     async def _render(self, card_type: str, data: dict, height: int = None) -> str:
         """内部渲染方法"""
@@ -99,6 +100,17 @@ class CardRenderer:
         if attrs.get("health", 100) < 50:
             warnings += "⚠️ 健康偏低！"
         
+        # 计算累计经验值和综合等级
+        skill_exp = user.get("skill_exp", {})
+        total_exp = sum(skill_exp.values()) if skill_exp else 0
+        from .skills import get_skill_level, get_skill_exp_rate
+        max_level = 0
+        for skill_name, exp in skill_exp.items():
+            lvl = get_skill_level(exp, get_skill_exp_rate(skill_name))
+            if lvl > max_level:
+                max_level = lvl
+        user_level = max_level
+        
         data = {
             **self._get_base_data(user_id),
             "nickname": user.get("nickname", "未知"),
@@ -117,6 +129,8 @@ class CardRenderer:
             "energy": int(attrs.get("energy", 0)),
             "mood": int(attrs.get("mood", 0)),
             "satiety": int(attrs.get("satiety", 0)),
+            "user_level": user_level,
+            "total_exp": total_exp,
         }
         
         height = 450 + (30 if buff_tags else 0) + (25 if skills_html else 0) + (20 if warnings else 0)
@@ -175,14 +189,27 @@ class CardRenderer:
         checkin = user.get("checkin", {})
         streak = checkin.get("streak", 0)
         
-        luck_rating = get_luck_rating(result.get("luck_value", 50))
+        # 优先使用新版品级信息，否则降级到旧版兼容
+        grade_info = result.get("grade_info")
+        fortune_text = result.get("fortune", "")
         
+        if grade_info:
+            luck_emoji = grade_info.get("emoji", "🎲")
+            luck_name = grade_info.get("name", "神秘品级")
+            luck_desc = fortune_text  # 签文作为描述
+        else:
+            # 降级：旧版兼容
+            luck_rating = get_luck_rating(result.get("luck_value", 50))
+            luck_emoji = luck_rating.get("emoji", "🎲")
+            luck_name = luck_rating.get("name", "普通人")
+            luck_desc = luck_rating.get("desc", "")
+
         data = {
             **self._get_base_data(user_id),
             "nickname": user.get("nickname", "未知"),
-            "luck_emoji": luck_rating.get("emoji", "🎲"),
-            "luck_name": luck_rating.get("name", "普通人"),
-            "luck_desc": luck_rating.get("desc", ""),
+            "luck_emoji": luck_emoji,
+            "luck_name": luck_name,
+            "luck_desc": luck_desc,
             "gold": result.get("total_gold", 0),
             "streak": streak,
             "streak_bonus": result.get("streak_bonus", 0) if not already_checked else None,
@@ -258,7 +285,7 @@ class CardRenderer:
         }
         
         height = 150 + len(buffs) * 35 if buffs else 150
-        return await self._render(CardType.BUFF_LIST, data, min(height, 500))
+        return await self._render(CardType.BUFF_LIST, data, min(height, 800))
     
     async def render_job_list(self, jobs: dict, user: dict, event) -> str:
         """渲染工作列表卡片"""
@@ -290,7 +317,7 @@ class CardRenderer:
         }
         
         height = 200 + (len(physical_jobs) + len(mental_jobs)) * 45
-        return await self._render(CardType.JOB_LIST, data, min(height, 600))
+        return await self._render(CardType.JOB_LIST, data, min(height, 800))
     
     async def render_job_start(self, user: dict, event, job_name: str, job_emoji: str, 
                                hours: int, expected_gold: int, expected_exp: int,
@@ -314,7 +341,100 @@ class CardRenderer:
         }
         
         return await self._render(CardType.JOB_START, data, 420)
-    
+
+    async def render_job_pool(self, user: dict, pool: list, recommended: dict,
+                             fmgr, jmgr, event) -> str:
+        """渲染委托池卡片"""
+        user_id = str(event.get_sender_id())
+
+        DIFF_ICON = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}
+
+        pools_data = []
+        for i, job in enumerate(pool, 1):
+            company = jmgr.get_company_info(job.company_id)
+            pools_data.append({
+                "index": i,
+                "title": f"{i}. {job.title}",
+                "emoji": company.get("emoji", "📋") if company else "📋",
+                "company_emoji": company.get("emoji", "") if company else "",
+                "company_name": company.get("name", job.company_id) if company else job.company_id,
+                "base_reward": job.base_reward,
+                "duration_hours": job.duration_hours,
+                "difficulty": job.difficulty,
+                "diff_icon": DIFF_ICON.get(job.difficulty, "⚪"),
+            })
+
+        recommended_data = []
+        favor_data = user.get("company_favorability", {})
+        for cid, jobs in recommended.items():
+            company = jmgr.get_company_info(cid)
+            if not company:
+                continue
+            favor = favor_data.get(cid, 0)
+            level = fmgr.get_favor_level(favor)
+            recommended_data.append({
+                "emoji": company.get("emoji", ""),
+                "name": company.get("name", cid),
+                "level": level["level"],
+                "level_name": level["name"],
+                "jobs": [
+                    {
+                        "title": f"[{j.get('job_id', '??')}] {j.get('title', '')}",
+                        "emoji": company.get("emoji", "📋"),
+                        "base_reward": j.get("base_reward", 0),
+                        "duration_hours": j.get("duration_hours", 1),
+                        "difficulty": j.get("difficulty", "D"),
+                        "diff_icon": DIFF_ICON.get(j.get("difficulty", "D"), "⚪"),
+                    }
+                    for j in jobs[:2]
+                ],
+            })
+
+        data = {
+            **self._get_base_data(user_id),
+            "nickname": user.get("nickname", "未知"),
+            "pools": pools_data,
+            "recommended": recommended_data,
+        }
+
+        height = 200 + len(pools_data) * 60 + len(recommended_data) * 120
+        return await self._render(CardType.JOB_POOL, data, min(height, 800))
+
+    async def render_job_complete(self, user: dict, event, eval_result: dict,
+                                  rewards: dict) -> str:
+        """渲染委托完成卡片"""
+        user_id = str(event.get_sender_id())
+
+        grade = eval_result.get("grade", "B")
+        GRADE_EMOJI = {"S": "🏆", "A": "🌟", "B": "👍", "C": "😐", "D": "😥", "F": "💀"}
+        GRADE_NAME = {"S": "完美", "A": "优秀", "B": "良好", "C": "合格", "D": "较差", "F": "失败"}
+
+        exp_str = ""
+        if rewards.get("exp"):
+            exp_str = ", ".join([f"{k}+{v}" for k, v in rewards.get("exp", {}).items()])
+
+        favor_change = rewards.get("favor_change", 0)
+
+        data = {
+            **self._get_base_data(user_id),
+            "nickname": user.get("nickname", "未知"),
+            "grade_emoji": GRADE_EMOJI.get(grade, "👍"),
+            "grade_name": GRADE_NAME.get(grade, grade),
+            "total_score": eval_result.get("score", 0),
+            "total_gold": rewards.get("gold", 0),
+            "gold": rewards.get("gold", 0),
+            "favor_change": favor_change,
+            "exp_str": exp_str,
+            "efficiency": eval_result.get("efficiency", 0),
+            "quality": eval_result.get("quality", 0),
+            "stress_bonus": eval_result.get("stress_bonus", 0),
+            "mood_bonus": eval_result.get("mood_bonus", 0),
+            "skill_bonus": eval_result.get("skill_bonus", 0),
+            "buff_bonus": eval_result.get("buff_bonus", 0),
+        }
+
+        return await self._render(CardType.JOB_COMPLETE, data, 420)
+
     async def render_course_list(self, courses: dict, user: dict, event) -> str:
         """渲染课程列表卡片"""
         user_id = str(event.get_sender_id())
@@ -335,8 +455,28 @@ class CardRenderer:
         }
         
         height = 150 + len(course_list) * 50
-        return await self._render(CardType.COURSE_LIST, data, min(height, 550))
-    
+        return await self._render(CardType.COURSE_LIST, data, min(height, 800))
+
+    async def render_course_start(self, user: dict, event, course_name: str, course_emoji: str,
+                                   hours: int, gain_exp: int,
+                                   consume_strength: int, consume_energy: int, consume_mood: int) -> str:
+        """渲染开始学习卡片"""
+        user_id = str(event.get_sender_id())
+
+        data = {
+            **self._get_base_data(user_id),
+            "nickname": user.get("nickname", "未知"),
+            "course_name": course_name,
+            "course_emoji": course_emoji,
+            "hours": hours,
+            "gain_exp": gain_exp,
+            "consume_strength": consume_strength,
+            "consume_energy": consume_energy,
+            "consume_mood": consume_mood,
+        }
+
+        return await self._render(CardType.COURSE_START, data, 380)
+
     async def render_food_list(self, foods: dict, user: dict, event) -> str:
         """渲染食物列表卡片"""
         user_id = str(event.get_sender_id())
@@ -367,7 +507,7 @@ class CardRenderer:
     
     async def render_eat(self, user: dict, event, food_name: str, food_emoji: str,
                         restore_health: int, restore_strength: int, restore_energy: int,
-                        restore_mood: int) -> str:
+                        restore_mood: int, restore_satiety: int = 0) -> str:
         """渲染吃东西卡片"""
         user_id = str(event.get_sender_id())
         
@@ -380,6 +520,7 @@ class CardRenderer:
             "restore_strength": restore_strength,
             "restore_energy": restore_energy,
             "restore_mood": restore_mood,
+            "restore_satiety": restore_satiety,
         }
         
         return await self._render(CardType.EAT, data, 380)
@@ -458,7 +599,7 @@ class CardRenderer:
         }
         
         height = 150 + (len(rental_list) + len(purchase_list)) * 50
-        return await self._render(CardType.HOUSING_LIST, data, min(height, 600))
+        return await self._render(CardType.HOUSING_LIST, data, min(height, 800))
     
     async def render_entertainment_list(self, entertainments: dict, user: dict, event) -> str:
         """渲染娱乐列表卡片"""
@@ -545,6 +686,71 @@ class CardRenderer:
         data = self._get_base_data(user_id)
         return await self._render(CardType.HELP, data, 460)
     
+    async def render_stock_market(self, stocks: list, user: dict, event, status: str) -> str:
+        """渲染股票市场卡片，渲染失败时回退纯文本"""
+        user_id = str(event.get_sender_id())
+        
+        data = {
+            **self._get_base_data(user_id),
+            "nickname": user.get("nickname", "未知"),
+            "gold": int(user.get("gold", 0)),
+            "status": status,
+            "stocks": stocks,
+        }
+        
+        height = 150 + len(stocks) * 50
+        try:
+            return await self._render(CardType.STOCK_MARKET, data, min(height, 450))
+        except RuntimeError as e:
+            if "All endpoints failed" in str(e):
+                raise
+            raise
+    
+    async def render_stock_holdings(self, holdings: list, user: dict, event, total_profit: int) -> str:
+        """渲染持股卡片"""
+        user_id = str(event.get_sender_id())
+        
+        total_profit_str = f"+{total_profit}" if total_profit >= 0 else str(total_profit)
+        
+        data = {
+            **self._get_base_data(user_id),
+            "nickname": user.get("nickname", "未知"),
+            "holdings": holdings,
+            "total_profit": total_profit,
+            "total_profit_str": total_profit_str,
+        }
+        
+        height = 150 + len(holdings) * 70 if holdings else 150
+        return await self._render(CardType.STOCK_HOLDINGS, data, min(height, 500))
+    
+    async def render_backpack(self, items: list, user: dict, event) -> str:
+        """渲染背包卡片"""
+        user_id = str(event.get_sender_id())
+        
+        data = {
+            **self._get_base_data(user_id),
+            "nickname": user.get("nickname", "未知"),
+            "items": items,
+        }
+        
+        height = 150 + len(items) * 45 if items else 150
+        return await self._render(CardType.BACKPACK, data, min(height, 500))
+
+    async def render_shop(self, shop_name: str, fixed_items: list, random_items: list, user: dict, event, section_title: str = None) -> str:
+        """渲染商店卡片"""
+        user_id = str(event.get_sender_id())
+        data = {
+            **self._get_base_data(user_id),
+            "nickname": user.get("nickname", "未知"),
+            "gold": int(user.get("gold", 0)),
+            "shop_name": shop_name,
+            "section_title": section_title or "",
+            "fixed_items": fixed_items,
+            "random_items": random_items,
+        }
+        height = 150 + (len(fixed_items) + len(random_items)) * 55
+        return await self._render(CardType.SHOP, data, min(height, 550))
+    
     async def render_generic(self, content: str, event, height: int = 200) -> str:
         """渲染通用卡片"""
         user_id = str(event.get_sender_id()) if event else "system"
@@ -554,6 +760,60 @@ class CardRenderer:
             "content": content,
         }
         return await self._render(CardType.GENERIC, data, height)
+
+    async def render_fishing_catch(self, user: dict, catch: dict, title_unlocked: str = None) -> str:
+        """渲染钓鱼结果卡片。"""
+        user_id = str(user.get("user_id", "system"))
+        fish = catch.get("fish", {})
+        rarity_cn = {"common": "常见", "uncommon": "不凡", "rare": "稀有", "epic": "史诗", "legendary": "传奇"}.get(
+            fish.get("rarity", "common"), "常见"
+        )
+        base = self._get_base_data(user_id)
+        data = {
+            **base,
+            "nickname": user.get("nickname", "玩家"),
+            "fish_emoji": fish.get("emoji", "🐟"),
+            "fish_name": fish.get("name", "未知"),
+            "size_label": catch.get("size_label", "普通"),
+            "weight": catch.get("weight", 0),
+            "rarity_cn": rarity_cn,
+            "estimated_price": catch.get("estimated_price", 0),
+            "spot": catch.get("spot", catch.get("_spot", "")),
+            "exp_gain": fish.get("exp_reward", 0),
+            "title_unlocked": title_unlocked,
+            "satiety_restore": fish.get("satiety_restore", 0),
+            "mood_restore": fish.get("mood_restore", 0),
+        }
+        return await self._render(CardType.FISHING_CARD, data, 520)
+
+    async def render_fish_dex(self, user: dict, event, caught: dict, all_fish: dict) -> str:
+        """渲染鱼塘图鉴卡片。"""
+        user_id = str(event.get_sender_id()) if event else "system"
+        fish_items = []
+        for fname, info in all_fish.items():
+            cnt = caught.get(fname, 0)
+            fish_items.append({
+                "emoji": info.get("emoji", "🐟"),
+                "name": fname,
+                "rarity": info.get("rarity", "common"),
+                "caught": cnt,
+                "locked": cnt == 0,
+            })
+        # 按稀有度排序
+        order = {"legendary": 0, "epic": 1, "rare": 2, "uncommon": 3, "common": 4}
+        fish_items.sort(key=lambda x: (order.get(x["rarity"], 99), x["name"]))
+
+        data = {
+            **self._get_base_data(user_id),
+            "nickname": user.get("nickname", "玩家"),
+            "fish_items": fish_items,
+            "caught_count": len(caught),
+            "total_count": len(all_fish),
+            "biggest": user.get("fishing", {}).get("biggest_catch", {}),
+            "title": user.get("fishing", {}).get("fish_title", ""),
+        }
+        height = 200 + len(fish_items) * 40
+        return await self._render(CardType.FISH_DEX, data, min(height, 700))
     
     # ========== 便捷包装方法 ==========
     

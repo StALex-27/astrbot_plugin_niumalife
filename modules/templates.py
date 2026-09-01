@@ -33,6 +33,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .section { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px; margin-bottom: 10px; }
 .section-title { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 .section-title::before { content: ''; width: 3px; height: 10px; background: linear-gradient(180deg, #4facfe, #00f2fe); border-radius: 2px; }
+.section-sub-title { font-size: 11px; color: rgba(255,255,255,0.6); margin: 10px 0 6px 0; }
 .row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .row:last-child { border-bottom: none; }
 .row-label { font-size: 11px; color: rgba(255,255,255,0.6); }
@@ -115,7 +116,10 @@ class CardType:
     BUFF_LIST = "buff_list"
     JOB_LIST = "job_list"
     JOB_START = "job_start"
+    JOB_POOL = "job_pool"
+    JOB_COMPLETE = "job_complete"
     COURSE_LIST = "course_list"
+    COURSE_START = "course_start"
     FOOD_LIST = "food_list"
     EAT = "eat"
     RESIDENCE = "residence"
@@ -127,6 +131,13 @@ class CardType:
     ERROR = "error"
     SUCCESS = "success"
     GENERIC = "generic"
+    STOCK_MARKET = "stock_market"
+    STOCK_HOLDINGS = "stock_holdings"
+    BACKPACK = "backpack"
+    SHOP = "shop"
+    FISHING_CARD = "fishing_card"
+    FISH_Market = "fish_market"
+    FISH_DEX = "fish_dex"
 
 
 # ============================================================
@@ -160,6 +171,8 @@ CONTENT_TEMPLATES = {
             <div class="grid-2">
                 <div class="grid-item"><div class="grid-item-title">连续</div><div class="grid-item-value">{{ streak }} 天</div></div>
                 <div class="grid-item"><div class="grid-item-title">总计</div><div class="grid-item-value">{{ total_days }} 天</div></div>
+                <div class="grid-item"><div class="grid-item-title">等级</div><div class="grid-item-value highlight">Lv.{{ user_level }}</div></div>
+                <div class="grid-item"><div class="grid-item-title">经验</div><div class="grid-item-value">{{ total_exp }} EXP</div></div>
                 <div class="grid-item"><div class="grid-item-title">欧气</div><div class="grid-item-value">{{ luck_emoji }} {{ luck_name }}</div></div>
             </div>
         </div>
@@ -293,7 +306,7 @@ CONTENT_TEMPLATES = {
         
         <div class="big-emoji">{{ luck_emoji }}</div>
         <div style="font-size:20px;font-weight:800;margin-bottom:2px">{{ luck_name }}</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-bottom:12px">{{ luck_desc }}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.85);margin:8px 16px 12px;line-height:1.6;white-space:pre-wrap;text-align:center">{{ luck_desc }}</div>
         
         <div class="grid-2" style="margin-bottom:12px">
             <div class="grid-item"><div class="grid-item-title">本次获得</div><div class="grid-item-value gold">+{{ gold }}</div></div>
@@ -478,6 +491,118 @@ CONTENT_TEMPLATES = {
 """,
 
 
+    CardType.JOB_POOL: """
+<div class="card">
+    <div class="card-top"></div>
+    <div class="header">
+        <img class="avatar" src="{{ avatar_url }}" alt="avatar">
+        <div class="header-info">
+            <div class="username">{{ nickname }}</div>
+            <div class="user-id">委托池</div>
+        </div>
+    </div>
+    <div class="main">
+        {% if pools %}
+        <div class="section">
+            <div class="section-title">📋 公共委托</div>
+            {% for job in pools %}
+            <div class="list-item">
+                <div class="list-item-left">
+                    <span class="list-item-emoji">{{ job.emoji }}</span>
+                    <div>
+                        <div class="list-item-name">{{ job.title }}</div>
+                        <div class="list-item-sub">{{ job.company_emoji }} {{ job.company_name }}</div>
+                    </div>
+                </div>
+                <div class="list-item-right">
+                    <div class="list-item-value gold">+{{ job.base_reward }}</div>
+                    <div class="list-item-sub">{{ job.duration_hours }}h {{ job.diff_icon }}{{ job.difficulty }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if recommended %}
+        <div class="section">
+            <div class="section-title">🏢 公司推荐</div>
+            {% for company in recommended %}
+            <div style="margin-bottom:10px">
+                <div style="font-size:12px;font-weight:600;margin-bottom:4px">{{ company.emoji }} {{ company.name }} <span style="opacity:0.6">Lv.{{ company.level }} {{ company.level_name }}</span></div>
+                {% for job in company.jobs %}
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <span class="list-item-emoji">{{ job.emoji }}</span>
+                        <div>
+                            <div class="list-item-name">{{ job.title }}</div>
+                            <div class="list-item-sub">{{ job.diff_icon }}{{ job.difficulty }}</div>
+                        </div>
+                    </div>
+                    <div class="list-item-right">
+                        <div class="list-item-value gold">+{{ job.base_reward }}</div>
+                        <div class="list-item-sub">{{ job.duration_hours }}h</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if not pools and not recommended %}
+        <div class="center" style="padding:20px;color:rgba(255,255,255,0.5)">暂无委托，请稍后再来~</div>
+        {% endif %}
+    </div>
+    <div class="footer"><div class="footer-text">/打工 &lt;编号/名称&gt; 接受委托</div></div>
+</div>
+""",
+
+
+    CardType.JOB_COMPLETE: """
+<div class="card">
+    <div class="card-top"></div>
+    <div class="header">
+        <img class="avatar" src="{{ avatar_url }}" alt="avatar">
+        <div class="header-info">
+            <div class="username">{{ nickname }}</div>
+            <div class="user-id">委托完成</div>
+        </div>
+        <div class="gold-box">
+            <div class="gold-label">获得</div>
+            <div class="gold-value">+{{ total_gold }}</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="center" style="padding:8px 0">
+            <div style="font-size:40px">{{ grade_emoji }}</div>
+            <div style="font-size:20px;font-weight:800;margin-top:4px">{{ grade_name }}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px">综合分 {{ total_score }}</div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:10px">
+            <div class="grid-item"><div class="grid-item-title">金币</div><div class="grid-item-value gold">+{{ gold }}</div></div>
+            <div class="grid-item"><div class="grid-item-title">好感度</div><div class="grid-item-value">{{ favor_change|+ }}</div></div>
+        </div>
+
+        {% if exp_str %}
+        <div class="row" style="margin-bottom:8px"><span class="row-label">📈 经验</span><span class="row-value">{{ exp_str }}</span></div>
+        {% endif %}
+
+        <div class="section">
+            <div class="section-title">📊 六维评价</div>
+            <div class="row"><span class="row-label">⚡ 效率</span><span class="row-value">{{ efficiency }}</span></div>
+            <div class="row"><span class="row-label">⭐ 质量</span><span class="row-value">{{ quality }}</span></div>
+            <div class="row"><span class="row-label">💪 压力</span><span class="row-value">{{ stress_bonus|+ }}</span></div>
+            <div class="row"><span class="row-label">😊 心情</span><span class="row-value">{{ mood_bonus|+ }}</span></div>
+            <div class="row"><span class="row-label">🎯 技能</span><span class="row-value">{{ skill_bonus|+ }}</span></div>
+            <div class="row"><span class="row-label">✨ Buff</span><span class="row-value">{{ buff_bonus|+ }}</span></div>
+        </div>
+    </div>
+    <div class="footer"><div class="footer-text">辛苦了~ 💪</div></div>
+</div>
+""",
+
+
     CardType.COURSE_LIST: """
 <div class="card">
     <div class="card-top"></div>
@@ -569,6 +694,7 @@ CONTENT_TEMPLATES = {
             <div class="row"><span class="row-label">⚡ 精力</span><span class="row-value success">+{{ restore_energy }}</span></div>
             <div class="row"><span class="row-label">😊 心情</span><span class="row-value success">+{{ restore_mood }}</span></div>
             <div class="row"><span class="row-label">❤️ 健康</span><span class="row-value success">+{{ restore_health }}</span></div>
+            <div class="row"><span class="row-label">🍖 饱食</span><span class="row-value success">+{{ restore_satiety }}</span></div>
         </div>
         
         <div class="success-box">购买成功！</div>
@@ -867,6 +993,291 @@ CONTENT_TEMPLATES = {
         </div>
     </div>
     <div class="main">{{ content }}</div>
+</div>
+""",
+
+
+    CardType.STOCK_MARKET: """
+<div class="card">
+    <div class="card-top"></div>
+    <div class="header">
+        <img class="avatar" src="{{ avatar_url }}" alt="avatar">
+        <div class="header-info">
+            <div class="username">{{ nickname }}</div>
+            <div class="user-id">{{ status }}</div>
+        </div>
+        <div class="gold-box">
+            <div class="gold-label">金币</div>
+            <div class="gold-value">{{ gold }}</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="section">
+            <div class="section-title">📈 股票行情</div>
+            {% for stock in stocks %}
+            <div class="list-item">
+                <div class="list-item-left">
+                    <span class="list-item-emoji">📊</span>
+                    <div>
+                        <div class="list-item-name">{{ stock.name }}</div>
+                        <div class="list-item-sub">{{ stock.code }}</div>
+                    </div>
+                </div>
+                <div class="list-item-right">
+                    <div class="list-item-value">¥{{ stock.price }}</div>
+                    <div class="list-item-sub {% if stock.change_val > 0 %}success{% elif stock.change_val < 0 %}warning{% endif %}">{{ stock.change_str }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="footer"><div class="footer-text">使用 /股市 买/卖 代码 数量</div></div>
+</div>
+""",
+
+
+    CardType.STOCK_HOLDINGS: """
+<div class="card">
+    <div class="card-top"></div>
+    <div class="header">
+        <img class="avatar" src="{{ avatar_url }}" alt="avatar">
+        <div class="header-info">
+            <div class="username">{{ nickname }}</div>
+            <div class="user-id">我的持股</div>
+        </div>
+        <div class="gold-box">
+            <div class="gold-label">总盈亏</div>
+            <div class="gold-value {% if total_profit >= 0 %}gold{% else %}warning{% endif %}">{{ total_profit_str }}</div>
+        </div>
+    </div>
+    <div class="main">
+        {% if holdings %}
+        <div class="section">
+            {% for holding in holdings %}
+            <div class="list-item" style="flex-wrap:wrap">
+                <div class="list-item-left" style="width:100%">
+                    <span class="list-item-emoji">📈</span>
+                    <div style="flex:1">
+                        <div class="list-item-name">{{ holding.code }} {{ holding.name }}</div>
+                        <div class="list-item-sub">{{ holding.amount }}股 | 成本¥{{ holding.cost_price }} | 现价¥{{ holding.current_price }}</div>
+                    </div>
+                </div>
+                <div class="list-item-right" style="width:100%;margin-top:4px">
+                    <div class="list-item-value {% if holding.profit >= 0 %}gold{% else %}warning{% endif %}">{{ holding.profit_str }}</div>
+                    <div class="list-item-sub {% if holding.today_change >= 0 %}success{% else %}warning{% endif %}">今日 {{ holding.today_change_str }} | 总 {{ holding.profit_pct_str }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="center" style="padding:30px;color:rgba(255,255,255,0.5)">
+            暂无持股<br>使用 /股市 买 <代码> <数量> 购入
+        </div>
+        {% endif %}
+    </div>
+    <div class="footer"><div class="footer-text">使用 /股市 卖 <代码> <数量></div></div>
+</div>
+""",
+
+
+    CardType.BACKPACK: """
+<div class="card">
+    <div class="card-top"></div>
+    <div class="header">
+        <img class="avatar" src="{{ avatar_url }}" alt="avatar">
+        <div class="header-info">
+            <div class="username">{{ nickname }}</div>
+            <div class="user-id">背包</div>
+        </div>
+    </div>
+    <div class="main">
+        {% if items %}
+        <div class="section">
+            {% for item in items %}
+            <div class="list-item">
+                <div class="list-item-left">
+                    <span class="list-item-emoji">{{ item.emoji }}</span>
+                    <div>
+                        <div class="list-item-name">{{ item.name }}</div>
+                        {% if item.quantity > 1 %}
+                        <div class="list-item-sub">x{{ item.quantity }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="center" style="padding:30px;color:rgba(255,255,255,0.5)">
+            🎒 背包是空的！<br>通过签到或购买获取物品
+        </div>
+        {% endif %}
+    </div>
+    <div class="footer"><div class="footer-text">使用 /背包 使用 物品名 | /装备 装备名</div></div>
+</div>
+""",
+
+    CardType.FISHING_CARD: """
+<div class="card">
+    <div class="card-top"></div>
+    <div class="header">
+        <img class="avatar" src="{{ avatar_url }}" alt="avatar">
+        <div class="header-info">
+            <div class="username">{{ nickname }}</div>
+            <div class="user-id">上钩啦！</div>
+        </div>
+        <div class="gold-box">
+            <div class="gold-label">估值</div>
+            <div class="gold-value">{{ estimated_price }}</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="section center" style="padding:20px 10px;background:linear-gradient(135deg,rgba(79,195,247,0.15),rgba(0,242,254,0.05));">
+            <div style="font-size:80px;line-height:1;margin-bottom:8px;">{{ fish_emoji }}</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;">{{ fish_name }}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);">{{ size_label }} · {{ weight }} kg</div>
+            <div style="display:inline-block;margin-top:8px;padding:3px 12px;background:rgba(254,202,87,0.2);border:1px solid rgba(254,202,87,0.4);border-radius:20px;font-size:10px;color:#feca57;">{{ rarity_cn }}</div>
+        </div>
+        <div class="grid-2">
+            <div class="grid-item">
+                <div class="grid-item-title">钓鱼点</div>
+                <div class="grid-item-value" style="font-size:13px;">{{ spot }}</div>
+            </div>
+            <div class="grid-item">
+                <div class="grid-item-title">EXP</div>
+                <div class="grid-item-value highlight">+{{ exp_gain }}</div>
+            </div>
+        </div>
+        {% if title_unlocked %}
+        <div class="success-box">
+            🏅 解锁称号：{{ title_unlocked }}
+        </div>
+        {% endif %}
+        <div class="section">
+            <div class="section-title">食用效果</div>
+            <div class="row">
+                <div class="row-label">🍖 饱食度</div>
+                <div class="row-value success">+{{ satiety_restore }}</div>
+            </div>
+            {% if mood_restore > 0 %}
+            <div class="row">
+                <div class="row-label">😊 心情</div>
+                <div class="row-value success">+{{ mood_restore }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-text">📦 已自动存入鱼塘 · 使用 /鱼塘 查看 · /卖鱼 出售</div>
+    </div>
+</div>
+""",
+
+    CardType.SHOP: """
+<div class="card">
+    <div class="card-top"></div>
+    <div class="header">
+        <img class="avatar" src="{{ avatar_url }}" alt="avatar">
+        <div class="header-info">
+            <div class="username">{{ nickname }}</div>
+            <div class="user-id">{{ shop_name }}</div>
+        </div>
+        <div class="gold-box">
+            <div class="gold-label">金币</div>
+            <div class="gold-value">{{ gold }}</div>
+        </div>
+    </div>
+    <div class="main">
+        {% if section_title %}
+        <div class="section-title">{{ section_title }}</div>
+        {% endif %}
+        {% if fixed_items %}
+        <div class="section">
+            <div class="section-sub-title">【 常驻商品 】</div>
+            {% for item in fixed_items %}
+            <div class="list-item">
+                <div class="list-item-left">
+                    <span class="list-item-emoji">{{ item.emoji }}</span>
+                    <div>
+                        <div class="list-item-name">{{ item.name }}</div>
+                        {% if item.effect_str %}
+                        <div class="list-item-sub">{{ item.effect_str }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="list-item-right">
+                    <div class="list-item-value gold">{{ item.price }}金</div>
+                    <div class="list-item-sub">{{ item.type }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if random_items %}
+        <div class="section">
+            <div class="section-sub-title">【 限时商品 】</div>
+            {% for item in random_items %}
+            <div class="list-item">
+                <div class="list-item-left">
+                    <span class="list-item-emoji">{{ item.emoji }}</span>
+                    <div>
+                        <div class="list-item-name">{{ item.name }}</div>
+                        {% if item.effect_str %}
+                        <div class="list-item-sub">{{ item.effect_str }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="list-item-right">
+                    <div class="list-item-value gold">{{ item.price }}金</div>
+                    <div class="list-item-sub">{{ item.type }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if not fixed_items and not random_items %}
+        <div class="center" style="padding:30px;color:rgba(255,255,255,0.5)">
+            🏪 暂无可购买商品
+        </div>
+        {% endif %}
+    </div>
+    <div class="footer"><div class="footer-text">购买: /商店 买 <物品名> [数量]</div></div>
+</div>
+""",
+
+    CardType.COURSE_START: """
+<div class="card">
+    <div class="card-top"></div>
+    <div class="header">
+        <img class="avatar" src="{{ avatar_url }}" alt="avatar">
+        <div class="header-info">
+            <div class="username">{{ nickname }}</div>
+            <div class="user-id">开始学习</div>
+        </div>
+        <div class="gold-box">
+            <div class="gold-label">经验</div>
+            <div class="gold-value">+{{ gain_exp }}</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="center" style="padding:10px 0">
+            <div style="font-size:32px">{{ course_emoji }}</div>
+            <div style="font-size:16px;font-weight:700;margin-top:4px">{{ course_name }}</div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">学习信息</div>
+            <div class="row"><span class="row-label">⏰ 时长</span><span class="row-value">{{ hours }} 小时</span></div>
+            <div class="row"><span class="row-label">📚 预计经验</span><span class="row-value gold">+{{ gain_exp }} EXP</span></div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">消耗预估</div>
+            <div class="row"><span class="row-label">💪 体力</span><span class="row-value warning">-{{ consume_strength }}</span></div>
+            <div class="row"><span class="row-label">⚡ 精力</span><span class="row-value warning">-{{ consume_energy }}</span></div>
+            <div class="row"><span class="row-label">😊 心情</span><span class="row-value warning">-{{ consume_mood }}</span></div>
+        </div>
+    </div>
 </div>
 """,
 }
