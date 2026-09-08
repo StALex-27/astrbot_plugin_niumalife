@@ -5,10 +5,16 @@
     "subcategory": "instant",
     "tier": 1,
     "price": 8,
-    "effects": {"satiety": 30},
+    "effects": {
+      "strength": 15,
+      "satiety": 30
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "速食首选"
+    "desc": "速食首选",
+    "type": "速食",
+    "description": "+15 体力/ +30 饱食",
+    "rarity": "common"
   },
   "薯片": {
     "name": "薯片",
@@ -16,10 +22,17 @@
     "subcategory": "snack",
     "tier": 1,
     "price": 5,
-    "effects": {"satiety": 8, "mood": 2},
+    "effects": {
+      "mood": 5,
+      "satiety": 8,
+      "strength": 3
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "开袋即食"
+    "desc": "开袋即食",
+    "type": "零食",
+    "description": "+3 体力/ +8 饱食/ +5 心情",
+    "rarity": "common"
   },
   "巧克力": {
     "name": "巧克力",
@@ -27,10 +40,17 @@
     "subcategory": "snack",
     "tier": 1,
     "price": 8,
-    "effects": {"mood": 5, "satiety": 5},
+    "effects": {
+      "mood": 5,
+      "satiety": 5,
+      "strength": 2
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "甜蜜补充"
+    "desc": "甜蜜补充",
+    "type": "零食",
+    "description": "+2 体力/ +5 饱食/ +5 心情",
+    "rarity": "common"
   },
   "矿泉水": {
     "name": "矿泉水",
@@ -38,10 +58,17 @@
     "subcategory": "drink",
     "tier": 1,
     "price": 2,
-    "effects": {"satiety": 5},
+    "effects": {
+      "satiety": 5,
+      "health": 2,
+      "strength": 1
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "解渴必备"
+    "desc": "解渴必备",
+    "type": "饮料",
+    "description": "+1 体力/ +5 饱食/ +2 健康",
+    "rarity": "common"
   },
   "面包": {
     "name": "面包",
@@ -49,10 +76,16 @@
     "subcategory": "baked",
     "tier": 1,
     "price": 6,
-    "effects": {"satiety": 20},
+    "effects": {
+      "strength": 15,
+      "satiety": 10
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "简单充饥"
+    "desc": "简单充饥",
+    "type": "烘焙",
+    "description": "+15 体力/ +10 饱食",
+    "rarity": "common"
   },
   "肉包": {
     "name": "肉包",
@@ -60,10 +93,20 @@
     "subcategory": "baked",
     "tier": 2,
     "price": 12,
-    "effects": {"satiety": 35, "mood": 2},
+    "effects": {
+      "strength": 20,
+      "satiety": 35,
+      "mood": 2
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "早餐常客"
+    "desc": "早餐常客",
+    "type": "烘焙",
+    "description": "+20 体力/ +35 饱食/ +2 心情",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "鸡蛋": {
     "name": "鸡蛋",
@@ -71,10 +114,20 @@
     "subcategory": "protein",
     "tier": 2,
     "price": 10,
-    "effects": {"satiety": 25, "health": 2},
+    "effects": {
+      "health": 12,
+      "strength": 8,
+      "satiety": 15
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "营养丰富"
+    "desc": "营养丰富",
+    "type": "蛋白",
+    "description": "+8 体力/ +15 饱食/ +12 健康",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "牛奶": {
     "name": "牛奶",
@@ -82,10 +135,20 @@
     "subcategory": "drink",
     "tier": 2,
     "price": 8,
-    "effects": {"satiety": 20, "health": 3},
+    "effects": {
+      "health": 10,
+      "satiety": 15,
+      "strength": 5
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "补钙佳品"
+    "desc": "补钙佳品",
+    "type": "饮料",
+    "description": "+5 体力/ +15 饱食/ +10 健康",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "奶茶": {
     "name": "奶茶",
@@ -93,10 +156,21 @@
     "subcategory": "drink",
     "tier": 2,
     "price": 15,
-    "effects": {"satiety": 15, "mood": 8},
+    "effects": {
+      "mood": 12,
+      "satiety": 15,
+      "energy": 5,
+      "strength": 4
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "快乐水"
+    "desc": "快乐水",
+    "type": "饮料",
+    "description": "+4 体力/ +5 精力/ +15 饱食",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "炸鸡": {
     "name": "炸鸡",
@@ -104,10 +178,21 @@
     "subcategory": "snack",
     "tier": 3,
     "price": 25,
-    "effects": {"satiety": 45, "mood": 10},
+    "effects": {
+      "mood": 18,
+      "satiety": 45,
+      "strength": 10
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "热量炸弹"
+    "desc": "热量炸弹",
+    "type": "零食",
+    "description": "+10 体力/ +45 饱食/ +18 心情",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "rarity": "rare"
   },
   "关东煮": {
     "name": "关东煮",
@@ -115,10 +200,21 @@
     "subcategory": "snack",
     "tier": 3,
     "price": 20,
-    "effects": {"satiety": 40, "mood": 5},
+    "effects": {
+      "strength": 15,
+      "satiety": 40,
+      "mood": 5
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "便利店必买"
+    "desc": "便利店必买",
+    "type": "零食",
+    "description": "+15 体力/ +40 饱食/ +5 心情",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "rarity": "rare"
   },
   "咖啡": {
     "name": "咖啡",
@@ -126,10 +222,21 @@
     "subcategory": "drink",
     "tier": 2,
     "price": 18,
-    "effects": {"energy": 15, "mood": 3},
+    "effects": {
+      "energy": 25,
+      "mood": 5,
+      "satiety": 3,
+      "strength": 2
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "提神醒脑"
+    "desc": "提神醒脑",
+    "type": "饮料",
+    "description": "+2 体力/ +25 精力/ +3 饱食",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "水果": {
     "name": "水果",
@@ -137,10 +244,21 @@
     "subcategory": "fresh",
     "tier": 2,
     "price": 15,
-    "effects": {"satiety": 25, "health": 5},
+    "effects": {
+      "health": 18,
+      "satiety": 20,
+      "mood": 3,
+      "strength": 10
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "健康之选"
+    "desc": "健康之选",
+    "type": "新鲜",
+    "description": "+10 体力/ +20 饱食/ +18 健康",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "沙拉": {
     "name": "沙拉",
@@ -148,10 +266,22 @@
     "subcategory": "fresh",
     "tier": 3,
     "price": 30,
-    "effects": {"satiety": 30, "health": 10, "mood": 3},
+    "effects": {
+      "health": 25,
+      "satiety": 25,
+      "mood": 3,
+      "strength": 12
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "轻食主义"
+    "desc": "轻食主义",
+    "type": "新鲜",
+    "description": "+12 体力/ +25 饱食/ +25 健康",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "rarity": "rare"
   },
   "披萨": {
     "name": "披萨",
@@ -159,10 +289,22 @@
     "subcategory": "meal",
     "tier": 4,
     "price": 50,
-    "effects": {"satiety": 60, "mood": 15},
+    "effects": {
+      "strength": 25,
+      "satiety": 60,
+      "mood": 15
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "聚会必备"
+    "desc": "聚会必备",
+    "type": "正餐",
+    "description": "+25 体力/ +60 饱食/ +15 心情",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "rarity": "epic"
   },
   "火锅": {
     "name": "火锅",
@@ -170,10 +312,24 @@
     "subcategory": "meal",
     "tier": 5,
     "price": 150,
-    "effects": {"satiety": 80, "mood": 30, "health": 10},
+    "effects": {
+      "strength": 50,
+      "satiety": 80,
+      "mood": 30,
+      "health": 10
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "终极享受"
+    "desc": "终极享受",
+    "type": "正餐",
+    "description": "+50 体力/ +80 饱食/ +10 健康",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_labor_level": 4,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "rarity": "legendary"
   },
   "止痛药": {
     "name": "止痛药",
@@ -181,10 +337,15 @@
     "subcategory": "painkiller",
     "tier": 1,
     "price": 15,
-    "effects": {"health": 20},
+    "effects": {
+      "health": 20
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "缓解疼痛"
+    "desc": "缓解疼痛",
+    "type": "止痛",
+    "description": "+20 健康",
+    "rarity": "common"
   },
   "感冒药": {
     "name": "感冒药",
@@ -192,10 +353,19 @@
     "subcategory": "cold",
     "tier": 2,
     "price": 25,
-    "effects": {"health": 30, "energy": 10},
+    "effects": {
+      "health": 30,
+      "energy": 10
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "包治百病"
+    "desc": "包治百病",
+    "type": "感冒",
+    "description": "+10 精力/ +30 健康",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "创可贴": {
     "name": "创可贴",
@@ -203,10 +373,15 @@
     "subcategory": "firstaid",
     "tier": 1,
     "price": 5,
-    "effects": {"health": 10},
+    "effects": {
+      "health": 10
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "小伤必备"
+    "desc": "小伤必备",
+    "type": "急救",
+    "description": "+10 健康",
+    "rarity": "common"
   },
   "维生素": {
     "name": "维生素",
@@ -214,10 +389,19 @@
     "subcategory": "supplement",
     "tier": 2,
     "price": 30,
-    "effects": {"health": 15, "mood": 5},
+    "effects": {
+      "health": 15,
+      "mood": 5
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "每日补充"
+    "desc": "每日补充",
+    "type": "补剂",
+    "description": "+15 健康/ +5 心情",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "胃药": {
     "name": "胃药",
@@ -225,21 +409,19 @@
     "subcategory": "stomach",
     "tier": 2,
     "price": 28,
-    "effects": {"health": 25, "mood": 3},
+    "effects": {
+      "health": 25,
+      "mood": 3
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "护胃专家"
-  },
-  "能量饮料": {
-    "name": "能量饮料",
-    "category": "medicine",
-    "subcategory": "energy",
-    "tier": 3,
-    "price": 15,
-    "effects": {"energy": 30, "mood": 5},
-    "stackable": true,
-    "consumable": true,
-    "desc": "熬夜神器"
+    "desc": "护胃专家",
+    "type": "肠胃",
+    "description": "+25 健康/ +3 心情",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "安眠药": {
     "name": "安眠药",
@@ -247,10 +429,20 @@
     "subcategory": "sleep",
     "tier": 3,
     "price": 40,
-    "effects": {"mood": 20, "strength": 10},
+    "effects": {
+      "mood": 20,
+      "strength": 10
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "助眠良药"
+    "desc": "助眠良药",
+    "type": "安眠",
+    "description": "+10 体力/ +20 心情",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "rarity": "rare"
   },
   "电池": {
     "name": "电池",
@@ -261,7 +453,10 @@
     "effects": {},
     "stackable": true,
     "consumable": true,
-    "desc": "电器必备"
+    "desc": "电器必备",
+    "type": "电子",
+    "description": "电池",
+    "rarity": "common"
   },
   "纸巾": {
     "name": "纸巾",
@@ -269,10 +464,15 @@
     "subcategory": "household",
     "tier": 1,
     "price": 5,
-    "effects": {"mood": 1},
+    "effects": {
+      "mood": 1
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "生活常备"
+    "desc": "生活常备",
+    "type": "家居",
+    "description": "+1 心情",
+    "rarity": "common"
   },
   "雨伞": {
     "name": "雨伞",
@@ -280,10 +480,18 @@
     "subcategory": "outdoor",
     "tier": 2,
     "price": 35,
-    "effects": {"health": 5},
+    "effects": {
+      "health": 5
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "遮风挡雨"
+    "desc": "遮风挡雨",
+    "type": "户外",
+    "description": "+5 健康",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "防晒霜": {
     "name": "防晒霜",
@@ -291,10 +499,18 @@
     "subcategory": "outdoor",
     "tier": 2,
     "price": 45,
-    "effects": {"health": 8},
+    "effects": {
+      "health": 8
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "夏日必备"
+    "desc": "夏日必备",
+    "type": "户外",
+    "description": "+8 健康",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "牙膏": {
     "name": "牙膏",
@@ -302,10 +518,16 @@
     "subcategory": "personal",
     "tier": 1,
     "price": 15,
-    "effects": {"health": 3, "mood": 2},
+    "effects": {
+      "health": 3,
+      "mood": 2
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "口腔护理"
+    "desc": "口腔护理",
+    "type": "个护",
+    "description": "+3 健康/ +2 心情",
+    "rarity": "common"
   },
   "沐浴露": {
     "name": "沐浴露",
@@ -313,10 +535,19 @@
     "subcategory": "personal",
     "tier": 2,
     "price": 30,
-    "effects": {"mood": 8, "health": 3},
+    "effects": {
+      "mood": 8,
+      "health": 3
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "清爽舒适"
+    "desc": "清爽舒适",
+    "type": "个护",
+    "description": "+3 健康/ +8 心情",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
   },
   "零食礼包": {
     "name": "零食礼包",
@@ -324,10 +555,22 @@
     "subcategory": "snack",
     "tier": 4,
     "price": 60,
-    "effects": {"satiety": 40, "mood": 20},
+    "effects": {
+      "mood": 30,
+      "satiety": 40,
+      "strength": 16
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "超值组合"
+    "desc": "超值组合",
+    "type": "零食",
+    "description": "+16 体力/ +40 饱食/ +30 心情",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "rarity": "epic"
   },
   "豪华便当": {
     "name": "豪华便当",
@@ -335,10 +578,23 @@
     "subcategory": "meal",
     "tier": 4,
     "price": 80,
-    "effects": {"satiety": 70, "mood": 15, "health": 10},
+    "effects": {
+      "strength": 35,
+      "satiety": 70,
+      "mood": 15,
+      "health": 10
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "工作餐首选"
+    "desc": "工作餐首选",
+    "type": "正餐",
+    "description": "+35 体力/ +70 饱食/ +10 健康",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "rarity": "epic"
   },
   "自助餐券": {
     "name": "自助餐券",
@@ -346,10 +602,299 @@
     "subcategory": "meal",
     "tier": 5,
     "price": 200,
-    "effects": {"satiety": 100, "mood": 50, "health": 20},
+    "effects": {
+      "strength": 60,
+      "satiety": 100,
+      "mood": 50,
+      "health": 20
+    },
     "stackable": true,
     "consumable": true,
-    "desc": "吃到扶墙出"
+    "desc": "吃到扶墙出",
+    "type": "正餐",
+    "description": "+60 体力/ +100 饱食/ +20 健康",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_labor_level": 4,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "rarity": "legendary"
+  },
+  "牛排": {
+    "name": "牛排",
+    "category": "food",
+    "subcategory": "power_meal",
+    "tier": 3,
+    "price": 35,
+    "effects": {
+      "strength": 30,
+      "satiety": 35,
+      "mood": 5
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "力量之源",
+    "type": "能量餐",
+    "description": "+30 体力/ +35 饱食/ +5 心情",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "rarity": "rare"
+  },
+  "红烧肉": {
+    "name": "红烧肉",
+    "category": "food",
+    "subcategory": "power_meal",
+    "tier": 3,
+    "price": 30,
+    "effects": {
+      "strength": 25,
+      "satiety": 40,
+      "mood": 5
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "肥而不腻",
+    "type": "能量餐",
+    "description": "+25 体力/ +40 饱食/ +5 心情",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "rarity": "rare"
+  },
+  "鸡腿饭": {
+    "name": "鸡腿饭",
+    "category": "food",
+    "subcategory": "power_meal",
+    "tier": 2,
+    "price": 18,
+    "effects": {
+      "strength": 20,
+      "satiety": 35,
+      "mood": 3
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "外卖常客",
+    "type": "能量餐",
+    "description": "+20 体力/ +35 饱食/ +3 心情",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
+  },
+  "炖牛肉汤": {
+    "name": "炖牛肉汤",
+    "category": "food",
+    "subcategory": "power_meal",
+    "tier": 4,
+    "price": 50,
+    "effects": {
+      "strength": 35,
+      "satiety": 25,
+      "health": 8,
+      "mood": 5
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "暖胃暖身",
+    "type": "能量餐",
+    "description": "+35 体力/ +25 饱食/ +8 健康",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "rarity": "epic"
+  },
+  "烤全羊": {
+    "name": "烤全羊",
+    "category": "food",
+    "subcategory": "power_meal",
+    "tier": 5,
+    "price": 180,
+    "effects": {
+      "strength": 55,
+      "satiety": 60,
+      "mood": 25,
+      "health": 15
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "大漠风情",
+    "type": "能量餐",
+    "description": "+55 体力/ +60 饱食/ +15 健康",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_labor_level": 4,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "rarity": "legendary"
+  },
+  "烤鱼": {
+    "name": "烤鱼",
+    "category": "food",
+    "subcategory": "power_meal",
+    "tier": 4,
+    "price": 55,
+    "effects": {
+      "strength": 40,
+      "satiety": 45,
+      "mood": 10
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "垂钓者的奖赏",
+    "type": "能量餐",
+    "description": "+40 体力/ +45 饱食/ +10 心情",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "rarity": "epic"
+  },
+  "能量饮料": {
+    "name": "能量饮料",
+    "category": "food",
+    "subcategory": "energy_drink",
+    "tier": 3,
+    "price": 15,
+    "effects": {
+      "energy": 40,
+      "mood": 8,
+      "satiety": 3,
+      "strength": 2
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "熬夜神器",
+    "type": "功能饮料",
+    "description": "+2 体力/ +40 精力/ +3 饱食",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "rarity": "rare"
+  },
+  "绿茶": {
+    "name": "绿茶",
+    "category": "food",
+    "subcategory": "energy_drink",
+    "tier": 2,
+    "price": 12,
+    "effects": {
+      "energy": 15,
+      "health": 5,
+      "mood": 3,
+      "strength": 1
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "清香提神",
+    "type": "功能饮料",
+    "description": "+1 体力/ +15 精力/ +5 健康",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
+  },
+  "红茶": {
+    "name": "红茶",
+    "category": "food",
+    "subcategory": "energy_drink",
+    "tier": 2,
+    "price": 12,
+    "effects": {
+      "energy": 15,
+      "mood": 8,
+      "satiety": 3,
+      "strength": 1
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "英伦经典",
+    "type": "功能饮料",
+    "description": "+1 体力/ +15 精力/ +3 饱食",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "rarity": "uncommon"
+  },
+  "燕窝": {
+    "name": "燕窝",
+    "category": "food",
+    "subcategory": "tonic",
+    "tier": 5,
+    "price": 200,
+    "effects": {
+      "strength": 30,
+      "energy": 30,
+      "health": 25,
+      "mood": 10
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "滋补圣品",
+    "type": "滋补",
+    "description": "+30 体力/ +30 精力/ +25 健康",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_labor_level": 4,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "rarity": "legendary"
+  },
+  "人参": {
+    "name": "人参",
+    "category": "food",
+    "subcategory": "tonic",
+    "tier": 4,
+    "price": 100,
+    "effects": {
+      "strength": 25,
+      "energy": 20,
+      "health": 15
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "大补元气",
+    "type": "滋补",
+    "description": "+25 体力/ +20 精力/ +15 健康",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "rarity": "epic"
+  },
+  "龟苓膏": {
+    "name": "龟苓膏",
+    "category": "food",
+    "subcategory": "tonic",
+    "tier": 3,
+    "price": 30,
+    "effects": {
+      "health": 15,
+      "energy": 15,
+      "satiety": 5,
+      "strength": 5
+    },
+    "stackable": true,
+    "consumable": true,
+    "desc": "清热解毒",
+    "type": "滋补",
+    "description": "+5 体力/ +15 精力/ +5 饱食",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "rarity": "rare"
   },
   "格子衬衫": {
     "name": "格子衬衫",
@@ -357,8 +902,11 @@
     "rarity": "common",
     "tier": 1,
     "price": 120,
-    "effects": {"work_income_bonus": 3},
-    "desc": "经典款式，职场百搭"
+    "effects": {
+      "work_income_bonus": 3
+    },
+    "desc": "经典款式，职场百搭",
+    "description": "格子衬衫"
   },
   "纯色T恤": {
     "name": "纯色T恤",
@@ -366,8 +914,15 @@
     "rarity": "uncommon",
     "tier": 2,
     "price": 250,
-    "effects": {"energy_bonus": 0.5, "mood_bonus": 0.3},
-    "desc": "舒适面料，休闲首选"
+    "effects": {
+      "energy_bonus": 0.5,
+      "mood_bonus": 0.3
+    },
+    "desc": "舒适面料，休闲首选",
+    "description": "纯色T恤",
+    "unlock_requirements": {
+      "min_player_level": 3
+    }
   },
   "品牌卫衣": {
     "name": "品牌卫衣",
@@ -375,8 +930,16 @@
     "rarity": "rare",
     "tier": 3,
     "price": 850,
-    "effects": {"work_income_bonus": 8, "learn_exp_bonus": 5},
-    "desc": "国潮品牌，年轻人的选择"
+    "effects": {
+      "work_income_bonus": 8,
+      "learn_exp_bonus": 5
+    },
+    "desc": "国潮品牌，年轻人的选择",
+    "description": "品牌卫衣",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    }
   },
   "商务休闲装": {
     "name": "商务休闲装",
@@ -384,8 +947,17 @@
     "rarity": "epic",
     "tier": 4,
     "price": 3800,
-    "effects": {"work_income_bonus": 15, "energy_bonus": 1, "mood_bonus": 1},
-    "desc": "精心剪裁，商务休闲两相宜"
+    "effects": {
+      "work_income_bonus": 15,
+      "energy_bonus": 1,
+      "mood_bonus": 1
+    },
+    "desc": "精心剪裁，商务休闲两相宜",
+    "description": "商务休闲装 (4级)",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_company_favor": 100
+    }
   },
   "定制西装": {
     "name": "定制西装",
@@ -393,8 +965,18 @@
     "rarity": "legendary",
     "tier": 5,
     "price": 28000,
-    "effects": {"work_income_bonus": 25, "energy_bonus": 2, "mood_bonus": 2},
-    "desc": "纯手工定制，精英人士的标配"
+    "effects": {
+      "work_income_bonus": 25,
+      "energy_bonus": 2,
+      "mood_bonus": 2
+    },
+    "desc": "纯手工定制，精英人士的标配",
+    "description": "定制西装 (5级)",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    }
   },
   "棒球帽": {
     "name": "棒球帽",
@@ -402,8 +984,11 @@
     "rarity": "common",
     "tier": 1,
     "price": 80,
-    "effects": {"mood_bonus": 0.3},
-    "desc": "防晒遮阳，街头风格"
+    "effects": {
+      "mood_bonus": 0.3
+    },
+    "desc": "防晒遮阳，街头风格",
+    "description": "棒球帽"
   },
   "防蓝光眼镜": {
     "name": "防蓝光眼镜",
@@ -411,8 +996,15 @@
     "rarity": "uncommon",
     "tier": 2,
     "price": 350,
-    "effects": {"health_bonus": 0.5, "mood_bonus": 0.2},
-    "desc": "过滤蓝光，护眼新选择"
+    "effects": {
+      "health_bonus": 0.5,
+      "mood_bonus": 0.2
+    },
+    "desc": "过滤蓝光，护眼新选择",
+    "description": "防蓝光眼镜",
+    "unlock_requirements": {
+      "min_player_level": 3
+    }
   },
   "降噪耳机": {
     "name": "降噪耳机",
@@ -420,8 +1012,16 @@
     "rarity": "rare",
     "tier": 3,
     "price": 1600,
-    "effects": {"passive_mood": 0.2, "entertain_mood_bonus": 10},
-    "desc": "Sony WH-1000XM5，隔绝世界喧嚣"
+    "effects": {
+      "passive_mood": 0.2,
+      "entertain_mood_bonus": 10
+    },
+    "desc": "Sony WH-1000XM5，隔绝世界喧嚣",
+    "description": "降噪耳机",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    }
   },
   "智能眼镜": {
     "name": "智能眼镜",
@@ -429,8 +1029,17 @@
     "rarity": "epic",
     "tier": 4,
     "price": 5500,
-    "effects": {"entertain_mood_bonus": 18, "learn_exp_bonus": 8, "passive_mood": 0.3},
-    "desc": "Meta Ray-Ban，AR增强现实"
+    "effects": {
+      "entertain_mood_bonus": 18,
+      "learn_exp_bonus": 8,
+      "passive_mood": 0.3
+    },
+    "desc": "Meta Ray-Ban，AR增强现实",
+    "description": "智能眼镜 (4级)",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_company_favor": 100
+    }
   },
   "VisionPro": {
     "name": "Vision Pro",
@@ -438,8 +1047,18 @@
     "rarity": "legendary",
     "tier": 5,
     "price": 35000,
-    "effects": {"entertain_mood_bonus": 30, "passive_mood": 0.8, "learn_exp_bonus": 15},
-    "desc": "苹果未来科技，沉浸式体验"
+    "effects": {
+      "entertain_mood_bonus": 30,
+      "passive_mood": 0.8,
+      "learn_exp_bonus": 15
+    },
+    "desc": "苹果未来科技，沉浸式体验",
+    "description": "Vision Pro (5级)",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    }
   },
   "帆布双肩包": {
     "name": "帆布双肩包",
@@ -447,8 +1066,11 @@
     "rarity": "common",
     "tier": 1,
     "price": 90,
-    "effects": {"strength_bonus": 0.3},
-    "desc": "耐用能装，学生党标配"
+    "effects": {
+      "strength_bonus": 0.3
+    },
+    "desc": "耐用能装，学生党标配",
+    "description": "帆布双肩包"
   },
   "移动电源": {
     "name": "移动电源",
@@ -456,8 +1078,15 @@
     "rarity": "uncommon",
     "tier": 2,
     "price": 280,
-    "effects": {"energy_bonus": 0.6, "mood_bonus": 0.3},
-    "desc": "20000mAh大容量，手机不断电"
+    "effects": {
+      "energy_bonus": 0.6,
+      "mood_bonus": 0.3
+    },
+    "desc": "20000mAh大容量，手机不断电",
+    "description": "移动电源",
+    "unlock_requirements": {
+      "min_player_level": 3
+    }
   },
   "降噪耳塞": {
     "name": "降噪耳塞",
@@ -465,8 +1094,16 @@
     "rarity": "rare",
     "tier": 3,
     "price": 1400,
-    "effects": {"sleep_strength_bonus": 12, "sleep_energy_bonus": 10},
-    "desc": "AirPods Pro，静享安宁夜晚"
+    "effects": {
+      "sleep_strength_bonus": 12,
+      "sleep_energy_bonus": 10
+    },
+    "desc": "AirPods Pro，静享安宁夜晚",
+    "description": "降噪耳塞",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    }
   },
   "机械键盘": {
     "name": "机械键盘",
@@ -474,8 +1111,16 @@
     "rarity": "epic",
     "tier": 4,
     "price": 3200,
-    "effects": {"work_income_bonus": 12, "work_time_reduce": 8},
-    "desc": "HHKB静电容，打字如飞"
+    "effects": {
+      "work_income_bonus": 12,
+      "work_time_reduce": 8
+    },
+    "desc": "HHKB静电容，打字如飞",
+    "description": "机械键盘 (4级)",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_company_favor": 100
+    }
   },
   "人体工学椅": {
     "name": "人体工学椅",
@@ -483,8 +1128,18 @@
     "rarity": "legendary",
     "tier": 5,
     "price": 18000,
-    "effects": {"sleep_strength_bonus": 18, "strength_bonus": 1.5, "health_bonus": 1.5},
-    "desc": "Herman Miller Embody，久坐不累"
+    "effects": {
+      "sleep_strength_bonus": 18,
+      "strength_bonus": 1.5,
+      "health_bonus": 1.5
+    },
+    "desc": "Herman Miller Embody，久坐不累",
+    "description": "人体工学椅 (5级)",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    }
   },
   "钥匙扣": {
     "name": "钥匙扣",
@@ -492,8 +1147,11 @@
     "rarity": "common",
     "tier": 1,
     "price": 40,
-    "effects": {"passive_gold": 0.8},
-    "desc": "出门不忘带钥匙"
+    "effects": {
+      "passive_gold": 0.8
+    },
+    "desc": "出门不忘带钥匙",
+    "description": "钥匙扣"
   },
   "品牌钱包": {
     "name": "品牌钱包",
@@ -501,8 +1159,15 @@
     "rarity": "uncommon",
     "tier": 2,
     "price": 600,
-    "effects": {"passive_gold": 1.5, "mood_bonus": 0.4},
-    "desc": "质感皮质，绅士风度"
+    "effects": {
+      "passive_gold": 1.5,
+      "mood_bonus": 0.4
+    },
+    "desc": "质感皮质，绅士风度",
+    "description": "品牌钱包",
+    "unlock_requirements": {
+      "min_player_level": 3
+    }
   },
   "平安玉佩": {
     "name": "平安玉佩",
@@ -510,8 +1175,17 @@
     "rarity": "rare",
     "tier": 3,
     "price": 2800,
-    "effects": {"health_bonus": 1, "mood_bonus": 0.8, "passive_gold": 1.2},
-    "desc": "和田美玉，保佑平安顺遂"
+    "effects": {
+      "health_bonus": 1,
+      "mood_bonus": 0.8,
+      "passive_gold": 1.2
+    },
+    "desc": "和田美玉，保佑平安顺遂",
+    "description": "平安玉佩",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    }
   },
   "AppleWatch": {
     "name": "Apple Watch",
@@ -519,8 +1193,17 @@
     "rarity": "epic",
     "tier": 4,
     "price": 6800,
-    "effects": {"health_bonus": 1.5, "passive_gold": 2.5, "work_income_bonus": 10},
-    "desc": "S9旗舰，健康管理专家"
+    "effects": {
+      "health_bonus": 1.5,
+      "passive_gold": 2.5,
+      "work_income_bonus": 10
+    },
+    "desc": "S9旗舰，健康管理专家",
+    "description": "Apple Watch (4级)",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_company_favor": 100
+    }
   },
   "限定高达": {
     "name": "限定高达",
@@ -528,8 +1211,18 @@
     "rarity": "legendary",
     "tier": 5,
     "price": 30000,
-    "effects": {"mood_bonus": 3, "entertain_mood_bonus": 25, "passive_gold": 3},
-    "desc": "RG命运女神，镇宅之宝"
+    "effects": {
+      "mood_bonus": 3,
+      "entertain_mood_bonus": 25,
+      "passive_gold": 3
+    },
+    "desc": "RG命运女神，镇宅之宝",
+    "description": "限定高达 (5级)",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    }
   },
   "备用机": {
     "name": "备用机",
@@ -537,8 +1230,11 @@
     "rarity": "common",
     "tier": 1,
     "price": 200,
-    "effects": {"satiety_bonus": 0.3},
-    "desc": "卡到怀疑人生，但能打电话"
+    "effects": {
+      "satiety_bonus": 0.3
+    },
+    "desc": "卡到怀疑人生，但能打电话",
+    "description": "备用机"
   },
   "红米Note12": {
     "name": "红米Note12",
@@ -546,8 +1242,15 @@
     "rarity": "uncommon",
     "tier": 2,
     "price": 1300,
-    "effects": {"work_income_bonus": 6, "passive_gold": 1},
-    "desc": "性价比之王，务实之选"
+    "effects": {
+      "work_income_bonus": 6,
+      "passive_gold": 1
+    },
+    "desc": "性价比之王，务实之选",
+    "description": "红米Note12",
+    "unlock_requirements": {
+      "min_player_level": 3
+    }
   },
   "小米14Ultra": {
     "name": "小米14 Ultra",
@@ -555,8 +1258,16 @@
     "rarity": "rare",
     "tier": 3,
     "price": 4500,
-    "effects": {"passive_mood": 0.25, "work_income_bonus": 10},
-    "desc": "徕卡影像，记录生活美好"
+    "effects": {
+      "passive_mood": 0.25,
+      "work_income_bonus": 10
+    },
+    "desc": "徕卡影像，记录生活美好",
+    "description": "小米14 Ultra",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    }
   },
   "华为Mate60Pro": {
     "name": "华为Mate60 Pro+",
@@ -564,8 +1275,17 @@
     "rarity": "epic",
     "tier": 4,
     "price": 9500,
-    "effects": {"passive_mood": 0.5, "work_time_reduce": 10, "health_bonus": 1},
-    "desc": "遥遥领先，国产骄傲"
+    "effects": {
+      "passive_mood": 0.5,
+      "work_time_reduce": 10,
+      "health_bonus": 1
+    },
+    "desc": "遥遥领先，国产骄傲",
+    "description": "华为Mate60 Pro+ (4级)",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_company_favor": 100
+    }
   },
   "iPhone16ProMax": {
     "name": "iPhone 16 Pro Max",
@@ -573,70 +1293,4642 @@
     "rarity": "legendary",
     "tier": 5,
     "price": 28000,
-    "effects": {"passive_mood": 1, "health_bonus": 1.5, "entertain_mood_bonus": 20},
-    "desc": "钛金属边框，顶配旗舰机皇"
+    "effects": {
+      "passive_mood": 1,
+      "health_bonus": 1.5,
+      "entertain_mood_bonus": 20
+    },
+    "desc": "钛金属边框，顶配旗舰机皇",
+    "description": "iPhone 16 Pro Max (5级)",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    }
   },
-  "竹竿": {
-    "name": "竹竿",
-    "category": "tool", "subcategory": "fishing_rod", "tier": 1,
-    "price": 50, "stackable": false, "consumable": false,
-    "effects": {"fishing_bonus": 0.0, "rare_bonus": 0.0, "min_size_bonus": 0.0, "duration_reduce": 0},
-    "desc": "新手鱼竿,凑合能用"
+  "_comment_rod": "=== 12 鱼竿 (每竿特殊加成) ===",
+  "_comment_bait": "=== 6 鱼饵 (含假饵/活饵) ===",
+  "_comment_bait_extra": "=== 扩展鱼饵 (按鱼种专属) ===",
+  "_comment_gear": "=== 25 钓鱼装备 (5部位×5品质) ===",
+  "_linenote": "鱼线：影响 min_size_bonus（拉得动大鱼）",
+  "_hooknote": "鱼钩：影响 rare_bonus（吸引稀有鱼）+ min_size_bonus",
+  "_floatnote": "浮漂：影响 fishing_bonus（基础成功率加成）",
+  "木浮漂": {
+    "name": "木浮漂",
+    "category": "tool",
+    "subcategory": "fishing_float",
+    "tier": 1,
+    "rarity": "common",
+    "price": 10,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_float",
+    "desc": "简易木漂",
+    "type": "工具",
+    "description": "传统木制浮漂, 灵敏度高, 适合溪流/池塘看轻口",
+    "base_effects": {
+      "success_rate": 50,
+      "price_bonus": 3
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "exp_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus"
+    ]
   },
-  "碳素竿": {
-    "name": "碳素竿",
-    "category": "tool", "subcategory": "fishing_rod", "tier": 2,
-    "price": 500, "stackable": false, "consumable": false,
-    "effects": {"fishing_bonus": 0.10, "rare_bonus": 0.0, "min_size_bonus": 0.0, "duration_reduce": 1},
-    "desc": "轻量坚固,入门首选"
+  "塑料浮漂": {
+    "name": "塑料浮漂",
+    "category": "tool",
+    "subcategory": "fishing_float",
+    "tier": 2,
+    "rarity": "uncommon",
+    "price": 50,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_float",
+    "desc": "彩色塑料漂",
+    "type": "工具",
+    "description": "经济塑料浮漂, 抗摔耐用, 适合新手台钓",
+    "unlock_requirements": {
+      "min_player_level": 3
+    },
+    "base_effects": {
+      "success_rate": 100,
+      "price_bonus": 5
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "exp_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus"
+    ]
   },
-  "海竿套装": {
-    "name": "海竿套装",
-    "category": "tool", "subcategory": "fishing_rod", "tier": 3,
-    "price": 3000, "stackable": false, "consumable": false,
-    "effects": {"fishing_bonus": 0.18, "rare_bonus": 0.05, "min_size_bonus": 0.0, "duration_reduce": 2},
-    "desc": "近海利器,能钓大家伙"
+  "巴尔杉木漂": {
+    "name": "巴尔杉木漂",
+    "category": "tool",
+    "subcategory": "fishing_float",
+    "tier": 3,
+    "rarity": "rare",
+    "price": 200,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_float",
+    "desc": "巴尔杉木,灵敏度高",
+    "type": "工具",
+    "description": "巴尔杉木材质, 轻巧灵敏, 竞技级浮漂",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "success_rate": 150,
+      "price_bonus": 8
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "exp_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus"
+    ]
   },
-  "电轮竿": {
-    "name": "电轮竿",
-    "category": "tool", "subcategory": "fishing_rod", "tier": 4,
-    "price": 15000, "stackable": false, "consumable": false,
-    "effects": {"fishing_bonus": 0.25, "rare_bonus": 0.10, "min_size_bonus": 0.05, "duration_reduce": 3},
-    "desc": "电动绕线,高端玩家标配"
+  "夜光漂": {
+    "name": "夜光漂",
+    "category": "tool",
+    "subcategory": "fishing_float",
+    "tier": 4,
+    "rarity": "epic",
+    "price": 800,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_float",
+    "desc": "夜光材料,夜钓必备",
+    "type": "工具",
+    "description": "内置 LED 夜光漂, 夜间远投清晰可见, 适合夜钓",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "success_rate": 200,
+      "price_bonus": 10
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "exp_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus"
+    ]
   },
-  "传说鱼竿": {
-    "name": "传说鱼竿",
-    "category": "tool", "subcategory": "fishing_rod", "tier": 5,
-    "price": 80000, "stackable": false, "consumable": false,
-    "effects": {"fishing_bonus": 0.35, "rare_bonus": 0.18, "min_size_bonus": 0.15, "duration_reduce": 4},
-    "desc": "渔具中的王者,传说是用龙骨做的"
+  "电子浮漂": {
+    "name": "电子浮漂",
+    "category": "tool",
+    "subcategory": "fishing_float",
+    "tier": 5,
+    "rarity": "legendary",
+    "price": 3000,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_float",
+    "desc": "电子智能,自动报警",
+    "type": "工具",
+    "description": "智能电子浮漂, 抗风浪信号稳定, 专业级远投",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "base_effects": {
+      "success_rate": 300,
+      "price_bonus": 15
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "exp_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus"
+    ]
+  },
+  "_reelnote": "鱼线轮：影响 duration_reduce（缩短钓鱼时间）和稀有度",
+  "塑料轮": {
+    "name": "塑料轮",
+    "category": "tool",
+    "subcategory": "fishing_reel",
+    "tier": 1,
+    "rarity": "common",
+    "price": 40,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_reel",
+    "desc": "廉价塑料轮",
+    "type": "鱼轮",
+    "description": "入门塑料鱼轮, 结构简单, 适合新手/儿童",
+    "base_effects": {
+      "rare_bonus": 0.05,
+      "exp_bonus": 3
+    },
+    "bonus_pool": [
+      "success_rate",
+      "exp_bonus",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "price_bonus",
+      "duration_reduce",
+      "stamina_reduce"
+    ]
+  },
+  "纺车轮": {
+    "name": "纺车轮",
+    "category": "tool",
+    "subcategory": "fishing_reel",
+    "tier": 2,
+    "rarity": "uncommon",
+    "price": 180,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_reel",
+    "desc": "标准纺车轮",
+    "type": "鱼轮",
+    "description": "通用纺车轮, 操作简单, 适合路亚/筏钓",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    },
+    "base_effects": {
+      "rare_bonus": 0.1,
+      "exp_bonus": 6
+    },
+    "bonus_pool": [
+      "success_rate",
+      "exp_bonus",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "price_bonus",
+      "duration_reduce",
+      "stamina_reduce"
+    ]
+  },
+  "水滴轮": {
+    "name": "水滴轮",
+    "category": "tool",
+    "subcategory": "fishing_reel",
+    "tier": 3,
+    "rarity": "rare",
+    "price": 600,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_reel",
+    "desc": "水滴形,顺滑",
+    "type": "鱼轮",
+    "description": "低齿比水滴轮, 精准控线, 适合专业路亚",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "rare_bonus": 0.15,
+      "exp_bonus": 9
+    },
+    "bonus_pool": [
+      "success_rate",
+      "exp_bonus",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "price_bonus",
+      "duration_reduce",
+      "stamina_reduce"
+    ]
+  },
+  "鼓轮": {
+    "name": "鼓轮",
+    "category": "tool",
+    "subcategory": "fishing_reel",
+    "tier": 4,
+    "rarity": "epic",
+    "price": 2500,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_reel",
+    "desc": "圆形鼓轮,大鱼专用",
+    "type": "鱼轮",
+    "description": "重型鼓轮, 大容量高强度, 适合船钓/远投",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "rare_bonus": 0.2,
+      "exp_bonus": 12
+    },
+    "bonus_pool": [
+      "success_rate",
+      "exp_bonus",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "price_bonus",
+      "duration_reduce",
+      "stamina_reduce"
+    ]
+  },
+  "电动轮": {
+    "name": "电动轮",
+    "category": "tool",
+    "subcategory": "fishing_reel",
+    "tier": 5,
+    "rarity": "legendary",
+    "price": 10000,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_reel",
+    "desc": "电动收线,自动收竿",
+    "type": "鱼轮",
+    "description": "智能电动轮, 自动收线助力, 适合深海巨物",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_fishing_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "base_effects": {
+      "rare_bonus": 0.3,
+      "exp_bonus": 15
+    },
+    "bonus_pool": [
+      "success_rate",
+      "exp_bonus",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "price_bonus",
+      "duration_reduce",
+      "stamina_reduce"
+    ]
+  },
+  "_wadersnote": "防水裤/涉水鞋：影响稀有度 (legendary鱼特殊加成)",
+  "防水长靴": {
+    "name": "防水长靴",
+    "category": "tool",
+    "subcategory": "fishing_waders",
+    "tier": 2,
+    "rarity": "uncommon",
+    "price": 200,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_waders",
+    "effects": {
+      "habitat_unlock": [
+        "pond",
+        "river",
+        "reservoir"
+      ]
+    },
+    "desc": "长筒防水,可下水库",
+    "type": "涉水鞋",
+    "description": "防水长靴",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    }
+  },
+  "深海潜水服": {
+    "name": "深海潜水服",
+    "category": "tool",
+    "subcategory": "fishing_waders",
+    "tier": 4,
+    "rarity": "epic",
+    "price": 3000,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_waders",
+    "effects": {
+      "habitat_unlock": [
+        "pond",
+        "river",
+        "reservoir",
+        "coast",
+        "deep_sea"
+      ]
+    },
+    "desc": "深海潜水服,极端环境专用",
+    "type": "涉水鞋",
+    "description": "深海潜水服 (4级)",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_company_favor": 100
+    }
+  },
+  "传奇钓鱼套装": {
+    "name": "传奇钓鱼套装",
+    "category": "tool",
+    "subcategory": "fishing_waders",
+    "tier": 5,
+    "rarity": "legendary",
+    "price": 15000,
+    "stackable": false,
+    "consumable": false,
+    "slot": "fishing_waders",
+    "effects": {
+      "habitat_unlock": [
+        "pond",
+        "river",
+        "reservoir",
+        "coast",
+        "deep_sea"
+      ],
+      "deep_sea_legendary_bonus": 0.1
+    },
+    "desc": "传奇渔夫套装,深海传说鱼加成",
+    "type": "涉水鞋",
+    "description": "传奇钓鱼套装 (5级)",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_fishing_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    }
   },
   "蚯蚓": {
     "name": "蚯蚓",
-    "category": "consumable", "subcategory": "bait", "tier": 1,
-    "price": 2, "stackable": true, "consumable": true,
-    "effects": {"rare_bonus": 0.02, "habitat_filter": ["pond", "river"]},
-    "desc": "万能饵料,小鱼的最爱"
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 1,
+    "rarity": "common",
+    "buy_price": 5,
+    "sell_price": 2,
+    "price": 5,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "万能饵料, 小鱼的最爱",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "base_effects": {
+      "target_diet": [
+        "omnivore"
+      ]
+    }
+  },
+  "红虫": {
+    "name": "红虫",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 1,
+    "rarity": "common",
+    "buy_price": 8,
+    "sell_price": 4,
+    "price": 8,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "鲜红小虫, 引小鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "base_effects": {
+      "target_diet": [
+        "omnivore",
+        "carnivore"
+      ]
+    }
+  },
+  "玉米粒": {
+    "name": "玉米粒",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 1,
+    "rarity": "common",
+    "buy_price": 6,
+    "sell_price": 3,
+    "price": 6,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "黄金素饵, 草鱼/鲤鱼/青鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "base_effects": {
+      "target_diet": [
+        "herbivore"
+      ]
+    }
+  },
+  "面团": {
+    "name": "面团",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 1,
+    "rarity": "common",
+    "buy_price": 10,
+    "sell_price": 5,
+    "price": 10,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "小麦面团, 引鲫鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "base_effects": {
+      "target_diet": [
+        "omnivore"
+      ]
+    }
+  },
+  "面包虫": {
+    "name": "面包虫",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 1,
+    "rarity": "common",
+    "buy_price": 8,
+    "sell_price": 4,
+    "price": 8,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "活体面包虫, 引泥鳅/黄颡",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "base_effects": {
+      "target_diet": [
+        "omnivore"
+      ]
+    }
+  },
+  "蓝藻": {
+    "name": "蓝藻",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 1,
+    "rarity": "common",
+    "buy_price": 5,
+    "sell_price": 2,
+    "price": 5,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "水生藻类, 引素食鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "base_effects": {
+      "target_diet": [
+        "herbivore"
+      ]
+    }
+  },
+  "大蚯蚓": {
+    "name": "大蚯蚓",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 2,
+    "rarity": "uncommon",
+    "buy_price": 30,
+    "sell_price": 15,
+    "price": 30,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "粗壮蚯蚓, 引鲶鱼/黑鱼/黄颡",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "螺蛳": {
+    "name": "螺蛳",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 2,
+    "rarity": "uncommon",
+    "buy_price": 25,
+    "sell_price": 12,
+    "price": 25,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "硬壳螺, 引青鱼/鲤鱼/鲶鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    },
+    "base_effects": {
+      "target_diet": [
+        "herbivore",
+        "omnivore"
+      ]
+    }
+  },
+  "青虫": {
+    "name": "青虫",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 2,
+    "rarity": "uncommon",
+    "buy_price": 25,
+    "sell_price": 12,
+    "price": 25,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "绿色虫, 引草鱼/鳊鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    },
+    "base_effects": {
+      "target_diet": [
+        "herbivore"
+      ]
+    }
+  },
+  "小鱼块": {
+    "name": "小鱼块",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 2,
+    "rarity": "uncommon",
+    "buy_price": 30,
+    "sell_price": 15,
+    "price": 30,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "切碎小鱼, 引翘嘴鲌/鳡鱼/鲈鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
   },
   "商品饵": {
     "name": "商品饵",
-    "category": "consumable", "subcategory": "bait", "tier": 2,
-    "price": 10, "stackable": true, "consumable": true,
-    "effects": {"rare_bonus": 0.05, "habitat_filter": ["pond", "river", "reservoir"]},
-    "desc": "精心配比,广谱诱鱼"
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 2,
+    "rarity": "uncommon",
+    "buy_price": 20,
+    "sell_price": 10,
+    "price": 20,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "万能商品, 通用",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    },
+    "base_effects": {
+      "target_diet": [
+        "omnivore"
+      ]
+    }
+  },
+  "活泥鳅": {
+    "name": "活泥鳅",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 80,
+    "sell_price": 40,
+    "price": 80,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "活泥鳅, 引黑鱼/鲶鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
   },
   "活虾": {
     "name": "活虾",
-    "category": "consumable", "subcategory": "bait", "tier": 3,
-    "price": 30, "stackable": true, "consumable": true,
-    "effects": {"rare_bonus": 0.08, "habitat_filter": ["river", "reservoir"]},
-    "desc": "活物诱惑,大鱼难挡"
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 100,
+    "sell_price": 50,
+    "price": 100,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "淡水活虾, 通用",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore",
+        "omnivore"
+      ]
+    }
   },
-  "拟饵": {
-    "name": "拟饵",
-    "category": "consumable", "subcategory": "bait", "tier": 4,
-    "price": 100, "stackable": true, "consumable": true,
-    "effects": {"rare_bonus": 0.12, "duration_reduce": 1, "habitat_filter": ["reservoir"]},
-    "desc": "仿真拟饵,路亚专用"
+  "活小鱼": {
+    "name": "活小鱼",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 80,
+    "sell_price": 40,
+    "price": 80,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "完整小鱼, 引鳡鱼/翘嘴鲌/鲈鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "海虫沙蚕": {
+    "name": "海虫沙蚕",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 60,
+    "sell_price": 30,
+    "price": 60,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "海虫沙蚕, 海鱼通用",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "omnivore"
+      ]
+    }
+  },
+  "海星": {
+    "name": "海星",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 80,
+    "sell_price": 40,
+    "price": 80,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "完整海星, 引海龟/翻车鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "海虾": {
+    "name": "海虾",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 100,
+    "sell_price": 50,
+    "price": 100,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "海虾, 引黄花鱼/鲳鱼/带鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore",
+        "omnivore"
+      ]
+    }
+  },
+  "螃蟹": {
+    "name": "螃蟹",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 120,
+    "sell_price": 60,
+    "price": 120,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "整只螃蟹, 引石斑鱼/鲷鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore",
+        "omnivore"
+      ]
+    }
+  },
+  "蜂蛹": {
+    "name": "蜂蛹",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 100,
+    "sell_price": 50,
+    "price": 100,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "蜂蛹蛋白质, 引翘嘴鲌王/鳡鱼王",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "大虾": {
+    "name": "大虾",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 250,
+    "sell_price": 125,
+    "price": 250,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "深海大虾, 引鲈鱼(海)/海鲶/鲨鱼小",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "大鱿鱼块": {
+    "name": "大鱿鱼块",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 280,
+    "sell_price": 140,
+    "price": 280,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "鱿鱼块, 引章鱼/鱿鱼/鲨鱼小",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "活鱼块": {
+    "name": "活鱼块",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 250,
+    "sell_price": 125,
+    "price": 250,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "整块活鱼, 引大型食肉",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "深海鱼块": {
+    "name": "深海鱼块",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 300,
+    "sell_price": 150,
+    "price": 300,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "深海鱼块, 引金枪鱼/剑鱼/箭鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "鱿鱼须": {
+    "name": "鱿鱼须",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 300,
+    "sell_price": 150,
+    "price": 300,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "专用鱿鱼须, 引章鱼/鱿鱼/海怪",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "发亮鱼块": {
+    "name": "发亮鱼块",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 350,
+    "sell_price": 175,
+    "price": 350,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "深海鲜饵, 引鮟鱇/灯笼鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "乌贼块": {
+    "name": "乌贼块",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 5,
+    "rarity": "legendary",
+    "buy_price": 500,
+    "sell_price": 250,
+    "price": 500,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "顶级深海饵, 引海怪/章鱼/鱿鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_fishing_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "巨型鱼块": {
+    "name": "巨型鱼块",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 5,
+    "rarity": "legendary",
+    "buy_price": 500,
+    "sell_price": 250,
+    "price": 500,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "巨型鲜鱼, 引鲨鱼小/金枪鱼/帝王蟹",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_fishing_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    }
+  },
+  "龙涎香": {
+    "name": "龙涎香",
+    "category": "consumable",
+    "subcategory": "fishing_bait",
+    "tier": 5,
+    "rarity": "legendary",
+    "buy_price": 800,
+    "sell_price": 400,
+    "price": 800,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "★传说饵★ 引黄金锦鲤/龙趸/翻车鱼",
+    "slot": "fishing_bait",
+    "type": "鱼饵",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_fishing_level": 25,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "base_effects": {
+      "target_diet": [
+        "omnivore",
+        "herbivore"
+      ]
+    }
+  },
+  "塑料软虫": {
+    "name": "塑料软虫",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 1,
+    "rarity": "common",
+    "buy_price": 80,
+    "sell_price": 40,
+    "price": 80,
+    "stackable": false,
+    "consumable": false,
+    "description": "廉价塑料虫, 路亚入门",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "base_effects": {
+      "target_diet": [
+        "omnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "金属亮片": {
+    "name": "金属亮片",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 2,
+    "rarity": "uncommon",
+    "buy_price": 200,
+    "sell_price": 100,
+    "price": 200,
+    "stackable": false,
+    "consumable": false,
+    "description": "反光金属, 引小鱼",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "橡胶鱼": {
+    "name": "橡胶鱼",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 2,
+    "rarity": "uncommon",
+    "buy_price": 250,
+    "sell_price": 125,
+    "price": 250,
+    "stackable": false,
+    "consumable": false,
+    "description": "拟小鱼, 引中小食肉鱼",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 3,
+      "min_fishing_level": 3
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "米诺": {
+    "name": "米诺",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 500,
+    "sell_price": 250,
+    "price": 500,
+    "stackable": false,
+    "consumable": false,
+    "description": "经典路亚, 摇摆泳姿",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "铅头软虫": {
+    "name": "铅头软虫",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 600,
+    "sell_price": 300,
+    "price": 600,
+    "stackable": false,
+    "consumable": false,
+    "description": "软底软虫, 引底栖鱼",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore",
+        "omnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "旋转亮片": {
+    "name": "旋转亮片",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 3,
+    "rarity": "rare",
+    "buy_price": 550,
+    "sell_price": 275,
+    "price": 550,
+    "stackable": false,
+    "consumable": false,
+    "description": "反光旋转, 视觉引诱",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 8,
+      "min_fishing_level": 8,
+      "min_company_favor": 50
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "波趴": {
+    "name": "波趴",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 1200,
+    "sell_price": 600,
+    "price": 1200,
+    "stackable": false,
+    "consumable": false,
+    "description": "水面爆水音, 引掠食鱼",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "沉水米诺": {
+    "name": "沉水米诺",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 1500,
+    "sell_price": 750,
+    "price": 1500,
+    "stackable": false,
+    "consumable": false,
+    "description": "中层巡游, 引中大型",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "VIB颤泳": {
+    "name": "VIB颤泳",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 4,
+    "rarity": "epic",
+    "buy_price": 1800,
+    "sell_price": 900,
+    "price": 1800,
+    "stackable": false,
+    "consumable": false,
+    "description": "高频振动, 全泳层",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 15,
+      "min_fishing_level": 15,
+      "min_labor_level": 3,
+      "min_company_favor": 100
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "大型金属饵": {
+    "name": "大型金属饵",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 5,
+    "rarity": "legendary",
+    "buy_price": 2500,
+    "sell_price": 1250,
+    "price": 2500,
+    "stackable": false,
+    "consumable": false,
+    "description": "深海金属, 重型远投",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_fishing_level": 25,
+      "min_labor_level": 4,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "木虾": {
+    "name": "木虾",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 5,
+    "rarity": "legendary",
+    "buy_price": 3000,
+    "sell_price": 1500,
+    "price": 3000,
+    "stackable": false,
+    "consumable": false,
+    "description": "拟虾路亚, 引章鱼鱿鱼",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_fishing_level": 25,
+      "min_labor_level": 4,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore",
+        "omnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "鲣鱼木饵": {
+    "name": "鲣鱼木饵",
+    "category": "equipment",
+    "subcategory": "fishing_lure",
+    "tier": 5,
+    "rarity": "legendary",
+    "buy_price": 3500,
+    "sell_price": 1750,
+    "price": 3500,
+    "stackable": false,
+    "consumable": false,
+    "description": "★顶级木饵★ 引金枪鱼/旗鱼",
+    "slot": "fishing_bait",
+    "type": "拟饵",
+    "unlock_requirements": {
+      "min_player_level": 25,
+      "min_fishing_level": 25,
+      "min_labor_level": 4,
+      "min_company_favor": 150,
+      "required_title": "初级渔夫"
+    },
+    "base_effects": {
+      "target_diet": [
+        "carnivore"
+      ]
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_deep_sea",
+      "rarity_common_bonus",
+      "rarity_pct_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus",
+      "size_titan_bonus",
+      "size_giant_bonus",
+      "size_huge_bonus",
+      "size_large_bonus",
+      "size_medium_bonus",
+      "size_small_bonus",
+      "size_tiny_bonus",
+      "diet_carnivore_bonus",
+      "diet_herbivore_bonus",
+      "diet_omnivore_bonus"
+    ]
+  },
+  "普通附魔券": {
+    "name": "普通附魔券",
+    "category": "enchant",
+    "subcategory": "scroll",
+    "rarity": "common",
+    "buy_price": 500,
+    "sell_price": 250,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "为装备随机更换稀有度。70%优秀,25%稀有,4%史诗,1%传说",
+    "enchant_type": "normal",
+    "price": 500
+  },
+  "优秀附魔券": {
+    "name": "优秀附魔券",
+    "category": "enchant",
+    "subcategory": "scroll",
+    "rarity": "uncommon",
+    "buy_price": 2000,
+    "sell_price": 1000,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "50%优秀,35%稀有,10%史诗,4%传说,1%神话",
+    "enchant_type": "uncommon",
+    "price": 2000
+  },
+  "稀有附魔券": {
+    "name": "稀有附魔券",
+    "category": "enchant",
+    "subcategory": "scroll",
+    "rarity": "rare",
+    "buy_price": 0,
+    "sell_price": 1000,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "30%优秀,45%稀有,15%史诗,8%传说,2%神话",
+    "enchant_type": "rare",
+    "price": 0
+  },
+  "史诗附魔券": {
+    "name": "史诗附魔券",
+    "category": "enchant",
+    "subcategory": "scroll",
+    "rarity": "epic",
+    "buy_price": 0,
+    "sell_price": 4000,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "20%优秀,30%稀有,30%史诗,18%传说,3%神话",
+    "enchant_type": "epic",
+    "price": 0
+  },
+  "传说附魔券": {
+    "name": "传说附魔券",
+    "category": "enchant",
+    "subcategory": "scroll",
+    "rarity": "legendary",
+    "buy_price": 0,
+    "sell_price": 15000,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "10%优秀,20%稀有,35%史诗,30%传说,5%神话",
+    "enchant_type": "legendary",
+    "price": 0
+  },
+  "神话附魔券": {
+    "name": "神话附魔券",
+    "category": "enchant",
+    "subcategory": "scroll",
+    "rarity": "mythic",
+    "buy_price": 0,
+    "sell_price": 50000,
+    "stackable": true,
+    "consumable": true,
+    "consume_quantity": 1,
+    "description": "10%稀有,40%史诗,40%传说,10%神话",
+    "enchant_type": "mythic",
+    "price": 0
+  },
+  "竹竿": {
+    "name": "竹竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 0,
+    "slot": "fishing_rod",
+    "description": "初始装备 - 简易竹竿, 适合溪流/水塘钓小鱼, 2kg 承载",
+    "price": 10,
+    "rarity": "common",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 2.0,
+      "max_hook_slots": 1,
+      "duration_reduce": 0
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 0
+    }
+  },
+  "玻纤溪流竿": {
+    "name": "玻纤溪流竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 1,
+    "slot": "fishing_rod",
+    "description": "玻纤材质, 轻盈短竿, 适合溪流钓小型鱼, 1钩槽",
+    "price": 50,
+    "rarity": "common",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 5.0,
+      "max_hook_slots": 1,
+      "duration_reduce": 0
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 1
+    }
+  },
+  "玻纤路亚竿": {
+    "name": "玻纤路亚竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 1,
+    "slot": "fishing_rod",
+    "description": "玻纤材质, 路亚短竿, 适合水库岸边抛饵, 1钩槽",
+    "price": 100,
+    "rarity": "common",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 20.0,
+      "max_hook_slots": 1,
+      "duration_reduce": 0
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 2
+    }
+  },
+  "玻纤台钓竿": {
+    "name": "玻纤台钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 1,
+    "slot": "fishing_rod",
+    "description": "玻纤材质, 长节台钓竿, 适合池塘/水库静水, 2钩槽",
+    "price": 200,
+    "rarity": "common",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 40.0,
+      "max_hook_slots": 1,
+      "duration_reduce": 0
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 3
+    }
+  },
+  "玻纤筏钓竿": {
+    "name": "玻纤筏钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 1,
+    "slot": "fishing_rod",
+    "description": "玻纤材质, 筏钓短竿, 适合水库筏排近钓, 2钩槽",
+    "price": 300,
+    "rarity": "common",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 60.0,
+      "max_hook_slots": 1,
+      "duration_reduce": 0
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 4
+    }
+  },
+  "玻纤海投竿": {
+    "name": "玻纤海投竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 1,
+    "slot": "fishing_rod",
+    "description": "玻纤材质, 海投短竿, 适合海岸线抛投, 1钩槽",
+    "price": 500,
+    "rarity": "common",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 80.0,
+      "max_hook_slots": 1,
+      "duration_reduce": 0
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 5
+    }
+  },
+  "碳纤溪流竿": {
+    "name": "碳纤溪流竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 2,
+    "slot": "fishing_rod",
+    "description": "碳纤材质, 灵敏轻便, 适合溪流中型鱼, 1钩槽",
+    "price": 1000,
+    "rarity": "uncommon",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 100.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 1
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 6
+    }
+  },
+  "碳纤路亚竿": {
+    "name": "碳纤路亚竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 2,
+    "slot": "fishing_rod",
+    "description": "碳纤材质, 路亚专用, 适合水库/海岸路亚, 2钩槽",
+    "price": 1500,
+    "rarity": "uncommon",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 150.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 1
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 7
+    }
+  },
+  "碳纤台钓竿": {
+    "name": "碳纤台钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 2,
+    "slot": "fishing_rod",
+    "description": "碳纤材质, 竞技台钓, 适合大水面深水, 3钩槽",
+    "price": 2000,
+    "rarity": "uncommon",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 200.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 1
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 8
+    }
+  },
+  "碳纤筏钓竿": {
+    "name": "碳纤筏钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 2,
+    "slot": "fishing_rod",
+    "description": "碳纤材质, 筏钓灵敏竿, 适合筏排精准作钓, 2钩槽",
+    "price": 2500,
+    "rarity": "uncommon",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 250.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 1
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 9
+    }
+  },
+  "碳纤海投竿": {
+    "name": "碳纤海投竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 2,
+    "slot": "fishing_rod",
+    "description": "碳纤材质, 海投中型竿, 适合海岸中距离, 2钩槽",
+    "price": 3000,
+    "rarity": "uncommon",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 300.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 1
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 10
+    }
+  },
+  "高碳溪流竿": {
+    "name": "高碳溪流竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 3,
+    "slot": "fishing_rod",
+    "description": "高碳材质, 强韧轻量, 适合溪流大型鱼, 2钩槽",
+    "price": 5000,
+    "rarity": "rare",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 1200.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 2
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 11
+    }
+  },
+  "高碳路亚竿": {
+    "name": "高碳路亚竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 3,
+    "slot": "fishing_rod",
+    "description": "高碳材质, 路亚进阶, 适合大型路亚/假饵, 3钩槽",
+    "price": 6000,
+    "rarity": "rare",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 1400.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 2
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 12
+    }
+  },
+  "高碳台钓竿": {
+    "name": "高碳台钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 3,
+    "slot": "fishing_rod",
+    "description": "高碳材质, 高端台钓, 适合竞技大水面, 3钩槽",
+    "price": 7000,
+    "rarity": "rare",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 1600.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 2
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 13
+    }
+  },
+  "高碳筏钓竿": {
+    "name": "高碳筏钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 3,
+    "slot": "fishing_rod",
+    "description": "高碳材质, 筏钓重型, 适合筏排大型鱼, 3钩槽",
+    "price": 8000,
+    "rarity": "rare",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 1800.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 2
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 14
+    }
+  },
+  "高碳海投竿": {
+    "name": "高碳海投竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 3,
+    "slot": "fishing_rod",
+    "description": "高碳材质, 海投高强度, 适合海岸/船钓中型, 3钩槽",
+    "price": 9000,
+    "rarity": "rare",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 2000.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 2
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 15
+    }
+  },
+  "钛合金溪流竿": {
+    "name": "钛合金溪流竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 4,
+    "slot": "fishing_rod",
+    "description": "钛合金材质, 顶级强度, 适合溪流巨物挑战, 2钩槽",
+    "price": 10000,
+    "rarity": "epic",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 3000.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 3
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 16
+    }
+  },
+  "钛合金路亚竿": {
+    "name": "钛合金路亚竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 4,
+    "slot": "fishing_rod",
+    "description": "钛合金材质, 顶级路亚竿, 适合大型掠食鱼, 3钩槽",
+    "price": 15000,
+    "rarity": "epic",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 3500.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 3
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 17
+    }
+  },
+  "钛合金台钓竿": {
+    "name": "钛合金台钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 4,
+    "slot": "fishing_rod",
+    "description": "钛合金材质, 竞技顶配, 适合专业台钓比赛, 4钩槽",
+    "price": 20000,
+    "rarity": "epic",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 4000.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 3
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 18
+    }
+  },
+  "钛合金筏钓竿": {
+    "name": "钛合金筏钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 4,
+    "slot": "fishing_rod",
+    "description": "钛合金材质, 筏钓王者, 适合筏排重型挑战, 3钩槽",
+    "price": 25000,
+    "rarity": "epic",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 4500.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 3
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 19
+    }
+  },
+  "钛合金海投竿": {
+    "name": "钛合金海投竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 4,
+    "slot": "fishing_rod",
+    "description": "钛合金材质, 海投重型, 适合远海大物, 4钩槽",
+    "price": 30000,
+    "rarity": "epic",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 5000.0,
+      "max_hook_slots": 2,
+      "duration_reduce": 3
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 20
+    }
+  },
+  "纳米溪流竿": {
+    "name": "纳米溪流竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 5,
+    "slot": "fishing_rod",
+    "description": "纳米材质, 极限轻量, 适合溪流精细作钓, 2钩槽",
+    "price": 50000,
+    "rarity": "legendary",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 10000.0,
+      "max_hook_slots": 3,
+      "duration_reduce": 4
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 21
+    }
+  },
+  "纳米路亚竿": {
+    "name": "纳米路亚竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 5,
+    "slot": "fishing_rod",
+    "description": "纳米材质, 路亚顶级, 适合专业路亚比赛, 4钩槽",
+    "price": 60000,
+    "rarity": "legendary",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 20000.0,
+      "max_hook_slots": 3,
+      "duration_reduce": 4
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 22
+    }
+  },
+  "纳米台钓竿": {
+    "name": "纳米台钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 5,
+    "slot": "fishing_rod",
+    "description": "纳米材质, 顶级台钓, 适合高强度竞技, 4钩槽",
+    "price": 70000,
+    "rarity": "legendary",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 30000.0,
+      "max_hook_slots": 3,
+      "duration_reduce": 4
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 23
+    }
+  },
+  "纳米筏钓竿": {
+    "name": "纳米筏钓竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 5,
+    "slot": "fishing_rod",
+    "description": "纳米材质, 筏钓神器, 适合筏排巨型鱼, 4钩槽",
+    "price": 80000,
+    "rarity": "legendary",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 40000.0,
+      "max_hook_slots": 3,
+      "duration_reduce": 4
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 24
+    }
+  },
+  "纳米海投竿": {
+    "name": "纳米海投竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 5,
+    "slot": "fishing_rod",
+    "description": "纳米材质, 顶级海投, 适合深海巨型挑战, 5钩槽",
+    "price": 90000,
+    "rarity": "legendary",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 50000.0,
+      "max_hook_slots": 3,
+      "duration_reduce": 4
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 25
+    }
+  },
+  "龙王竿": {
+    "name": "龙王竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 6,
+    "slot": "fishing_rod",
+    "description": "龙王御用, 可钓巨物级鱼, 顶级承载力 100,000kg, 4钩槽",
+    "price": 100000,
+    "rarity": "mythic",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 100000.0,
+      "max_hook_slots": 3,
+      "duration_reduce": 6
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 27
+    }
+  },
+  "龙神竿": {
+    "name": "龙神竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 7,
+    "slot": "fishing_rod",
+    "description": "龙神神赐, 可钓绝大部分大型鱼, 500,000kg 神话级承载, 5钩槽",
+    "price": 150000,
+    "rarity": "mythic",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 500000.0,
+      "max_hook_slots": 3,
+      "duration_reduce": 6
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 29
+    }
+  },
+  "星海竿": {
+    "name": "星海竿",
+    "category": "equipment",
+    "subcategory": "fishing_rod",
+    "tier": 8,
+    "slot": "fishing_rod",
+    "description": "星海龙王, 顶级海神级鱼竿, 10,000,000kg 神话承载, 5钩槽",
+    "price": 200000,
+    "rarity": "mythic",
+    "stackable": false,
+    "type": "鱼竿",
+    "base_effects": {
+      "load_capacity_max": 1000000.0,
+      "max_hook_slots": 3,
+      "duration_reduce": 6
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 30
+    }
+  },
+  "棉线": {
+    "name": "棉线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 1,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "棉质天然纤维, 吸水较重, 适合新手/小溪慢钓小鱼",
+    "price": 5,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 5.0,
+      "durability": 50,
+      "flexibility": 55
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 0
+    }
+  },
+  "尼龙基础线": {
+    "name": "尼龙基础线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 1,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "基础尼龙线, 延展性好, 适合一般溪流台钓",
+    "price": 25,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 4.0,
+      "durability": 50,
+      "flexibility": 55
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 1
+    }
+  },
+  "尼龙编织线": {
+    "name": "尼龙编织线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 1,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "尼龙编织结构, 抗磨耐咬, 适合底栖鱼/路亚",
+    "price": 50,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 16.0,
+      "durability": 50,
+      "flexibility": 55
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 2
+    }
+  },
+  "尼龙强化线": {
+    "name": "尼龙强化线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 1,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "强化尼龙, 抗拉强度提升, 适合中大型鱼",
+    "price": 150,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 32.0,
+      "durability": 50,
+      "flexibility": 55
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 3
+    }
+  },
+  "尼龙精密线": {
+    "name": "尼龙精密线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 1,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "精密尼龙, 直径细强度高, 适合路亚灵敏作钓",
+    "price": 200,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 48.0,
+      "durability": 50,
+      "flexibility": 55
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 4
+    }
+  },
+  "尼龙大师线": {
+    "name": "尼龙大师线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 1,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "顶级尼龙工艺, 兼具柔软与强度, 适合专业溪流",
+    "price": 300,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 64.0,
+      "durability": 50,
+      "flexibility": 55
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 5
+    }
+  },
+  "碳纤基础线": {
+    "name": "碳纤基础线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 2,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "碳纤基础线, 灵敏度高, 适合竞技台钓",
+    "price": 500,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 80.0,
+      "durability": 50,
+      "flexibility": 60
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 6
+    }
+  },
+  "碳纤编织线": {
+    "name": "碳纤编织线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 2,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "碳纤编织, 切水快信号准, 适合路亚/筏钓",
+    "price": 750,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 120.0,
+      "durability": 50,
+      "flexibility": 60
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 7
+    }
+  },
+  "碳纤强化线": {
+    "name": "碳纤强化线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 2,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "强化碳纤, 抗拉耐磨兼具, 适合中型海鱼",
+    "price": 1000,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 160.0,
+      "durability": 50,
+      "flexibility": 60
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 8
+    }
+  },
+  "碳纤精密线": {
+    "name": "碳纤精密线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 2,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "精密碳纤, 极低延展性, 适合远投路亚",
+    "price": 1250,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 200.0,
+      "durability": 50,
+      "flexibility": 60
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 9
+    }
+  },
+  "碳纤大师线": {
+    "name": "碳纤大师线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 2,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "大师级碳纤, 顶级灵敏度, 适合高水平竞技",
+    "price": 1500,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 240.0,
+      "durability": 50,
+      "flexibility": 60
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 10
+    }
+  },
+  "PE基础线": {
+    "name": "PE基础线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 3,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "PE编织基础线, 无延展信号直接, 适合路亚",
+    "price": 2500,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 960.0,
+      "durability": 50,
+      "flexibility": 65
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 11
+    }
+  },
+  "PE编织线": {
+    "name": "PE编织线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 3,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "PE编织, 柔软细腻, 适合轻型路亚/精细作钓",
+    "price": 3000,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 1120.0,
+      "durability": 50,
+      "flexibility": 65
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 12
+    }
+  },
+  "PE强化线": {
+    "name": "PE强化线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 3,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "强化PE, 高抗拉, 适合大型淡水鱼",
+    "price": 3500,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 1280.0,
+      "durability": 50,
+      "flexibility": 65
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 13
+    }
+  },
+  "PE精密线": {
+    "name": "PE精密线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 3,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "精密PE, 远投性能优异, 适合海投路亚",
+    "price": 4000,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 1440.0,
+      "durability": 50,
+      "flexibility": 65
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 14
+    }
+  },
+  "PE大师线": {
+    "name": "PE大师线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 3,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "大师级PE, 强度与柔软完美平衡, 顶级路亚线",
+    "price": 4500,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 1600.0,
+      "durability": 50,
+      "flexibility": 65
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 15
+    }
+  },
+  "合金基础线": {
+    "name": "合金基础线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 4,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "合金涂层基础线, 抗腐蚀, 适合近海",
+    "price": 5000,
+    "rarity": "epic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 2400.0,
+      "durability": 50,
+      "flexibility": 70
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 16
+    }
+  },
+  "合金编织线": {
+    "name": "合金编织线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 4,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "合金编织, 强度大幅提升, 适合中型海鱼",
+    "price": 6000,
+    "rarity": "epic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 2800.0,
+      "durability": 50,
+      "flexibility": 70
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 17
+    }
+  },
+  "合金强化线": {
+    "name": "合金强化线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 4,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "强化合金, 抗咬抗磨, 适合礁石区海钓",
+    "price": 7000,
+    "rarity": "epic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 3200.0,
+      "durability": 50,
+      "flexibility": 70
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 18
+    }
+  },
+  "合金精密线": {
+    "name": "合金精密线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 4,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "精密合金, 远投性能佳, 适合船钓/海投",
+    "price": 8000,
+    "rarity": "epic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 3600.0,
+      "durability": 50,
+      "flexibility": 70
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 19
+    }
+  },
+  "合金大师线": {
+    "name": "合金大师线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 4,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "大师级合金, 顶级耐候性, 适合远海船钓",
+    "price": 9000,
+    "rarity": "epic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 4000.0,
+      "durability": 100,
+      "flexibility": 70
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 20
+    }
+  },
+  "石墨烯基础线": {
+    "name": "石墨烯基础线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 5,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "石墨烯基础, 强度重量比极致, 顶级远投",
+    "price": 10000,
+    "rarity": "legendary",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 8000.0,
+      "durability": 100,
+      "flexibility": 75
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 21
+    }
+  },
+  "石墨烯编织线": {
+    "name": "石墨烯编织线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 5,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "石墨烯编织, 强度+柔韧, 适合巨物挑战",
+    "price": 15000,
+    "rarity": "legendary",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 16000.0,
+      "durability": 100,
+      "flexibility": 75
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 22
+    }
+  },
+  "石墨烯强化线": {
+    "name": "石墨烯强化线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 5,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "强化石墨烯, 抗拉超群, 适合深海巨物",
+    "price": 20000,
+    "rarity": "legendary",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 24000.0,
+      "durability": 100,
+      "flexibility": 75
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 23
+    }
+  },
+  "石墨烯精密线": {
+    "name": "石墨烯精密线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 5,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "精密石墨烯, 顶级信号传导, 适合专业海钓",
+    "price": 25000,
+    "rarity": "legendary",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 32000.0,
+      "durability": 100,
+      "flexibility": 75
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 24
+    }
+  },
+  "石墨烯大师线": {
+    "name": "石墨烯大师线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 5,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "大师级石墨烯, 顶级材料+顶级工艺, 神话级鱼线",
+    "price": 30000,
+    "rarity": "legendary",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 40000.0,
+      "durability": 100,
+      "flexibility": 75
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 25
+    }
+  },
+  "龙王线": {
+    "name": "龙王线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 6,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "龙王御用鱼线, 蕴含龙宫之力, 抗一切断线",
+    "price": 50000,
+    "rarity": "mythic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 50000.0,
+      "durability": 100,
+      "flexibility": 80
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 26
+    }
+  },
+  "龙神线": {
+    "name": "龙神线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 6,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "龙神赐福的鱼线, 不可摧毁, 深海巨物克星",
+    "price": 80000,
+    "rarity": "mythic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 80000.0,
+      "durability": 100,
+      "flexibility": 80
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 27
+    }
+  },
+  "星辰线": {
+    "name": "星辰线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 6,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "星辰编织的神话鱼线, 来自天界, 钓尽海神",
+    "price": 100000,
+    "rarity": "mythic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 200000.0,
+      "durability": 100,
+      "flexibility": 80
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 28
+    }
+  },
+  "星海线": {
+    "name": "星海线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 6,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "容纳星海之力的鱼线, 神话级别耐久度",
+    "price": 150000,
+    "rarity": "mythic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 500000.0,
+      "durability": 100,
+      "flexibility": 80
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 29
+    }
+  },
+  "命运线": {
+    "name": "命运线",
+    "category": "equipment",
+    "subcategory": "fishing_line",
+    "tier": 6,
+    "type": "鱼线",
+    "slot": "fishing_line",
+    "description": "命运之线, 不可切断, 钓上命运所归之鱼",
+    "price": 300000,
+    "rarity": "mythic",
+    "stackable": true,
+    "base_effects": {
+      "load_capacity_max": 1000000.0,
+      "durability": 100,
+      "flexibility": 80
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 30
+    }
+  },
+  "海夕": {
+    "name": "海夕",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 1,
+    "slot": "fishing_hook",
+    "description": "袖型微钩, 钓微鱼/小鱼, 0-2kg",
+    "price": 50,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "tiny": 0.6,
+        "small": 0.6
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 0
+    }
+  },
+  "袖钩": {
+    "name": "袖钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 1,
+    "slot": "fishing_hook",
+    "description": "袖型小钩, 专为鲫鱼设计, 0.3-2kg",
+    "price": 30,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "small": 0.8
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 0
+    }
+  },
+  "伊势尼": {
+    "name": "伊势尼",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 1,
+    "slot": "fishing_hook",
+    "description": "伊势尼万能钩, 小型-中型, 0.3-50kg",
+    "price": 250,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "small": 0.3,
+        "medium": 0.5
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 1
+    }
+  },
+  "秋田狐": {
+    "name": "秋田狐",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 1,
+    "slot": "fishing_hook",
+    "description": "秋田狐细长钩, 中型精细钓, 2-50kg",
+    "price": 150,
+    "rarity": "common",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "medium": 0.7
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 1
+    }
+  },
+  "伊豆": {
+    "name": "伊豆",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 2,
+    "slot": "fishing_hook",
+    "description": "伊豆偏口钩, 中小型鱼, 0.3-500kg",
+    "price": 1200,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "small": 0.25,
+        "medium": 0.3,
+        "large": 0.2
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 2
+    }
+  },
+  "铁钩": {
+    "name": "铁钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 2,
+    "slot": "fishing_hook",
+    "description": "路亚专用铁钩, 大型鱼, 50-10000kg",
+    "price": 1000,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "large": 0.5,
+        "huge": 0.3
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 3
+    }
+  },
+  "新关东": {
+    "name": "新关东",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 2,
+    "slot": "fishing_hook",
+    "description": "新关东宽口钩, 中大型淡水, 2-500kg",
+    "price": 800,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "medium": 0.3,
+        "large": 0.6
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 4
+    }
+  },
+  "鲤钩": {
+    "name": "鲤钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 2,
+    "slot": "fishing_hook",
+    "description": "鲤鱼专用宽口钩, 抗拉抗撕, 50-500kg",
+    "price": 600,
+    "rarity": "uncommon",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "large": 0.8
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 5
+    }
+  },
+  "三本钩": {
+    "name": "三本钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 3,
+    "slot": "fishing_hook",
+    "description": "三本钩 (三钩组合), 超大-巨型, 500-100000kg",
+    "price": 2200,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "giant": 0.5,
+        "huge": 0.3
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 7
+    }
+  },
+  "小矶": {
+    "name": "小矶",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 3,
+    "slot": "fishing_hook",
+    "description": "矶钓专用小钩, 海岸礁石, 多 size 均衡, 0-10000kg",
+    "price": 2800,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "tiny": 0.1,
+        "small": 0.1,
+        "medium": 0.1,
+        "large": 0.1,
+        "huge": 0.1
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 8
+    }
+  },
+  "鲨鱼钩": {
+    "name": "鲨鱼钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 3,
+    "slot": "fishing_hook",
+    "description": "重型鲨鱼钩, 高强度钢丝, 500-10000kg",
+    "price": 1800,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "huge": 0.7
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 9
+    }
+  },
+  "鲸钩": {
+    "name": "鲸钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 3,
+    "slot": "fishing_hook",
+    "description": "鲸鱼级专用钩, 神话强度, 10000-100000kg",
+    "price": 2500,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "giant": 0.8
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 11
+    }
+  },
+  "串钩": {
+    "name": "串钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 3,
+    "slot": "fishing_hook",
+    "description": "串钩 (3 钩组合), 远投/船钓大型, 500-100000kg",
+    "price": 4000,
+    "rarity": "rare",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "giant": 0.5,
+        "huge": 0.2
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 13
+    }
+  },
+  "巨物锚钩": {
+    "name": "巨物锚钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 4,
+    "slot": "fishing_hook",
+    "description": "★怪物级专钩★, >100000kg 巨物, 1-2 钩槽",
+    "price": 8000,
+    "rarity": "epic",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "titan": 0.8
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 17
+    }
+  },
+  "爆炸钩": {
+    "name": "爆炸钩",
+    "category": "equipment",
+    "subcategory": "fishing_hook",
+    "tier": 4,
+    "slot": "fishing_hook",
+    "description": "爆炸钩 (6 钩组合), 团钓大型, 500-100000kg+",
+    "price": 3500,
+    "rarity": "epic",
+    "stackable": true,
+    "base_effects": {
+      "max_bait_per_hook": 1,
+      "target_size_weights": {
+        "giant": 0.3,
+        "huge": 0.2,
+        "titan": 0.15
+      }
+    },
+    "bonus_pool": [
+      "success_rate",
+      "habitat_pond",
+      "habitat_river",
+      "habitat_reservoir",
+      "habitat_coast",
+      "habitat_shallow_sea",
+      "habitat_deep_sea",
+      "load_capacity",
+      "exp_bonus",
+      "stamina_reduce",
+      "rarity_common_bonus",
+      "rarity_uncommon_bonus",
+      "rarity_rare_bonus",
+      "rarity_epic_bonus",
+      "rarity_legendary_bonus",
+      "rarity_mythic_bonus"
+    ],
+    "unlock_requirements": {
+      "min_fishing_level": 15
+    }
   }
 }

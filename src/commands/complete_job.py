@@ -1,13 +1,15 @@
-"""
-完成委托命令逻辑
-"""
+"""完成委托命令逻辑"""
 from astrbot.api.event import AstrMessageEvent
 
 from ...src.commands.interactive import get_job_mgr
+from ...modules.templates import CardType
 
 
-async def run_complete_job_logic(event: AstrMessageEvent, store, parser, renderer):
-    """完成委托并获取评价"""
+async def run_complete_job_logic(event: AstrMessageEvent, store, parser, sender):
+    """完成委托并获取评价.
+
+    9/6: 改用 sender.send_card() 替代 try/except + yield image_result/plain_result 样板。
+    """
     user_id = str(event.get_sender_id())
     user = await store.get_user(user_id)
 
@@ -26,7 +28,7 @@ async def run_complete_job_logic(event: AstrMessageEvent, store, parser, rendere
         if len(in_progress) == 1:
             job_id = in_progress[0]["job_id"]
         else:
-            yield event.plain_result("请指定要完成的委托编号\n格式: /完成委托 <编号>")
+            yield event.plain_result("请指定要完成的委托编号\\n格式: /完成委托 <编号>")
             return
     else:
         try:
@@ -52,33 +54,33 @@ async def run_complete_job_logic(event: AstrMessageEvent, store, parser, rendere
     eval_result = result.get("evaluation", {})
     rewards = result.get("rewards", {})
 
-    try:
-        url = await renderer.render_job_complete(user, event, eval_result, rewards)
-        yield event.image_result(url)
-    except Exception:
-        # 降级回纯文字
-        grade = eval_result.get("grade", "B")
-        grade_name = {"S": "完美", "A": "优秀", "B": "良好", "C": "合格", "D": "较差", "F": "失败"}.get(grade, grade)
-
-        lines = ["═══════════════════════════", "    「 委 托 完 成 」", "═══════════════════════════"]
-        lines.append(f"\n  评价: {grade} ({grade_name})")
-        lines.append(f"  综合分: {eval_result.get('score', 0)}")
-        lines.append(f"\n  💰 获得金币: {rewards.get('gold', 0)}")
-
-        if rewards.get("exp"):
-            exp_str = ", ".join([f"{k}+{v}" for k, v in rewards.get("exp", {}).items()])
-            lines.append(f"  📈 获得经验: {exp_str}")
-
-        lines.append(f"  ❤️ 好感度: {rewards.get('favor_change', 0):+d}")
-
-        lines.append("\n─── 六维评价 ───")
-        lines.append(f"  效率: {eval_result.get('efficiency', 0)}")
-        lines.append(f"  质量: {eval_result.get('quality', 0)}")
-        lines.append(f"  压力: {eval_result.get('stress_bonus', 0):+d}")
-        lines.append(f"  心情: {eval_result.get('mood_bonus', 0):+d}")
-        lines.append(f"  技能: {eval_result.get('skill_bonus', 0):+d}")
-        lines.append(f"  Buff: {eval_result.get('buff_bonus', 0):+d}")
-
-        lines.append("\n═══════════════════════════")
-
-        yield event.plain_result("\n".join(lines))
+    # 9/6: 改用 sender.send_card() (CardType.JOB_COMPLETE 渲染模板)
+    data = {
+        "user_id": user_id,
+        "evaluation": eval_result,
+        "rewards": rewards,
+    }
+    # 降级纯文本
+    grade = eval_result.get("grade", "B")
+    grade_name = {"S": "完美", "A": "优秀", "B": "良好", "C": "合格", "D": "较差", "F": "失败"}.get(grade, grade)
+    lines = ["═══════════════════════════", "    「 委 托 完 成 」", "═══════════════════════════"]
+    lines.append(f"\\n  评价: {grade} ({grade_name})")
+    lines.append(f"  综合分: {eval_result.get('score', 0)}")
+    lines.append(f"\\n  💰 获得金币: {rewards.get('gold', 0)}")
+    if rewards.get("exp"):
+        exp_str = ", ".join([f"{k}+{v}" for k, v in rewards.get("exp", {}).items()])
+        lines.append(f"  📈 获得经验: {exp_str}")
+    lines.append(f"  ❤️ 好感度: {rewards.get('favor_change', 0):+d}")
+    lines.append("\\n─── 六维评价 ───")
+    lines.append(f"  效率: {eval_result.get('efficiency', 0)}")
+    lines.append(f"  质量: {eval_result.get('quality', 0)}")
+    lines.append(f"  压力: {eval_result.get('stress_bonus', 0):+d}")
+    lines.append(f"  心情: {eval_result.get('mood_bonus', 0):+d}")
+    lines.append(f"  技能: {eval_result.get('skill_bonus', 0):+d}")
+    lines.append(f"  Buff: {eval_result.get('buff_bonus', 0):+d}")
+    lines.append("\\n═══════════════════════════")
+    async for r in sender.send_card(
+        event, CardType.JOB_COMPLETE, data,
+        fallback_text="\\n".join(lines),
+    ):
+        yield r

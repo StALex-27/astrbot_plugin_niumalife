@@ -1,16 +1,8 @@
-"""
-帮助命令逻辑
-"""
+"""帮助命令逻辑"""
 from astrbot.api.event import AstrMessageEvent
 
 
-async def run_help_logic(event: AstrMessageEvent, renderer):
-    """帮助命令逻辑"""
-    try:
-        url = await renderer.render_help(event)
-        yield event.image_result(url)
-    except Exception:
-        yield event.plain_result("""
+_HELP_FALLBACK = """
 ━━━━━━━━━━━━━━
 【 牛马人生 - 指令帮助 】
 ━━━━━━━━━━━━━━
@@ -56,4 +48,17 @@ async def run_help_logic(event: AstrMessageEvent, renderer):
 
 💡 提示: 0点-8点空闲时自动睡眠
 ━━━━━━━━━━━━━━
-""")
+"""
+
+
+async def run_help_logic(event: AstrMessageEvent, sender):
+    """帮助命令逻辑
+
+    9/6: 改用 sender.send_card() 替代 try/except 样板。
+    """
+    async for r in sender.send_card(
+        event, "help",
+        {},  # render_help 不需要外部 data
+        fallback_text=_HELP_FALLBACK,
+    ):
+        yield r

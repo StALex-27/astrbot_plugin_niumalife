@@ -38,7 +38,6 @@ from .stock import STOCKS, update_stock_price, is_trading_hour, init_stock_trend
 # ============================================================
 
 TICK_TYPE_WORK = "工作"
-TICK_TYPE_SLEEP = "睡眠"
 TICK_TYPE_LEARN = "学习"
 TICK_TYPE_ENTERTAIN = "娱乐"
 TICK_TYPE_FISHING = "钓鱼"
@@ -475,6 +474,7 @@ class WorkTickProcessor(TickProcessor):
                 user_id,
                 job_name=job_name,
                 earned_gold=gold_earned,
+                session_key=detail.get("data", {}).get("session_key", ""),  # 9/6: Pattern 10
             )
         except Exception as e:
             self.plugin.logger.error(f"工作完成通知发送失败: {e}")
@@ -483,190 +483,6 @@ class WorkTickProcessor(TickProcessor):
 
 # ============================================================
 
-class SleepTickProcessor(TickProcessor):
-    """睡眠Tick处理器 - 整点结算属性版本"""
-    
-    def get_action_type(self) -> str:
-        return TICK_TYPE_SLEEP
-    
-    async def process(
-        self, user_id: str, user: dict, detail: dict, now: datetime
-    ) -> bool:
-        """处理睡眠tick - 整点结算属性
-        
-        Args:
-            user_id: 用户ID
-            user: 用户数据
-            detail: 动作详情
-            now: 当前时间
-        
-        Returns:
-            bool: 是否完成
-        """
-        
-        action_type = detail.get("action_type")
-        if action_type != TICK_TYPE_SLEEP:
-            return False
-        
-        residence = user.get("residence", "桥下")
-        res_info = RESIDENCES.get(residence, RESIDENCES["桥下"])
-        sleep_bonus = res_info.get("sleep_bonus", 1.0)
-        
-        planned = detail["planned_ticks"]
-        
-        # ========== 整点结算属性 ==========
-        # 检查是否到达整点，且尚未结算
-        if now.minute == 0:
-            current_hour_str = f"{now.hour:02d}:00"
-            last_settle = detail.get("last_hourly_settle")
-            
-            if last_settle != current_hour_str:
-                # 执行整点结算
-                await self._settle_hourly(user, user_id, detail, res_info, sleep_bonus, now)
-                detail["last_hourly_settle"] = current_hour_str
-        
-        # ========== 检查睡眠是否完成（每分钟检查）==========
-        elapsed_seconds = ActionDetail.get_elapsed_seconds(detail, now)
-        elapsed_ticks = int(elapsed_seconds // 60)
-        
-        if elapsed_ticks >= planned:
-            # 睡眠完成，执行最终结算
-            return await self._complete_sleep(user, user_id, detail, res_info, sleep_bonus, now)
-        
-        # 更新进度（但不结算属性）
-        detail["completed_ticks"] = elapsed_ticks
-        detail["last_tick"] = now.isoformat()
-        user["action_detail"] = detail
-        await self.plugin._store.update_user(user_id, user)
-        
-        return False
-    
-    async def _settle_hourly(
-        self, user: dict, user_id: str, detail: dict,
-        res_info: dict, sleep_bonus: float, now: datetime
-    ):
-        """执行整点结算
-        
-        Args:
-            user: 用户数据
-            user_id: 用户ID
-            detail: 动作详情
-            res_info: 住所信息
-            sleep_bonus: 睡眠加成
-            now: 当前时间
-        """
-        last_tick_str = detail.get("last_tick", detail["start_time"])
-        last_tick = datetime.fromisoformat(last_tick_str)
-        if last_tick.tzinfo is None:
-            pass  # last_tick 存的是本地时间
-        if now.tzinfo is None:
-            pass  # now 已是本地时间，不做 UTC 转换
-        
-        # 计算距离上次结算的小时数
-        hours_since_last = (now - last_tick).total_seconds() / 3600.0
-        
-        if hours_since_last <= 0:
-            return  # 避免重复结算
-        
-        # 装备效果加成
-        effects = calc_equipped_effects(user)
-        sleep_strength_bonus = effects.get("sleep_strength_bonus", 0) / 100.0
-        sleep_energy_bonus = effects.get("sleep_energy_bonus", 0) / 100.0
-        
-        attrs = user["attributes"]
-        
-        # 结算属性恢复（每小时）
-        strength_rec = res_info.get("strength_recovery", 5) * hours_since_last * sleep_bonus * 1.5 * (1 + sleep_strength_bonus)
-        energy_rec = res_info.get("energy_recovery", 5) * hours_since_last * sleep_bonus * 1.5 * (1 + sleep_energy_bonus)
-        mood_rec = res_info.get("mood_recovery", 2) * hours_since_last * sleep_bonus
-        health_rec = res_info.get("health_recovery", 2) * hours_since_last * sleep_bonus
-        
-        attrs["strength"] = max(0, min(MAX_ATTRIBUTE, attrs["strength"] + strength_rec))
-        attrs["energy"] = max(0, min(MAX_ATTRIBUTE, attrs["energy"] + energy_rec))
-        attrs["mood"] = max(0, min(MAX_ATTRIBUTE, attrs["mood"] + mood_rec))
-        attrs["health"] = max(0, min(MAX_ATTRIBUTE, attrs["health"] + health_rec))
-        # 睡眠时饱食消耗减半
-        attrs["satiety"] = max(0, attrs["satiety"] - 5 * 0.5 * hours_since_last)
-        
-        # 更新状态
-        user["attributes"] = attrs
-        detail["last_tick"] = now.isoformat()
-        user["action_detail"] = detail
-        await self.plugin._store.update_user(user_id, user)
-        
-        self.plugin.logger.info(
-            f"整点结算: {user['nickname']} 睡眠 "
-            f"结算 {hours_since_last:.2f} 小时"
-        )
-    
-    async def _complete_sleep(
-        self, user: dict, user_id: str, detail: dict,
-        res_info: dict, sleep_bonus: float, now: datetime
-    ) -> bool:
-        """完成睡眠，执行最终结算
-        
-        Args:
-            user: 用户数据
-            user_id: 用户ID
-            detail: 动作详情
-            res_info: 住所信息
-            sleep_bonus: 睡眠加成
-            now: 当前时间
-        
-        Returns:
-            bool: 始终返回 True
-        """
-        # 如果上次结算后还有剩余时间，先结算剩余属性
-        last_tick_str = detail.get("last_tick", detail["start_time"])
-        last_tick = datetime.fromisoformat(last_tick_str)
-        if last_tick.tzinfo is None:
-            pass  # last_tick 存的是本地时间
-        if now.tzinfo is None:
-            pass  # now 已是本地时间，不做 UTC 转换
-        
-        remaining_hours = (now - last_tick).total_seconds() / 3600.0
-        
-        if remaining_hours > 0:
-            # 结算剩余时间的属性
-            effects = calc_equipped_effects(user)
-            sleep_strength_bonus = effects.get("sleep_strength_bonus", 0) / 100.0
-            sleep_energy_bonus = effects.get("sleep_energy_bonus", 0) / 100.0
-            
-            attrs = user["attributes"]
-            
-            strength_rec = res_info.get("strength_recovery", 5) * remaining_hours * sleep_bonus * 1.5 * (1 + sleep_strength_bonus)
-            energy_rec = res_info.get("energy_recovery", 5) * remaining_hours * sleep_bonus * 1.5 * (1 + sleep_energy_bonus)
-            mood_rec = res_info.get("mood_recovery", 2) * remaining_hours * sleep_bonus
-            health_rec = res_info.get("health_recovery", 2) * remaining_hours * sleep_bonus
-            
-            attrs["strength"] = max(0, min(MAX_ATTRIBUTE, attrs["strength"] + strength_rec))
-            attrs["energy"] = max(0, min(MAX_ATTRIBUTE, attrs["energy"] + energy_rec))
-            attrs["mood"] = max(0, min(MAX_ATTRIBUTE, attrs["mood"] + mood_rec))
-            attrs["health"] = max(0, min(MAX_ATTRIBUTE, attrs["health"] + health_rec))
-            attrs["satiety"] = max(0, attrs["satiety"] - 5 * 0.5 * remaining_hours)
-            
-            user["attributes"] = attrs
-        
-        await self.plugin._store.update_user(user_id, user)
-        
-        # 发送睡眠完成通知
-        try:
-            messenger = self.plugin._messenger
-            hours = planned / TICKS_PER_HOUR
-            await messenger.push(
-                user_id,
-                messenger.MessageType.NOTIFY_SLEEP_COMPLETE,
-                {
-                    "plain_text": (
-                        f"😴 睡眠 {hours:.0f} 小时完成！\n"
-                        f"体力 +{int(res_info.get('strength_recovery', 5) * hours * sleep_bonus * 1.5)} "
-                        f"精力 +{int(res_info.get('energy_recovery', 5) * hours * sleep_bonus * 1.5)}"
-                    )
-                }
-            )
-        except Exception as e:
-            self.plugin.logger.error(f"睡眠完成通知发送失败: {e}")
-        
         return True
 
 
@@ -784,6 +600,7 @@ class LearnTickProcessor(TickProcessor):
                     user_id,
                     skill_name=course_name,
                     earned_exp=detail.get("earned_exp", 0),
+                    session_key=detail.get("data", {}).get("session_key", ""),  # 9/6: Pattern 10
                 )
             except Exception as e:
                 self.plugin.logger.error(f"学习完成通知发送失败: {e}")
@@ -877,6 +694,7 @@ class EntertainTickProcessor(TickProcessor):
                     user_id,
                     ent_name=entertainment_name,
                     mood_gain=mood_gain,
+                    session_key=detail.get("data", {}).get("session_key", ""),  # 9/6: Pattern 10
                 )
             except Exception as e:
                 self.plugin.logger.error(f"娱乐完成通知发送失败: {e}")
@@ -921,38 +739,181 @@ class FishingTickProcessor(TickProcessor):
         data = detail.get("data", {})
         spot_id = data.get("spot_id", "")
         rod_id = data.get("rod_id", "竹竿")
-        bait_id = data.get("bait_id", "蚯蚓")
+        # 9/4晚: 多槽鱼钩 (优先 hook_slots, 兼容 hook_id)
+        hook_ids = data.get("hook_slots", [])
+        if not hook_ids:
+            legacy_hook = data.get("hook_id", "")
+            hook_ids = [legacy_hook] if legacy_hook else []
+        # 9/4晚: 多槽饵料 (bait_slots 列表, 默认1个)
+        bait_ids = data.get("bait_slots", data.get("bait_ids", []))
+        if isinstance(bait_ids, str):
+            # 兼容旧数据: 单 bait_id → 包成列表
+            bait_ids = [bait_ids] if bait_ids else []
+        if not bait_ids:
+            # 兜底用 data.get("bait_id", "")
+            legacy = data.get("bait_id", "")
+            bait_ids = [legacy] if legacy else []
+        # 9/3晚: 鱼轮 (钓鱼经验加成 + rare_bonus + duration_reduce)
+        reel_id = data.get("reel_id", "")
+        # 9/3: 渔具其他槽
+        line_id = data.get("line_id", "")
+        float_id = data.get("float_id", "")
 
-        rod = ITEMS.get(rod_id, {}).get("effects", {})
-        bait = ITEMS.get(bait_id, {}).get("effects", {})
+        # 9/5: 从 user.equipped_items 取 entry effects (含附魔词条)
+        equipped_items = user.get("equipped_items", {})
 
-        # 1. 尝试中鱼
-        catch = roll_catch(user, spot_id, rod, bait)
+        def _entry_effects(slot_key: str) -> dict:
+            """从 equipped_items 拿 slot 的 entry effects, 找不到 fallback ITEMS.base
+
+            9/7: 兼容老 slot 名 (line→fishing_line, hook→fishing_hook, float→fishing_float,
+                 reel→fishing_reel, bait→fishing_bait). 也兼容单槽字段 (hook) vs 多槽列表 (hook_slots)
+            """
+            # 9/7 兼容映射 (老 key → 新 key)
+            _SLOT_LEGACY = {
+                "line": "fishing_line",
+                "hook": "fishing_hook",
+                "float": "fishing_float",
+                "reel": "fishing_reel",
+                "bait": "fishing_bait",
+                "lure": "fishing_lure",
+                "rod": "fishing_rod",
+            }
+            _LIST_LEGACY = {
+                "hook_slots": "fishing_hook",   # 多槽 fallback 单槽
+                "bait_slots": "fishing_bait",   # 多槽 fallback 单槽
+            }
+            # 多槽优先 (hook_slots/bait_slots)
+            e = equipped_items.get(slot_key)
+            # 列表类 key: fallback 单槽 (老数据 hook/bait 单字段)
+            if not e and slot_key in _LIST_LEGACY:
+                e = equipped_items.get(_LIST_LEGACY[slot_key])
+            # 单槽 key: 兼容老 slot 名
+            if not e and slot_key in _SLOT_LEGACY:
+                e = equipped_items.get(_SLOT_LEGACY[slot_key])
+            # 新 slot 名查老 key (比如 _entry_effects("fishing_hook") 读老数据 equipped_items["hook"])
+            if not e:
+                for old_key, new_key in _SLOT_LEGACY.items():
+                    if new_key == slot_key:
+                        e = equipped_items.get(old_key)
+                        if e:
+                            break
+            if isinstance(e, dict) and e.get("id"):
+                eff = e.get("effects") or ITEMS.get(e.get("id", ""), {}).get("effects", {})
+                return eff
+            return {}
+
+        def _entry_effects_list(slot_key: str) -> list[dict]:
+            """拿列表槽位 (hook_slots/bait_slots) 所有 entry effects
+
+            9/7: 兼容老单槽字段 (hook/bait) → 转为单元素列表
+            """
+            slots = equipped_items.get(slot_key, [])
+            if not slots:
+                # 兼容老单槽字段
+                _SINGLE_LEGACY = {
+                    "hook_slots": "fishing_hook",
+                    "bait_slots": "fishing_bait",
+                    "fishing_hook": "hook",       # 查老 key "hook"
+                    "fishing_bait": "bait",       # 查老 key "bait"
+                }
+                fallback_key = _SINGLE_LEGACY.get(slot_key)
+                if fallback_key:
+                    single = equipped_items.get(fallback_key)
+                    if isinstance(single, dict) and single.get("id"):
+                        slots = [single]
+            if not isinstance(slots, list):
+                return []
+            out = []
+            for s in slots:
+                if isinstance(s, dict) and s.get("id"):
+                    eff = s.get("effects") or ITEMS.get(s.get("id", ""), {}).get("effects", {})
+                    out.append(eff)
+            return out
+
+        rod = _entry_effects("fishing_rod")
+        # 9/4晚: 多钩/多饵 - 合并所有 hook effects (size_weights 取累加)
+        hook_effects_list = _entry_effects_list("hook_slots")
+        hook_effects = {}
+        for eff in hook_effects_list:
+            for k, v in eff.items():
+                if k == "target_size_weights" and isinstance(v, dict):
+                    hook_effects.setdefault(k, {})
+                    for sc, w in v.items():
+                        hook_effects[k][sc] = hook_effects[k].get(sc, 0) + w
+                else:
+                    hook_effects[k] = hook_effects.get(k, 0) + v if isinstance(v, (int, float)) else v
+        # 9/4晚: 多槽饵料 - 从 entry effects 取
+        bait_effects_list = _entry_effects_list("bait_slots")
+        consume_targets = []  # [(bait_id, is_consumable)]
+        bait_ids = data.get("bait_slots", data.get("bait_ids", []))
+        if isinstance(bait_ids, str):
+            bait_ids = [bait_ids] if bait_ids else []
+        if not bait_ids:
+            legacy = data.get("bait_id", "")
+            bait_ids = [legacy] if legacy else []
+        # 从 entry.consumable 判定 (而非 ITEMS.consumable)
+        bait_slots_data = equipped_items.get("bait_slots", [])
+        for bs in (bait_slots_data if isinstance(bait_slots_data, list) else []):
+            if not isinstance(bs, dict):
+                continue
+            bid = bs.get("id", "")
+            if bid:
+                # consumable 来自 entry (entry 保存了购买时的 consumable)
+                consume_targets.append((bid, bool(bs.get("consumable", bs.get("effects", {}).get("consumable", False)))))
+        # 9/7 命名统一: 用 fishing_ 前缀的 slot 名
+        line = _entry_effects("fishing_line")
+        float_eff = _entry_effects("fishing_float")
+        reel = _entry_effects("fishing_reel")
+
+        # 1. 尝试中鱼 (多 hook effects 合并, 多饵 effects list)
+        catch = roll_catch(user, spot_id, rod, bait_effects_list, line_effects=line, hook_effects=hook_effects, float_effects=float_eff, reel_effects=reel)
 
         if catch:
-            # 写入用户数据
-            apply_catch(user, catch, now.isoformat())
-            # 加钓鱼技能经验
-            fish = catch["fish"]
-            exp_gain = fish.get("exp_reward", 0)
-            skill_exp = user.setdefault("skill_exp", {})
-            skill_exp["钓鱼"] = skill_exp.get("钓鱼", 0) + exp_gain
-            user.setdefault("skills", {})["钓鱼"] = get_fishing_skill_level(user)
+            # 9/4晚: 中鱼后扣 bait_slot 内 quantity (消耗饵), 拟饵不扣
+            self._consume_one_bait(user, consume_targets, bait_slots_data)
+
+        if catch:
+            # 9/3深夜: 断线事件 - 不算鱼, 丢失鱼线/鱼钩/鱼饵(1个)/鱼漂, 通知玩家
+            if catch.get("_line_break"):
+                lost = self._lose_gear_on_line_break(user)
+                await self._notify_line_break(user_id, catch, detail, lost_gear=lost)
+                await self.plugin._store.update_user(user_id, user)
+                return False
+            # 9/6: 断竿事件 - 丢失鱼竿/鱼轮/鱼线/鱼钩/鱼漂/鱼饵(1个), 通知玩家
+            if catch.get("_rod_break"):
+                lost = self._lose_gear_on_rod_break(user)
+                await self._notify_rod_break(user_id, catch, detail, lost_gear=lost)
+                await self.plugin._store.update_user(user_id, user)
+                return False
+            # 写入用户数据 (apply_catch 内部已加 skill_exp, 写 _last_levelup)
+            apply_catch(user, catch, now.isoformat(), reel_effects=reel, all_effects=None)
+            # 读 apply_catch 算出的升级信息
+            levelup_info = user.get("fishing", {}).pop("_last_levelup", None) or {
+                "from": 0, "to": get_fishing_skill_level(user),
+                "exp_gain": 0, "total_exp": user.get("skill_exp", {}).get("钓鱼", 0),
+            }
+            # 同步 skills["钓鱼"] = level (兼容性, 老 UI 读这个字段)
+            user.setdefault("skills", {})["钓鱼"] = levelup_info["to"]
             # 检查称号
             new_title = check_fish_title(user)
             user["fishing"]["last_catch"] = {
                 "fish": catch["fish_id"],
                 "weight": catch["weight"],
                 "size_label": catch["size_label"],
+                "length_cm": catch.get("length_cm"),
                 "estimated_price": catch["estimated_price"],
                 "spot": spot_id,
                 "time": now.isoformat(),
                 "title_unlocked": new_title,
+                "exp_gain": levelup_info["exp_gain"],
+                "level_up": levelup_info["from"] != levelup_info["to"],
+                "skill_level": levelup_info["to"],
+                "total_exp": levelup_info["total_exp"],
             }
 
             # 通知用户（私聊 + 群 @）
             try:
-                await self._notify_catch(user_id, user, catch, new_title, detail)
+                await self._notify_catch(user_id, user, catch, new_title, detail, levelup_info)
             except Exception as e:
                 self.plugin.logger.error(f"钓鱼结果通知失败: {e}")
 
@@ -983,35 +944,35 @@ class FishingTickProcessor(TickProcessor):
         user["action_detail"] = detail
         return False
 
-    async def _notify_catch(self, user_id, user, catch, new_title, detail):
+    async def _notify_catch(self, user_id, user, catch, new_title, detail, levelup_info=None):
         """把中鱼通知扔进 plugin 的通知队列（方案G）。
 
         consumer task 会通过缓存的最近 event.send() 发消息，
         完全不构造 MessageSession —— 走 AstrBot 内部路径，
         无需 platform_id，无需 MessageSession.from_str。
+
+        9/8: 标题文本加入鱼名 + 重量 + 尺寸, 让用户从通知标题也能看出鱼况
         """
         try:
+            from ..src.fishing.fishing_manager import format_weight, format_length_compact
             fish = catch["fish"]
             nickname = user.get("nickname", "钓手")
-            text = (
-                f"🎣 叮！上钩了！\n\n"
-                f"{fish['emoji']} **{fish['name']}**\n"
-                f"⚖️ 重量: {catch['weight']} kg\n"
-                f"📏 尺寸: {catch['size_label']}\n"
-                f"💰 估值: {catch['estimated_price']} 金币\n"
-                f"📊 钓鱼技能 +{fish.get('exp_reward', 0)} EXP"
-            )
-            if new_title:
-                text += f"\n\n🏅 解锁称号: {new_title}"
+            fish_name = fish.get("name", "鱼")
+            emoji = fish.get("emoji", "🐟")
+            weight_str = format_weight(catch.get("weight", 0))
+            length_str = format_length_compact(catch.get("length_cm"))
+
+            # 9/8: 标题文本含鱼名 + 重量 + 尺寸 (例: "🎣 上钩！草鱼 1.50kg 35cm")
+            text = f"🎣 上钩！{emoji} {fish_name} {weight_str} {length_str}"
 
             # 尝试渲染卡片
             image_url = None
             try:
                 renderer = getattr(self.plugin, "_renderer", None)
                 if renderer:
-                    image_url = await renderer.render_fishing_catch(user, catch, new_title)
+                    image_url = await renderer.render_fishing_catch(user, catch, new_title, exp_gain=(levelup_info or {}).get("exp_gain", 0))
             except Exception as e:
-                self.plugin.logger.debug(f"钓鱼卡片渲染失败（降级纯文本）: {e}")
+                self.plugin.logger.warning(f"钓鱼卡片渲染失败（降级纯文本）: {type(e).__name__}: {e}")
 
             # at() 签名：.at(name, qq)
             try:
@@ -1019,18 +980,31 @@ class FishingTickProcessor(TickProcessor):
             except (ValueError, AttributeError):
                 qq = user_id
 
-            # 构造 chain，扔进队列。consumer 会用 event.send() 发。
+            # 构造 chain, 扔进队列. consumer 会用 event.send() 发.
             from astrbot.core.message.message_event_result import MessageChain
             chain = MessageChain().at(name=nickname, qq=qq).message(text)
             if image_url:
-                chain = chain.url_image(image_url)
+                import logging
+                logging.getLogger("astrbot_plugin_niumalife").warning(f"[FISH_NOTIFY] image_url={image_url!r}")
+                # 判断是本地路径还是 URL: 本地用 file_image, 远程用 url_image
+                if image_url.startswith(("http://", "https://")):
+                    chain = chain.url_image(image_url)
+                else:
+                    chain = chain.file_image(image_url)
 
             q = getattr(self.plugin, "_notify_queue", None)
             if q is None:
                 self.plugin.logger.error("plugin._notify_queue 未初始化")
                 return
+            # 9/6: 优先用完整 session_key (新); 回退到 start_group_id (旧数据)
+            action_detail = user.get("action_detail", {})
+            action_data = action_detail.get("data", {})
+            session_key = action_data.get("session_key", "")
+            if not session_key:
+                start_group_id = action_data.get("start_group_id", "")
+                session_key = start_group_id  # 旧数据: 裸 group_id, consumer 走 suffix 匹配
             # put_nowait 同步入队，consumer 异步消费
-            q.put_nowait((user_id, chain))
+            q.put_nowait((user_id, chain, session_key))
         except Exception as e:
             self.plugin.logger.error(f"构造钓鱼通知失败: {e}")
 
@@ -1050,9 +1024,244 @@ class FishingTickProcessor(TickProcessor):
             q = getattr(self.plugin, "_notify_queue", None)
             if q is None:
                 return
-            q.put_nowait((user_id, chain))
+            # 9/6: 优先用完整 session_key (新); 回退到 start_group_id (旧数据)
+            action_detail = user.get("action_detail", {})
+            action_data = action_detail.get("data", {})
+            session_key = action_data.get("session_key", "") or action_data.get("start_group_id", "")
+            q.put_nowait((user_id, chain, session_key))
         except Exception as e:
             self.plugin.logger.error(f"构造空竿通知失败: {e}")
+
+    def _lose_gear_on_line_break(self, user: dict) -> list[str]:
+        """9/6: 断线时丢失鱼线/鱼钩/鱼饵(1个)/鱼漂
+
+        Args:
+            user: 用户数据 (in-place 修改)
+
+        Returns:
+            丢失的装备名列表
+        """
+        lost = []
+        equipped = user.get("equipped_items", {})
+        # 鱼线 - 必丢 (9/7 命名统一, 兼容老 key "line")
+        line = equipped.get("fishing_line") or equipped.get("line", {})
+        if line:
+            lost.append(f"鱼线:{line.get('id', '?')}")
+            equipped["fishing_line"] = {}
+        # 鱼钩 - 必丢 (9/7: 兼容 hook_slots 老 key + hook 单字段 fallback)
+        hook_slots = equipped.get("hook_slots", [])
+        if not hook_slots:
+            single_hook = equipped.get("hook") or equipped.get("fishing_hook")
+            if isinstance(single_hook, dict) and single_hook.get("id"):
+                lost.append(f"鱼钩:{single_hook.get('id', '?')}")
+                equipped["fishing_hook"] = {}
+        if hook_slots and isinstance(hook_slots, list):
+            new_slots = []
+            for hs in hook_slots:
+                if isinstance(hs, dict) and hs.get("id"):
+                    lost.append(f"鱼钩:{hs.get('id', '?')}")
+                else:
+                    new_slots.append(hs)
+            equipped["hook_slots"] = new_slots
+        # 鱼漂 - 必丢 (9/7: 兼容老 key "float")
+        fl = equipped.get("fishing_float") or equipped.get("float", {})
+        if fl:
+            lost.append(f"鱼漂:{fl.get('id', '?')}")
+            equipped["fishing_float"] = {}
+        # 鱼饵 - 只丢 1 个 (9/7: 兼容 bait_slots 老 key + bait 单字段)
+        bait_slots = equipped.get("bait_slots", [])
+        if not bait_slots:
+            single_bait = equipped.get("bait") or equipped.get("fishing_bait")
+            if isinstance(single_bait, dict) and single_bait.get("id"):
+                single_bait["quantity"] = single_bait.get("quantity", 1) - 1
+                lost.append(f"鱼饵:{single_bait.get('id', '?')}")
+        if bait_slots and isinstance(bait_slots, list):
+            for bs in bait_slots:
+                if isinstance(bs, dict) and bs.get("id"):
+                    # quantity -1
+                    bs["quantity"] = bs.get("quantity", 1) - 1
+                    lost.append(f"鱼饵:{bs.get('id', '?')}")
+                    break  # 只扣一个
+        user["equipped_items"] = equipped
+        return lost
+
+    def _lose_gear_on_rod_break(self, user: dict) -> list[str]:
+        """9/6: 断竿时丢失鱼竿/鱼轮/鱼线/鱼钩/鱼漂/鱼饵(1个)
+
+        Args:
+            user: 用户数据 (in-place 修改)
+
+        Returns:
+            丢失的装备名列表
+        """
+        lost = []
+        equipped = user.get("equipped_items", {})
+        # 鱼竿 - 必丢
+        rod = equipped.get("fishing_rod", {})
+        if rod:
+            lost.append(f"鱼竿:{rod.get('id', '?')}")
+            equipped["fishing_rod"] = {}
+        # 鱼轮 - 必丢
+        reel = equipped.get("fishing_reel", {})
+        if reel:
+            lost.append(f"鱼轮:{reel.get('id', '?')}")
+            equipped["fishing_reel"] = {}
+        # 鱼线 - 必丢 (9/7 命名统一, 兼容老 key "line")
+        line = equipped.get("fishing_line") or equipped.get("line", {})
+        if line:
+            lost.append(f"鱼线:{line.get('id', '?')}")
+            equipped["fishing_line"] = {}
+        # 鱼钩 - 必丢
+        # 鱼钩 - 必丢 (9/7: 兼容 hook_slots 老 key + hook 单字段 fallback)
+        hook_slots = equipped.get("hook_slots", [])
+        if not hook_slots:
+            # 兼容: 单字段 hook / fishing_hook
+            single_hook = equipped.get("hook") or equipped.get("fishing_hook")
+            if isinstance(single_hook, dict) and single_hook.get("id"):
+                lost.append(f"鱼钩:{single_hook.get('id', '?')}")
+                equipped["fishing_hook"] = {}
+        if hook_slots and isinstance(hook_slots, list):
+            new_slots = []
+            for hs in hook_slots:
+                if isinstance(hs, dict) and hs.get("id"):
+                    lost.append(f"鱼钩:{hs.get('id', '?')}")
+                else:
+                    new_slots.append(hs)
+            equipped["hook_slots"] = new_slots
+        # 鱼漂 - 必丢 (9/7: 兼容老 key "float")
+        fl = equipped.get("fishing_float") or equipped.get("float", {})
+        if fl:
+            lost.append(f"鱼漂:{fl.get('id', '?')}")
+            equipped["fishing_float"] = {}
+        # 鱼饵 - 只丢 1 个 (9/7: 兼容 bait_slots 老 key + bait 单字段)
+        bait_slots = equipped.get("bait_slots", [])
+        if not bait_slots:
+            # 兼容: 单字段 bait / fishing_bait
+            single_bait = equipped.get("bait") or equipped.get("fishing_bait")
+            if isinstance(single_bait, dict) and single_bait.get("id"):
+                single_bait["quantity"] = single_bait.get("quantity", 1) - 1
+                lost.append(f"鱼饵:{single_bait.get('id', '?')}")
+        if bait_slots and isinstance(bait_slots, list):
+            for bs in bait_slots:
+                if isinstance(bs, dict) and bs.get("id"):
+                    bs["quantity"] = bs.get("quantity", 1) - 1
+                    lost.append(f"鱼饵:{bs.get('id', '?')}")
+                    break
+        user["equipped_items"] = equipped
+        return lost
+
+
+    async def _notify_rod_break(self, user_id, catch, detail, lost_gear: list = []):
+        """9/6: 断竿通知 - 巨物咬钩但鱼竿承受不住, 竿损坏
+
+        catch dict:
+            _rod_break: True
+            fish_id, fish_name, weight, size_label
+            overload_pct: 超载百分比
+            rod_load_max: 鱼竿承载力 (kg)
+        """
+        try:
+            nickname = detail.get("nickname") if detail else "钓手"
+            fish_name = catch.get("fish_name", catch.get("fish_id", "巨物"))
+            weight = catch.get("weight", 0)
+            overload = catch.get("overload_pct", 0)
+            cap = catch.get("rod_load_max", 0)
+            lost_str = ", ".join(lost_gear) if lost_gear else "无"
+            text = (
+                f"🎣 咔嚓！{fish_name} ({weight}kg) 咬钩后扯断了鱼竿……\n"
+                f"超载 {overload}%（竿承重 {cap}kg）\n"
+                f"💔 丢失装备: {lost_str}"
+            )
+            try:
+                qq = int(user_id) if user_id.isdigit() else user_id
+            except (ValueError, AttributeError):
+                qq = user_id
+
+            from astrbot.core.message.message_event_result import MessageChain
+            chain = MessageChain().at(name=nickname or "钓手", qq=qq).message(text)
+
+            q = getattr(self.plugin, "_notify_queue", None)
+            if q is None:
+                self.plugin.logger.error("plugin._notify_queue 未初始化")
+                return
+
+            session_key = detail.get("session_key", "") if detail else ""
+            try:
+                q.put_nowait((user_id, chain, session_key))
+            except Exception as e:
+                self.plugin.logger.error(f"构造断竿通知失败: {e}")
+        except Exception as e:
+            logger.error(f"[断竿通知失败] user_id={user_id}, error={e}")
+
+
+    async def _notify_line_break(self, user_id, catch, detail, lost_gear: list = []):
+        """9/3深夜: 断线通知 - 巨物咬钩但线断了, 不算鱼仅通知
+
+        catch dict:
+            _line_break: True
+            fish_id, fish_name, weight, size_label
+            overload_pct: 超载百分比
+            line_load_max: 鱼线承载力 (kg)
+        """
+        try:
+            nickname = detail.get("nickname") if detail else "钓手"
+            # 简略: @用户 + "巨物逃了" + 关键数据
+            fish_name = catch.get("fish_name", catch.get("fish_id", "巨物"))
+            weight = catch.get("weight", 0)
+            overload = catch.get("overload_pct", 0)
+            cap = catch.get("line_load_max", 0)
+            lost_str = ", ".join(lost_gear) if lost_gear else "无"
+            text = (
+                f"🎣 噗通！{fish_name} ({weight}kg) 咬钩后扯断了线……\n"
+                f"超载 {overload}%（线承重 {cap}kg）\n"
+                f"💔 丢失装备: {lost_str}"
+            )
+            try:
+                qq = int(user_id) if user_id.isdigit() else user_id
+            except (ValueError, AttributeError):
+                qq = user_id
+
+            from astrbot.core.message.message_event_result import MessageChain
+            chain = MessageChain().at(name=nickname or "钓手", qq=qq).message(text)
+
+            q = getattr(self.plugin, "_notify_queue", None)
+            if q is None:
+                self.plugin.logger.error("plugin._notify_queue 未初始化")
+                return
+            # 9/6: 优先用完整 session_key (新); 回退到 start_group_id (旧数据)
+            action_data = (detail or {}).get("data", {})
+            session_key = action_data.get("session_key", "") or action_data.get("start_group_id", "")
+            q.put_nowait((user_id, chain, session_key))
+        except Exception as e:
+            self.plugin.logger.error(f"构造断线通知失败: {e}")
+
+    def _consume_one_bait(self, user: dict, consume_targets: list, bait_slots_data: list = None):
+        """9/4晚: 中鱼后扣 bait_slot 内 quantity (消耗饵), 拟饵不扣
+
+        consume_targets: [(bait_id, is_consumable), ...] (兼容性保留)
+        bait_slots_data: bait_slots 列表 (优先), 包含 quantity 字段
+
+        拟饵 (quantity=None) 永不消耗
+        消耗饵 quantity -= 1, qty 归零后从 list 移除 (避免残留)
+        9/7: 修复鱼饵消耗后残留 bug - qty=0 时不删除 slot 导致渔具卡死
+        """
+        if not bait_slots_data:
+            return
+
+        # 找到第一个消耗饵槽扣 1 个
+        for slot in bait_slots_data:
+            if not slot.get("consumable", False):
+                continue
+            qty = slot.get("quantity")
+            if qty is None or qty <= 0:
+                continue
+            new_qty = qty - 1
+            if new_qty <= 0:
+                # 9/7: 数量归零 → 从列表移除 slot, 避免卡装备栏
+                bait_slots_data.remove(slot)
+            else:
+                slot["quantity"] = new_qty
+            return  # 只扣一个槽
 
 
 # ============================================================
@@ -1066,7 +1275,6 @@ class TickManager:
         self.plugin = plugin
         self._processors = {
             TICK_TYPE_WORK: WorkTickProcessor(plugin),
-            TICK_TYPE_SLEEP: SleepTickProcessor(plugin),
             TICK_TYPE_LEARN: LearnTickProcessor(plugin),
             TICK_TYPE_ENTERTAIN: EntertainTickProcessor(plugin),
             TICK_TYPE_FISHING: FishingTickProcessor(plugin),
@@ -1183,7 +1391,8 @@ class TickManager:
                     await self.plugin._store.update_user(user_id, user)
                     
             except Exception as e:
-                self.plugin.logger.error(f"Tick用户{user_id}时出错: {e}")
+                import traceback as _tb
+                self.plugin.logger.error(f"Tick用户{user_id}时出错: {e}\n{_tb.format_exc()}")
     
     async def _settle_idle_hourly(
         self, user: dict, user_id: str,

@@ -18,6 +18,10 @@ _KEYWORD_ROUTES = (
     KeywordRoute(keyword="装备", action="equip_cmd"),
     KeywordRoute(keyword="背包", action="backpack"),
     KeywordRoute(keyword="商店", action="shop_cmd"),
+    KeywordRoute(keyword="买", action="buy_cmd"),
+    KeywordRoute(keyword="购买", action="buy_cmd"),
+    KeywordRoute(keyword="购入", action="buy_cmd"),
+    KeywordRoute(keyword="入手", action="buy_cmd"),
     KeywordRoute(keyword="股市", action="stock_cmd"),
     KeywordRoute(keyword="取消", action="cancel"),
     KeywordRoute(keyword="帮助", action="help_cmd"),
@@ -32,7 +36,17 @@ _KEYWORD_ROUTES = (
 
     # 钓鱼
     KeywordRoute(keyword="钓鱼", action="fishing_cmd"),
+    KeywordRoute(keyword="渔具", action="fishing_gear_cmd"),
+    KeywordRoute(keyword="装渔具", action="fishing_gear_cmd"),
     KeywordRoute(keyword="鱼塘", action="fish_dex_cmd"),
+
+    # 交易
+    KeywordRoute(keyword="卖", action="sell_cmd"),
+    KeywordRoute(keyword="/卖", action="sell_cmd"),  # 兼容带斜杠写法
+
+    # 附魔
+    KeywordRoute(keyword="附魔", action="enchant_cmd"),
+    KeywordRoute(keyword="使用", action="use_cmd"),
 )
 
 # 全局路由器实例（懒加载）

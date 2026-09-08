@@ -1,31 +1,129 @@
 {
-  "_comment": "钓鱼水域数据",
-
+  "_comment": "钓鱼水域数据 - 8个水域按解锁等级排序",
+  "_rarity_weight": {
+    "common": 1.0,
+    "uncommon": 0.4,
+    "rare": 0.12,
+    "epic": 0.03,
+    "legendary": 0.005
+  },
   "村口池塘": {
-    "name": "村口池塘", "emoji": "🪣",
-    "tier": 1, "unlock_level": 1,
-    "success_rate": 0.50,
-    "habitat_tags": ["pond"],
+    "name": "村口池塘",
+    "emoji": "🪣",
+    "tier": 1,
+    "unlock_level": 1,
+    "success_rate": 0.5,
+    "habitat_tags": [
+      "pond"
+    ],
     "duration_ticks": 30,
+    "strength_cost": 1,
     "desc": "老家的池塘,鱼多易上钩",
     "license_fee": 0
   },
-  "城郊河边": {
-    "name": "城郊河边", "emoji": "🏞️",
-    "tier": 2, "unlock_level": 3,
-    "success_rate": 0.30,
-    "habitat_tags": ["pond", "river"],
+  "林间小溪": {
+    "name": "林间小溪",
+    "emoji": "💧",
+    "tier": 2,
+    "unlock_level": 3,
+    "success_rate": 0.4,
+    "habitat_tags": [
+      "creek",
+      "pond"
+    ],
     "duration_ticks": 30,
-    "desc": "城里人周末最爱去的地方",
-    "license_fee": 50
+    "strength_cost": 1,
+    "desc": "清澈见底的小溪,溪鱼活跃",
+    "license_fee": 30
   },
-  "深山水库": {
-    "name": "深山水库", "emoji": "🌊",
-    "tier": 3, "unlock_level": 6,
-    "success_rate": 0.15,
-    "habitat_tags": ["river", "reservoir"],
+  "山区水库": {
+    "name": "山区水库",
+    "emoji": "🌊",
+    "tier": 3,
+    "unlock_level": 5,
+    "success_rate": 0.3,
+    "habitat_tags": [
+      "reservoir",
+      "creek"
+    ],
     "duration_ticks": 30,
-    "desc": "深藏不露的宝库,但要小心大鱼",
-    "license_fee": 200
+    "strength_cost": 2,
+    "desc": "深山中的水库,大鱼出没",
+    "license_fee": 100
+  },
+  "平原河流": {
+    "name": "平原河流",
+    "emoji": "🏞️",
+    "tier": 4,
+    "unlock_level": 7,
+    "success_rate": 0.25,
+    "habitat_tags": [
+      "river",
+      "pond"
+    ],
+    "duration_ticks": 30,
+    "strength_cost": 3,
+    "desc": "平原大河,鱼种丰富",
+    "license_fee": 300
+  },
+  "大型湖泊": {
+    "name": "大型湖泊",
+    "emoji": "🌅",
+    "tier": 5,
+    "unlock_level": 9,
+    "success_rate": 0.2,
+    "habitat_tags": [
+      "lake",
+      "reservoir"
+    ],
+    "duration_ticks": 30,
+    "strength_cost": 5,
+    "desc": "大湖深水,中大型鱼聚集",
+    "license_fee": 800
+  },
+  "近海港口": {
+    "name": "近海港口",
+    "emoji": "⚓",
+    "tier": 6,
+    "unlock_level": 11,
+    "success_rate": 0.15,
+    "habitat_tags": [
+      "nearshore",
+      "river"
+    ],
+    "duration_ticks": 30,
+    "strength_cost": 7,
+    "desc": "咸淡水交界处,鱼种繁多",
+    "license_fee": 2000
+  },
+  "远洋深海": {
+    "name": "远洋深海",
+    "emoji": "🌊",
+    "tier": 7,
+    "unlock_level": 13,
+    "success_rate": 0.1,
+    "habitat_tags": [
+      "deep_sea",
+      "nearshore"
+    ],
+    "duration_ticks": 30,
+    "strength_cost": 10,
+    "desc": "远洋深处,稀有巨鱼",
+    "license_fee": 5000
+  },
+  "深渊海沟": {
+    "name": "深渊海沟",
+    "emoji": "🕳️",
+    "tier": 8,
+    "unlock_level": 15,
+    "success_rate": 0.06,
+    "habitat_tags": [
+      "abyss",
+      "deep_sea"
+    ],
+    "duration_ticks": 30,
+    "strength_cost": 14,
+    "desc": "深渊之底,远古传说生物出没",
+    "license_fee": 15000
   }
 }

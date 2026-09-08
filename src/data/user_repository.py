@@ -15,6 +15,7 @@ get_lock() 保留返回 asyncio.Lock 以兼容旧调用方。
 from __future__ import annotations
 
 import asyncio
+import time
 from typing import Optional, TYPE_CHECKING
 
 from ...modules.constants import INITIAL_GOLD, INITIAL_ATTRIBUTES, INITIAL_SKILLS
@@ -22,6 +23,36 @@ from ...modules.user import UserStatus, migrate_user_data
 
 if TYPE_CHECKING:
     pass
+
+
+# ============================================================
+# 9/6: put_kv_data retry (SQLAlchemy pool 满 30s 超时降级)
+# ============================================================
+# 原计划加 write coalescing (50ms 合并), 但调研发现 niumalife 每个指令
+# 只调 1 次 update_user, 同指令内不存在连续多次写, 加 coalescing 无收益。
+# 仅保留 retry, 失败时指数退避重试 3 次能大概率命中连接。
+_KV_RETRY_ATTEMPTS = 3
+_KV_RETRY_BASE_DELAY = 0.5  # 500ms → 1s → 2s
+
+
+async def _put_kv_with_retry(plugin, key, value):
+    """带指数退避的 put_kv_data wrapper.
+
+    应对 AstrBot SharedPreferences 的 SQLAlchemy AsyncAdaptedQueuePool
+    pool_size=5 + overflow=10 = 15 个连接上限. 并发高时 30s 排队超时,
+    retry 几次往往就能拿到连接写入。
+    """
+    last_err = None
+    for attempt in range(_KV_RETRY_ATTEMPTS):
+        try:
+            await plugin.put_kv_data(key, value)
+            return
+        except Exception as e:
+            last_err = e
+            if attempt < _KV_RETRY_ATTEMPTS - 1:
+                await asyncio.sleep(_KV_RETRY_BASE_DELAY * (2 ** attempt))
+    assert last_err is not None
+    raise last_err
 
 
 # KV 存储键名前缀
@@ -63,14 +94,89 @@ class UserRepository:
     # ========================================================
 
     async def get_user(self, user_id: str) -> Optional[dict]:
-        """获取用户数据（含自动迁移）。"""
-        user_data = await self._plugin.get_kv_data(self._user_key(user_id), None)
-        if not user_data:
+        """获取用户数据（含自动迁移 + 老 plugin_id scope fallback）。
+
+        历史背景：AstrBot 在某个版本切换了 plugin_id 算法，
+        从 "{author}/astrbot_plugin_{name}" 变为 "{author}/{name}"。
+        老数据还在旧 scope_id 下，需要 fallback 查询并自动迁移。
+        """
+        key = self._user_key(user_id)
+
+        # 1. 当前 scope_id (AstrBot 4.27+ 算法)
+        user_data = await self._plugin.get_kv_data(key, None)
+        if user_data:
+            return self._maybe_migrate_fields(user_id, user_data)
+
+        # 2. Fallback: 老 plugin_id = "海獭 🦦/astrbot_plugin_niumalife"
+        #    一次性的数据迁移, 读后立刻写到新 scope, 下次就走 1. 路径
+        legacy_data = await self._read_legacy_scope(key)
+        if legacy_data:
+            # 写到当前 scope (迁移)
+            await _put_kv_with_retry(self._plugin, key, legacy_data)
+            return self._maybe_migrate_fields(user_id, legacy_data)
+
+        return None
+
+    async def _read_legacy_scope(self, key: str):
+        """从老 plugin_id scope 读单条 KV。
+
+        老 plugin_id = "海獭 🦦/astrbot_plugin_niumalife" (硬编码,
+        因为我们没法从 plugin 实例反推 directory name)。
+
+        用 sp.range_get_async 查到所有相关 scope, 再用 sp.get_async 取值。
+        """
+        from astrbot.core import sp
+        import logging
+        _log = logging.getLogger("astrbot_plugin_niumalife.UserRepository")
+        try:
+            current_plugin_id = getattr(self._plugin, "plugin_id", "")
+            _log.warning(f"[fallback] current plugin_id={current_plugin_id!r}")
+            # 提取 author 前缀 (plugin_id = "author/name")
+            if "/" not in current_plugin_id:
+                _log.warning("[fallback] no / in plugin_id, abort")
+                return None
+            author = current_plugin_id.split("/", 1)[0]
+            _log.warning(f"[fallback] author={author!r}")
+
+            # 列出所有 plugin scope (range_get_async 不支持前缀, 只接受精确 scope_id 或 None)
+            prefs = await sp.range_get_async(scope="plugin")
+            _log.warning(f"[fallback] range_get returned {len(prefs)} prefs")
+            for p in prefs:
+                sid = p.scope_id
+                _log.warning(f"[fallback]   scope_id={sid!r}")
+                # 只看当前 author 下的老 scope
+                if not sid.startswith(author + "/"):
+                    continue
+                if sid == current_plugin_id:
+                    continue  # 当前 scope 已查过
+                if "/astrbot_plugin_" not in sid:
+                    continue  # 不是老 scope 格式
+                _log.warning(f"[fallback] trying legacy scope {sid!r}")
+                # 读这一条
+                val = await sp.get_async("plugin", sid, key, None)
+                if val is not None:
+                    _log.warning(f"[fallback] FOUND legacy data in {sid!r}")
+                    return val
+        except Exception as e:
+            _log.warning(f"[fallback] EXCEPTION: {e!r}")
             return None
-        # 老用户迁移：字段缺失则补全并落盘
+        return None
+
+    def _maybe_migrate_fields(self, user_id: str, user_data: dict) -> dict:
+        """老用户字段缺失则补全并落盘。"""
         if "checkin" not in user_data or "active_buffs" not in user_data.get("checkin", {}):
             user_data = migrate_user_data(user_data)
-            await self._plugin.put_kv_data(self._user_key(user_id), user_data)
+            # 异步写回 (fire and forget, 不阻塞 get)
+            # 实际写回会在下一个 update_user 时一起
+            import asyncio
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    loop.create_task(
+                        self._plugin.put_kv_data(self._user_key(user_id), user_data)
+                    )
+            except Exception:
+                pass
         return user_data
 
     async def create_user(self, user_id: str, nickname: str) -> dict:
@@ -145,13 +251,17 @@ class UserRepository:
             "groups": [],
         }
 
-        await self._plugin.put_kv_data(self._user_key(user_id), user_data)
+        await _put_kv_with_retry(self._plugin, self._user_key(user_id), user_data)
         await self._add_to_index(user_id)
         return user_data
 
     async def update_user(self, user_id: str, user_data: dict) -> None:
-        """整体替换用户数据（callers 负责构造完整 dict）。"""
-        await self._plugin.put_kv_data(self._user_key(user_id), user_data)
+        """整体替换用户数据（callers 负责构造完整 dict）。
+
+        9/6: 加 retry — AstrBot SQLAlchemy pool_size=5+overflow=10=15 满了 30s 超时,
+        失败时指数退避重试 3 次能大概率命中。
+        """
+        await _put_kv_with_retry(self._plugin, self._user_key(user_id), user_data)
 
     async def delete_user(self, user_id: str) -> None:
         await self._plugin.delete_kv_data(self._user_key(user_id))
@@ -206,11 +316,11 @@ class UserRepository:
 
     async def update_user_settings(self, user_id: str, settings: dict) -> None:
         """整体替换用户设置；同时回写到 user dict 保证一致。"""
-        await self._plugin.put_kv_data(self._settings_key(user_id), settings)
+        await _put_kv_with_retry(self._plugin, self._settings_key(user_id), settings)
         user = await self.get_user(user_id)
         if user is not None:
             user["settings"] = settings
-            await self._plugin.put_kv_data(self._user_key(user_id), user)
+            await _put_kv_with_retry(self._plugin, self._user_key(user_id), user)
 
     # ========================================================
     # 索引维护（私有）
@@ -222,7 +332,7 @@ class UserRepository:
             index = []
         if user_id not in index:
             index.append(user_id)
-            await self._plugin.put_kv_data(ALL_USERS_KEY, index)
+            await _put_kv_with_retry(self._plugin, ALL_USERS_KEY, index)
 
     async def _remove_from_index(self, user_id: str) -> None:
         index = await self._plugin.get_kv_data(ALL_USERS_KEY, [])
@@ -230,7 +340,7 @@ class UserRepository:
             return
         if user_id in index:
             index.remove(user_id)
-            await self._plugin.put_kv_data(ALL_USERS_KEY, index)
+            await _put_kv_with_retry(self._plugin, ALL_USERS_KEY, index)
 
     # ========================================================
     # 兼容性：无锁占位（旧 DataStore 的 get_lock 在 KV 上无意义）

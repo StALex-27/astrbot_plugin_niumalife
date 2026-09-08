@@ -2,7 +2,9 @@
 物品系统模块 v3
 支持背包堆叠、装备栏位、商店系统
 """
+from typing import Optional
 from .constants import ITEMS
+from .entry_lib import resolve_effects as _resolve_effects, get_item_rarity as _get_entry_rarity, get_entry_rarity_mult as _get_entry_rarity_mult
 
 
 # ============================================================
@@ -16,8 +18,24 @@ RARITY_COLORS = {
     "uncommon": "🟢",
     "rare": "🔵",
     "epic": "🟣",
-    "legendary": "🟡",
+    "legendary": "🟠",  # 9/4晚: 黄→橙
+    "mythic": "🔴",     # 9/4晚: 新增神话级
 }
+
+# 9/6: rarity → hex 颜色 (UI 渲染用). 与 RARITY_COLORS (emoji) 并存.
+RARITY_HEX_COLORS = {
+    "common":    "#9e9e9e",  # 灰
+    "uncommon":  "#7bed9f",  # 绿
+    "rare":      "#4fc3f7",  # 蓝
+    "epic":      "#c586c0",  # 紫
+    "legendary": "#ffa726",  # 橙
+    "mythic":    "#ff6b6b",  # 红
+}
+
+
+def rarity_hex(rarity: Optional[str]) -> str:
+    """rarity → hex 颜色 (UI 渲染). 未知值回退 common 灰."""
+    return RARITY_HEX_COLORS.get(rarity or "common", "#9e9e9e")
 
 RARITY_NAMES = {
     "common": "普通",
@@ -25,6 +43,33 @@ RARITY_NAMES = {
     "rare": "稀有",
     "epic": "史诗",
     "legendary": "传说",
+    "mythic": "神话",     # 9/4晚: 新增神话级
+}
+
+# 9/4晚: rarity 排序 (用于比较)
+RARITY_RANK = {
+    "common": 0, "uncommon": 1, "rare": 2,
+    "epic": 3, "legendary": 4, "mythic": 5,
+}
+
+# 9/4晚: 词条系统 - rarity 基础数值倍率范围 (等比缩放, 神话不超过 2.5)
+RARITY_MULT_RANGE = {
+    "common":    (1.00, 1.00),   # 固定
+    "uncommon":  (1.05, 1.15),
+    "rare":      (1.15, 1.35),
+    "epic":      (1.35, 1.65),
+    "legendary": (1.65, 2.00),
+    "mythic":    (2.00, 2.50),
+}
+
+# 9/4晚: 词条数 (rarity 决定抽几个词条)
+RARITY_BONUS_COUNT = {
+    "common":    0,
+    "uncommon":  1,
+    "rare":      2,
+    "epic":      3,
+    "legendary": 4,
+    "mythic":    5,
 }
 
 # 栏位配置
@@ -34,6 +79,14 @@ SLOTS = {
     "tool": "工具",
     "accessory": "饰品",
     "phone": "手机",
+    # 9/3: 渔具子系统 (双轨制, 不复用通用5 槽)
+    "fishing_rod": "鱼竿",
+    "fishing_line": "鱼线",
+    "fishing_hook": "鱼钩",
+    "fishing_float": "浮漂",
+    "fishing_bait": "鱼饵",
+    # 9/3 (晚): 鱼轮 (钓鱼经验加成 + duration_reduce + rare_bonus)
+    "fishing_reel": "鱼轮",
 }
 
 SLOT_EMOJI = {
@@ -42,6 +95,26 @@ SLOT_EMOJI = {
     "tool": "🎒",
     "accessory": "💍",
     "phone": "📱",
+    "fishing_rod": "🎣",
+    "fishing_line": "🪢",
+    "fishing_hook": "🪝",
+    "fishing_float": "🪶",
+    "fishing_bait": "🪱",
+    "fishing_lure": "🪝",
+    "fishing_reel": "🧵",
+    "fishing_waders": "👖",
+}
+
+# 渔具栏位中文名 → 槽位 key (供 /渔具 命令用)
+FISHING_GEAR_SLOTS = {
+    "鱼竿": "fishing_rod",
+    "鱼线": "fishing_line",
+    "鱼钩": "fishing_hook",
+    "浮漂": "fishing_float",
+    "鱼饵": "fishing_bait",
+    "拟饵": "fishing_lure",
+    "鱼轮": "fishing_reel",
+    "涉水裤": "fishing_waders",
 }
 
 
@@ -195,90 +268,282 @@ def get_items_by_slot(user: dict, slot: str) -> list:
 
 
 def get_equipped_items(user: dict) -> dict:
-    """获取用户已装备的物品"""
+    """获取用户已装备的物品
+
+    9/7 命名统一: 不再做反向兼容 (fishing_line → line), 数据统一用 fishing_ 前缀
+    """
     equipped = user.get("equipped_items", {})
     return equipped
 
 
 def equip_item(user: dict, item_id: str) -> tuple[bool, str, dict]:
-    """装备物品到对应栏位"""
+    """装备物品到对应栏位
+
+    9/4晚: 多槽系统
+    - hook: 鱼竿 max_hook_slots 决定钩槽数, 追加到 hook_slots
+    - bait: 槽数 = len(hook_slots), 装备时自动合并 inventory 同种饵料 quantity
+    - 拟饵 (consumable=False): 不消耗, quantity=null
+    - 消耗饵 (consumable=True): 合并 inventory quantity 到 bait_slot
+    """
     item_info = ITEMS.get(item_id)
     if not item_info:
         return False, "物品不存在", {}
-    
+
     slot = item_info.get("slot")
     if not slot:
         return False, "该物品无法装备", {}
-    
-    # 检查背包中是否有该物品
+
+    # 检查背包中是否有该物品 (9/4晚: 拟饵/鱼钩不消耗, 但仍需在背包)
     inventory = user.get("inventory", [])
     item_found = False
     item_index = -1
     qty = 0
-    
+    inv_entry = None  # 9/4晚: 保留 inventory entry (含 rarity/rarity_mult)
+
     for i, inv_item in enumerate(inventory):
         if inv_item.get("id") == item_id:
             item_found = True
             item_index = i
             qty = inv_item.get("quantity", 1)
+            inv_entry = inv_item
             break
-    
+
     if not item_found:
         return False, "背包中没有该物品", {}
-    
-    # 获取当前装备
+
+    # 9/4晚: 计算装备后实际生效 effects
+    # 9/7 命名统一: slot key 加 fishing_ 前缀
+    if slot == "fishing_bait" and inv_entry is not None and inv_entry.get("subcategory") != "fishing_lure" and inv_entry.get("consumable", item_info.get("consumable", False)):
+        # 消耗性鱼饵: 不走词条系统 (无 rarity)
+        equip_effects = item_info.get("base_effects", {})
+        rarity = "common"
+        rarity_mult = 1.0
+    else:
+        # 渔具/拟饵: 读 inventory entry 的 rarity/rarity_mult
+        rarity = _get_entry_rarity(inv_entry) if inv_entry else "common"
+        rarity_mult = _get_entry_rarity_mult(inv_entry) if inv_entry else 1.0
+        equip_effects = _resolve_effects(item_info, rarity, rarity_mult)
+
     equipped = user.get("equipped_items", {})
+
+    # ===== 9/4晚: 鱼钩多槽 =====
+    if slot == "fishing_hook":
+        rod_id = equipped.get("fishing_rod", {}).get("id", "")
+        rod_info = ITEMS.get(rod_id, {})
+        # 9/4晚: 用鱼竿的 resolved effects (含 rarity_mult) 查 max_hook_slots
+        rod_rarity = equipped.get("fishing_rod", {}).get("rarity", "common")
+        rod_mult = equipped.get("fishing_rod", {}).get("rarity_mult", 1.0)
+        rod_effects = _resolve_effects(rod_info, rod_rarity, rod_mult)
+        max_hooks = int(rod_effects.get("max_hook_slots", rod_info.get("base_effects", {}).get("max_hook_slots", 1)))
+        hook_slots = equipped.get("hook_slots", [])
+        if not isinstance(hook_slots, list):
+            hook_slots = []
+        current_count = sum(1 for s in hook_slots if s)
+        replaced_msg = ""
+        # 9/4: 槽满时替换第一个 (最旧), 而不是拒绝
+        if current_count >= max_hooks:
+            # 找第一个非空槽位, 替换
+            for i, s in enumerate(hook_slots):
+                if s:
+                    old_id = s.get("id", "")
+                    old_def = ITEMS.get(old_id, {})
+                    old_name = old_def.get("name", old_id)
+                    # 卸下的鱼钩加回背包 (鱼钩 stackable=False, 整个 entry)
+                    inventory.append({
+                        "id": old_id,
+                        "name": old_name,
+                        "rarity": s.get("rarity", "common"),
+                        "rarity_mult": s.get("rarity_mult", 1.0),
+                    })
+                    hook_slots[i] = {
+                        "id": item_id,
+                        "name": item_info.get("name"),
+                        "rarity": rarity,
+                        "rarity_mult": rarity_mult,
+                        "effects": equip_effects,
+                    }
+                    replaced_msg = f" (已卸下 {old_name})"
+                    break
+            equipped["hook_slots"] = hook_slots
+            # 从背包移除新鱼钩
+            if item_index >= 0:
+                if qty > 1:
+                    inventory[item_index]["quantity"] = qty - 1
+                else:
+                    inventory.pop(item_index)
+            user["equipped_items"] = equipped
+            user["inventory"] = inventory
+            return True, f"已装备 {item_info.get('name')}{replaced_msg}", item_info
+        hook_slots.append({
+            "id": item_id,
+            "name": item_info.get("name"),
+            "rarity": rarity,
+            "rarity_mult": rarity_mult,
+            "effects": equip_effects,
+        })
+        equipped["hook_slots"] = hook_slots
+        # 从背包移除鱼钩 (鱼钩不消耗)
+        if item_index >= 0:
+            if qty > 1:
+                inventory[item_index]["quantity"] = qty - 1
+            else:
+                inventory.pop(item_index)
+        user["equipped_items"] = equipped
+        user["inventory"] = inventory
+        return True, f"已装备 {item_info.get('name')} (鱼钩槽 {current_count + 1}/{max_hooks})", item_info
+
+    # ===== 9/4晚: 鱼饵多槽 = sum(每个鱼钩的 max_bait_per_hook), 上限3 =====
+    if slot == "fishing_bait":
+        hook_slots = equipped.get("hook_slots", [])
+        if not hook_slots:
+            return False, "请先装备鱼钩, 才能装鱼饵", item_info
+        # 9/5: 计算每个鱼钩的 bait 槽位, 累加, 上限 3
+        max_bait = 0
+        from .item import ITEMS as _ITEMS_HOOK
+        for hs in hook_slots:
+            if not hs:
+                continue
+            hook_id = hs.get("id", "")
+            hook_def = _ITEMS_HOOK.get(hook_id, {})
+            per_hook = int(hook_def.get("base_effects", {}).get("max_bait_per_hook", 1))
+            # 鱼钩词条 bait_slots 也加成 +1 (传说/神话鱼钩)
+            hook_effects = hs.get("effects", {})
+            per_hook += int(hook_effects.get("bait_slots", 0))
+            max_bait += per_hook
+        max_bait = min(max_bait, 3)  # 硬上限3
+        bait_slots = equipped.get("bait_slots", [])
+        if not isinstance(bait_slots, list):
+            bait_slots = []
+        current_count = sum(1 for s in bait_slots if s)
+        is_consumable = bool(item_info.get("consumable", False))
+        # 9/4晚: 合并逻辑 - 如果同种饵已在 slot 中, 直接 +qty (不创建新槽)
+        for existing in bait_slots:
+            if existing.get("id") == item_id:
+                if is_consumable:
+                    existing["quantity"] = (existing.get("quantity") or 0) + qty
+                # 从背包移除 (消耗饵全扣到 slot, 拟饵不消耗)
+                if is_consumable and item_index >= 0:
+                    if qty > 1:
+                        inventory[item_index]["quantity"] = qty - 1
+                    else:
+                        inventory.pop(item_index)
+                equipped["bait_slots"] = bait_slots
+                user["equipped_items"] = equipped
+                user["inventory"] = inventory
+                return True, f"已合并 {item_info.get('name')} (现有槽, 总数 {existing.get('quantity', 0)})", item_info
+        # 新槽
+        if current_count >= max_bait:
+            return False, f"鱼饵槽已满 ({current_count}/{max_bait})", item_info
+        slot_entry = {
+            "id": item_id,
+            "name": item_info.get("name"),
+            "rarity": rarity,
+            "rarity_mult": rarity_mult,
+            "effects": equip_effects,
+            "consumable": is_consumable,
+        }
+        if is_consumable:
+            slot_entry["quantity"] = qty  # 初始 = inventory 现有数量
+        else:
+            slot_entry["quantity"] = None  # 拟饵永不消耗
+        bait_slots.append(slot_entry)
+        equipped["bait_slots"] = bait_slots
+        # 从背包移除 (消耗饵装上后合并 qty, 拟饵不消耗)
+        if is_consumable and item_index >= 0:
+            if qty > 1:
+                inventory[item_index]["quantity"] = qty - 1
+            else:
+                inventory.pop(item_index)
+        user["equipped_items"] = equipped
+        user["inventory"] = inventory
+        return True, f"已装备 {item_info.get('name')} (饵料槽 {current_count + 1}/{max_bait})", item_info
+
+    # ===== 普通单槽装备 (鱼竿/鱼线/浮漂/鱼轮/通用装备) =====
     current_equipped = equipped.get(slot)
-    
-    # 卸下当前装备（如果有）
+    # 卸下当前 (放回背包)
+    replaced_msg = ""
     if current_equipped:
-        # 放回背包
+        old_name = current_equipped.get("name", current_equipped.get("id", ""))
+        old_entry = {
+            "id": current_equipped.get("id"),
+            "name": current_equipped.get("name"),
+            "rarity": current_equipped.get("rarity", "common"),
+            "rarity_mult": current_equipped.get("rarity_mult", 1.0),
+        }
         if is_stackable(current_equipped.get("id", "")):
             add_to_inventory(user, current_equipped.get("id"), 1)
         else:
-            inventory.append({
-                "id": current_equipped.get("id"),
-                "name": current_equipped.get("name")
-            })
-    
-    # 装备新物品
+            inventory.append(old_entry)
+        replaced_msg = f" (已卸下 {old_name})"
+
     equipped[slot] = {
         "id": item_id,
         "name": item_info.get("name"),
-        "effects": item_info.get("effects", {}),
+        "rarity": rarity,
+        "rarity_mult": rarity_mult,
+        "effects": equip_effects,
     }
-    
+
     # 从背包移除
     if item_index >= 0:
         if qty > 1:
             inventory[item_index]["quantity"] = qty - 1
         else:
             inventory.pop(item_index)
-    
+
     user["equipped_items"] = equipped
     user["inventory"] = inventory
-    
-    return True, f"已装备 {item_info.get('name')}", item_info
+
+    return True, f"已装备 {item_info.get('name')}{replaced_msg}", item_info
 
 
 def unequip_item(user: dict, slot: str) -> tuple[bool, str]:
     """卸下指定栏位的装备"""
     if slot not in SLOTS:
         return False, "无效的栏位"
-    
+
     equipped = user.get("equipped_items", {})
     current = equipped.get(slot)
-    
+
+    # 9/4晚: bait/hook 多槽兼容 - 优先检查 _slots list
+    # 9/7 命名统一: slot 加 fishing_ 前缀, 但 _slots list 字段保持不变 (兼容老数据)
+    if not current and slot in ("fishing_hook", "fishing_bait"):
+        # 9/7: 兼容老 slot 名 (hook/bait → fishing_hook/fishing_bait)
+        list_key = f"{slot}_slots"
+        # 兜底: 查老 list_key (hook_slots/bait_slots)
+        if not equipped.get(list_key) and slot in ("fishing_hook", "fishing_bait"):
+            old_slot = slot.replace("fishing_", "")
+            list_key = f"{old_slot}_slots"
+        slots_list = equipped.get(list_key, [])
+        if isinstance(slots_list, list) and slots_list:
+            # 卸第一个非空槽 (单槽卸下语义)
+            removed = slots_list.pop(0)
+            equipped[list_key] = slots_list
+            # 写回背包
+            if removed.get("consumable") and removed.get("quantity"):
+                add_to_inventory(user, removed.get("id"), removed["quantity"])
+            else:
+                user.setdefault("inventory", []).append({
+                    "id": removed.get("id"),
+                    "name": removed.get("name"),
+                    "category": removed.get("category") or ITEMS.get(removed.get("id"), {}).get("category"),
+                    "type": removed.get("type") or ITEMS.get(removed.get("id"), {}).get("type"),
+                    "slot": removed.get("slot") or ITEMS.get(removed.get("id"), {}).get("slot"),
+                    "consumable": removed.get("consumable", False),
+                })
+            user["equipped_items"] = equipped
+            return True, f"已卸下 {removed.get('name')}"
+
     if not current:
         return False, "该栏位没有装备"
-    
+
     # 放入背包
     add_to_inventory(user, current.get("id"), 1)
-    
+
     # 清除装备
     del equipped[slot]
     user["equipped_items"] = equipped
-    
+
     return True, f"已卸下 {current.get('name')}"
 
 
@@ -311,39 +576,76 @@ def auto_equip_if_empty(user: dict, item_id: str) -> bool:
 # ============================================================
 
 def calc_equipped_effects(user: dict) -> dict:
-    """计算用户已装备物品的总效果"""
-    effects = {
-        # 属性加成
+    """计算用户已装备物品的总效果
+
+    9/4晚: 支持渔具词条系统
+    - flat 字段累加 (success_rate, habitat_*, size_*, diet_*, load_capacity_max 等)
+    - pct 字段累加百分比 (rarity_pct_bonus, exp_bonus, price_bonus, load_capacity_pct 等)
+    - 通用装备字段直接累加
+    """
+    # 通用装备字段 (老系统) - 兼容
+    effects: dict[str, float] = {
         "strength_bonus": 0,
         "energy_bonus": 0,
         "mood_bonus": 0,
         "health_bonus": 0,
         "satiety_bonus": 0,
-        # 百分比加成
         "work_income_bonus": 0,
         "learn_exp_bonus": 0,
         "entertain_mood_bonus": 0,
         "sleep_strength_bonus": 0,
         "sleep_energy_bonus": 0,
-        # 被动效果
         "passive_gold": 0,
         "passive_mood": 0,
-        # 时间减少
         "work_time_reduce": 0,
     }
-    
+
+    # 9/4晚: pct 字段累加器 (新系统) - 渔具百分比词条
+    pct_sums: dict[str, float] = {}
+
     equipped = user.get("equipped_items", {})
     if not equipped:
         return effects
-    
-    for slot, item_data in equipped.items():
-        if not item_data:
-            continue
-        item_effects = item_data.get("effects", {})
-        for effect_key, effect_value in item_effects.items():
-            if effect_key in effects:
-                effects[effect_key] += effect_value
-    
+
+    def _iter_items():
+        """生成所有装备 entry"""
+        for slot, item_data in equipped.items():
+            if not item_data:
+                continue
+            if slot == "hook_slots" and isinstance(item_data, list):
+                for hook_item in item_data:
+                    if hook_item and isinstance(hook_item, dict):
+                        yield hook_item
+            elif slot == "bait_slots" and isinstance(item_data, list):
+                for bait_item in item_data:
+                    if bait_item and isinstance(bait_item, dict):
+                        yield bait_item
+            elif isinstance(item_data, dict):
+                yield item_data
+            # 忽略 list 但不是 hook/bait_slots (兼容老数据)
+
+    for entry in _iter_items():
+        item_effects = entry.get("effects", {})
+        for key, val in item_effects.items():
+            if not isinstance(val, (int, float)):
+                continue  # 跳过 dict (如 target_size_weights)
+            # 判断是 flat 还是 pct - 用 COMMON_ENTRY_LIB
+            from .entry_lib import COMMON_ENTRY_LIB
+            entry_def = COMMON_ENTRY_LIB.get(key)
+            if entry_def and entry_def.get("type") == "pct":
+                # 百分比累加
+                pct_sums[key] = pct_sums.get(key, 0) + val
+            else:
+                # flat 或基础属性 - 直接累加
+                effects[key] = effects.get(key, 0) + val
+
+    # 9/4晚: 应用 (1 + pct) 到 pct 字段对应效果 (简单形式: 把 pct 加到原字段)
+    # pct 字段约定: 字段名后缀 _pct 表示百分比加成
+    for k, pct in pct_sums.items():
+        # pct 字段如 rarity_pct_bonus / exp_bonus / price_bonus / load_capacity
+        # 直接返回百分比值, 让上层调用者按公式应用
+        effects[k] = effects.get(k, 0) + pct
+
     return effects
 
 
@@ -424,17 +726,35 @@ def apply_item_effects(user: dict, item_id: str) -> tuple[bool, str]:
 # 格式化
 # ============================================================
 
-def format_item(item_id: str, show_price: bool = True, show_slot: bool = False) -> str:
-    """格式化物品显示信息"""
-    item = ITEMS.get(item_id, {})
+def format_item(item_id_or_entry, show_price: bool = True, show_slot: bool = False) -> str:
+    """格式化物品显示信息
+
+    9/4晚: 支持 entry dict 传入, 优先用 entry 的 rarity
+    """
+    if isinstance(item_id_or_entry, dict):
+        entry = item_id_or_entry
+        item_id = entry.get("id", "")
+        item = ITEMS.get(item_id, {})
+        name = entry.get("name") or item.get("name", item_id)
+        # entry 的 rarity 优先 (附魔后 entry 有新 rarity)
+        rarity = entry.get("rarity", item.get("rarity", "common"))
+    else:
+        item_id = item_id_or_entry
+        item = ITEMS.get(item_id, {})
+        name = item.get("name", "未知")
+        rarity = item.get("rarity", "common")
+
     if not item:
         return "未知物品"
-    
-    name = item.get("name", "未知")
-    rarity = item.get("rarity", "common")
+
     emoji = RARITY_COLORS.get(rarity, "⚪")
     tier = item.get("tier", 1)
-    
+
+    # 9/4晚: 物品名加稀有度前缀 (普通不加)
+    rarity_cn = RARITY_NAMES.get(rarity, "")
+    if rarity_cn and rarity != "common":
+        name = f"{rarity_cn}{name}"
+
     result = f"{emoji}{name}"
     
     if show_slot:

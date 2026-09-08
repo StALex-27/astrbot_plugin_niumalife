@@ -1,0 +1,263 @@
+{
+  "_doc": "9/6 渔具组合式生成模板。从这里生成 31 件鱼竿 (5 型号×5 档 + 5 顶级龙王竿 + 1 初始竹竿)。",
+  "_doc_v3": "9/6 v3: 每型号有主/次两个水域加成, 综合竿全淡水等值. 各 tier 数值按主加成 +10/+20/+30/+40/+50 等比, 次加成 +5/+10/+15/+20/+25.",
+  "_doc_aliases": "老鱼竿 ID 别名映射表（旧名 → 新名）",
+  "rod_models_habitat": {
+    "溪流竿": {
+      "primary": "habitat_river",
+      "secondary": "habitat_pond"
+    },
+    "综合竿": {
+      "primary": [
+        "habitat_pond",
+        "habitat_river",
+        "habitat_reservoir"
+      ],
+      "secondary": null,
+      "equal": true
+    },
+    "路亚竿": {
+      "primary": "habitat_reservoir",
+      "secondary": "habitat_coast"
+    },
+    "海鲈竿": {
+      "primary": "habitat_coast",
+      "secondary": "habitat_deep_sea"
+    },
+    "铁板竿": {
+      "primary": "habitat_deep_sea",
+      "secondary": "habitat_coast"
+    }
+  },
+  "rod_tier_habitat_bonus": {
+    "1": 10,
+    "2": 20,
+    "3": 30,
+    "4": 40,
+    "5": 50
+  },
+  "rod_tier_secondary_bonus": {
+    "1": 5,
+    "2": 10,
+    "3": 15,
+    "4": 20,
+    "5": 25
+  },
+  "rod_tiers": {
+    "1": {
+      "name_suffix": "玻纤",
+      "rarity": "common",
+      "price": 200,
+      "unlock_levels": [
+        2,
+        3,
+        3,
+        4,
+        4
+      ],
+      "base_effects": {
+        "duration_reduce": 0,
+        "load_capacity_max": 2.0,
+        "max_hook_slots": 1,
+        "rarity_pct_bonus": 5
+      }
+    },
+    "2": {
+      "name_suffix": "碳纤",
+      "rarity": "uncommon",
+      "price": 800,
+      "unlock_levels": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "base_effects": {
+        "duration_reduce": 1,
+        "load_capacity_max": 50.0,
+        "max_hook_slots": 2,
+        "rarity_pct_bonus": 10
+      }
+    },
+    "3": {
+      "name_suffix": "高碳",
+      "rarity": "rare",
+      "price": 2500,
+      "unlock_levels": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "base_effects": {
+        "duration_reduce": 2,
+        "load_capacity_max": 500.0,
+        "max_hook_slots": 2,
+        "rarity_pct_bonus": 15
+      }
+    },
+    "4": {
+      "name_suffix": "钛合金",
+      "rarity": "epic",
+      "price": 8000,
+      "unlock_levels": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "base_effects": {
+        "duration_reduce": 3,
+        "load_capacity_max": 10000.0,
+        "max_hook_slots": 2,
+        "rarity_pct_bonus": 22
+      }
+    },
+    "5": {
+      "name_suffix": "纳米",
+      "rarity": "legendary",
+      "price": 25000,
+      "unlock_levels": [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "base_effects": {
+        "duration_reduce": 4,
+        "load_capacity_max": 50000.0,
+        "max_hook_slots": 3,
+        "rarity_pct_bonus": 30
+      }
+    }
+  },
+  "rod_top_tiers": {
+    "1": {
+      "name": "玄铁龙王竿",
+      "rarity": "legendary",
+      "price": 80000,
+      "unlock_level": 25,
+      "base_effects": {
+        "duration_reduce": 5,
+        "load_capacity_max": 50000.0,
+        "max_hook_slots": 3,
+        "rarity_pct_bonus": 35,
+        "habitat_pond": 100,
+        "habitat_river": 100,
+        "habitat_reservoir": 100,
+        "habitat_coast": 100,
+        "habitat_deep_sea": 100
+      }
+    },
+    "2": {
+      "name": "赤铜龙王竿",
+      "rarity": "legendary",
+      "price": 150000,
+      "unlock_level": 26,
+      "base_effects": {
+        "duration_reduce": 5,
+        "load_capacity_max": 100000.0,
+        "max_hook_slots": 3,
+        "rarity_pct_bonus": 38,
+        "habitat_pond": 150,
+        "habitat_river": 150,
+        "habitat_reservoir": 150,
+        "habitat_coast": 150,
+        "habitat_deep_sea": 150
+      }
+    },
+    "3": {
+      "name": "秘银龙王竿",
+      "rarity": "mythic",
+      "price": 300000,
+      "unlock_level": 27,
+      "base_effects": {
+        "duration_reduce": 6,
+        "load_capacity_max": 500000.0,
+        "max_hook_slots": 3,
+        "rarity_pct_bonus": 40,
+        "habitat_pond": 200,
+        "habitat_river": 200,
+        "habitat_reservoir": 200,
+        "habitat_coast": 200,
+        "habitat_deep_sea": 200
+      }
+    },
+    "4": {
+      "name": "奥金龙王竿",
+      "rarity": "mythic",
+      "price": 500000,
+      "unlock_level": 28,
+      "base_effects": {
+        "duration_reduce": 7,
+        "load_capacity_max": 1000000.0,
+        "max_hook_slots": 3,
+        "rarity_pct_bonus": 42,
+        "habitat_pond": 300,
+        "habitat_river": 300,
+        "habitat_reservoir": 300,
+        "habitat_coast": 300,
+        "habitat_deep_sea": 300
+      }
+    },
+    "5": {
+      "name": "星尘龙王竿",
+      "rarity": "mythic",
+      "price": 800000,
+      "unlock_level": 30,
+      "base_effects": {
+        "duration_reduce": 8,
+        "load_capacity_max": 5000000.0,
+        "max_hook_slots": 3,
+        "rarity_pct_bonus": 45,
+        "habitat_pond": 500,
+        "habitat_river": 500,
+        "habitat_reservoir": 500,
+        "habitat_coast": 500,
+        "habitat_deep_sea": 500
+      }
+    }
+  },
+  "rod_models": [
+    "溪流竿",
+    "综合竿",
+    "路亚竿",
+    "海鲈竿",
+    "铁板竿"
+  ],
+  "rod_bonus_pool": [
+    "success_rate",
+    "habitat_pond",
+    "habitat_river",
+    "habitat_reservoir",
+    "habitat_coast",
+    "habitat_deep_sea",
+    "rarity_common_bonus",
+    "rarity_pct_bonus",
+    "rarity_legendary_bonus",
+    "rarity_mythic_bonus",
+    "exp_bonus",
+    "size_titan_bonus",
+    "size_giant_bonus",
+    "size_huge_bonus",
+    "size_large_bonus",
+    "price_bonus",
+    "stamina_reduce",
+    "load_capacity",
+    "max_hook_slots"
+  ],
+  "aliases": {
+    "玻璃钢竿": "玻纤溪流竿",
+    "玻璃纤维竿": "碳纤溪流竿",
+    "路亚竿": "玻纤路亚竿",
+    "筏竿": "玻纤筏钓竿",
+    "矶竿": "玻纤海投竿",
+    "深海钓竿": "玻纤海投竿",
+    "传说鱼竿": "龙王竿",
+    "神话鱼竿": "星海竿"
+  }
+}

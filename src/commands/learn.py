@@ -7,6 +7,8 @@ from astrbot.api.event import AstrMessageEvent
 
 from ...modules.user import UserStatus
 from ...modules.tick import ActionDetail, TICK_TYPE_LEARN
+# 9/6: Pattern 10 — 从 event 拼完整 session_key
+from ..ui.message_sender import _extract_session_key
 from ...modules.institutions import INSTITUTIONS, COURSES
 from ...modules.constants import MAX_ATTRIBUTE
 from ...modules.institutions import (
@@ -21,8 +23,11 @@ from ...modules.skills import check_course_available, get_skills_meta
 LOCAL_TZ = timezone(timedelta(hours=8))
 
 
-async def run_learn_logic(event: AstrMessageEvent, store, parser, renderer):
-    """学习命令逻辑"""
+async def run_learn_logic(event: AstrMessageEvent, store, parser, sender):
+    """学习命令逻辑.
+
+    9/6: 改用 sender.send_card() 替代 try/except + yield image_result/plain_result 样板。
+    """
     user_id = str(event.get_sender_id())
     user = await store.get_user(user_id)
 
@@ -195,6 +200,8 @@ async def run_learn_logic(event: AstrMessageEvent, store, parser, renderer):
 
     attrs["gold"] = attrs.get("gold", 0) - total_cost
     now = datetime.now(LOCAL_TZ)
+    # 9/6: Pattern 10 — tick 完成通知按此 key 查缓存 event
+    session_key = _extract_session_key(event) or ""
     detail = ActionDetail.create(
         action_type=TICK_TYPE_LEARN,
         hours=hours,
@@ -204,7 +211,8 @@ async def run_learn_logic(event: AstrMessageEvent, store, parser, renderer):
         consume_strength=course.get("consume_strength", 3),
         consume_energy=course.get("consume_energy", 8),
         consume_mood=course.get("consume_mood", 5),
-        cost=course.get("cost", 0)
+        cost=course.get("cost", 0),
+        session_key=session_key,
     )
     user["status"] = UserStatus.LEARNING
     user["current_action"] = TICK_TYPE_LEARN
@@ -212,24 +220,26 @@ async def run_learn_logic(event: AstrMessageEvent, store, parser, renderer):
     await store.update_user(user_id, user)
 
     course_name_display = f"{course.get('institution','')}·{course.get('name','')}"
-    try:
-        url = await renderer.render_course_start(
-            user, event,
-            course_name=course_name_display,
-            course_emoji="📚",
-            hours=hours,
-            gain_exp=course.get('exp_per_hour', 10) * hours,
-            consume_strength=course.get('consume_strength', 3) * hours,
-            consume_energy=course.get('consume_energy', 8) * hours,
-            consume_mood=course.get('consume_mood', 5) * hours,
-        )
-        yield event.image_result(url)
-    except Exception:
-        yield event.plain_result(
-            f"✅ 开始学习：\n━━━━━━━━━━━━━━\n"
-            f"📚 {course_name_display}\n"
-            f"⏱️ 时长：{hours}小时\n"
-            f"💰 学费：{total_cost}金币（已扣除）\n"
-            f"📈 预计经验：{course.get('exp_per_hour', 10) * hours}\n"
-            f"━━━━━━━━━━━━━━\n🎉 学习愉快！"
-        )
+    # 9/6: 改用 sender.send_card() (course_start 渲染模板)
+    data = {
+        "user_id": user_id,
+        "course_name": course_name_display,
+        "course_emoji": "📚",
+        "hours": hours,
+        "gain_exp": course.get('exp_per_hour', 10) * hours,
+        "consume_strength": course.get('consume_strength', 3) * hours,
+        "consume_energy": course.get('consume_energy', 8) * hours,
+        "consume_mood": course.get('consume_mood', 5) * hours,
+    }
+    fallback_text = (
+        f"✅ 开始学习：\n━━━━━━━━━━━━━━\n"
+        f"📚 {course_name_display}\n"
+        f"⏱️ 时长：{hours}小时\n"
+        f"💰 学费：{total_cost}金币（已扣除）\n"
+        f"📈 预计经验：{course.get('exp_per_hour', 10) * hours}\n"
+        f"━━━━━━━━━━━━━━\n🎉 学习愉快！"
+    )
+    async for r in sender.send_card(
+        event, "course_start", data, fallback_text=fallback_text,
+    ):
+        yield r

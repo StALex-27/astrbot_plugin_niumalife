@@ -9,17 +9,44 @@ CONFIG_DIR = Path(__file__).parent.parent / "data" / "config"
 
 
 def load_json(name: str) -> dict:
-    """加载 JSON 配置文件"""
+    """加载 JSON 配置文件。自动过滤掉 string 类型的注释 key。"""
     with open(CONFIG_DIR / f"{name}.json", encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    # 过滤掉 string value 的"注释行"（如 _comment_rod）
+    if isinstance(data, dict):
+        return {k: v for k, v in data.items() if isinstance(v, (dict, list))}
+    return data
 
 
 # 加载所有配置
 ITEMS = load_json("items")
 STOCKS = load_json("stocks")
 
+# 9/6: 渔具组合式生成模板 (档位定义 + 型号列表 + 老 ID 别名)
+GEAR_TEMPLATES = load_json("gear_templates")
+
+# 9/6: 组合式生成的鱼竿 (从 rod_tiers/rod_top_tiers + rod_models 组合)
+# 别名同步加载用于老 ID 兼容. 从模块属性访问以获取最新 dict 引用.
+try:
+    from . import gear_builder as _gb  # noqa: E402
+    _BUILT_RODS = _gb.build_rod_items(GEAR_TEMPLATES)
+    # 9/6 v9.5: build_rod_items 返回空 dict (鱼竿/线已直接写入 items.json)
+    # 但用 update 以防未来扩展
+    if _BUILT_RODS:
+        ITEMS.update(_BUILT_RODS)
+    # 别名映射在 build_rod_items 内已填到 gear_builder.ITEM_ALIASES
+    # 业务代码通过 gear_builder.resolve_item_id() 访问, 这里只做模块级 alias
+    ITEM_ALIASES = dict(_gb.ITEM_ALIASES)
+    resolve_item_id = _gb.resolve_item_id
+except Exception as _e:  # pragma: no cover
+    # 兜底: 模板加载失败不影响现有 ITEMS
+    import sys as _sys
+    print(f"[gear_builder] 加载失败, 跳过组合生成: {_e}", file=_sys.stderr)
+    ITEM_ALIASES = {}
+    resolve_item_id = lambda x: x  # noqa: E731
+
 # 食物系统已合并到 ITEMS，按 category="food" 过滤
-FOODS = {k: v for k, v in ITEMS.items() if v.get("category") == "food"}
+FOODS = {k: v for k, v in ITEMS.items() if isinstance(v, dict) and v.get("category") == "food"}
 RESIDENCES = load_json("residences")
 JOBS = load_json("jobs")
 COURSES = load_json("courses")

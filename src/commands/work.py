@@ -11,36 +11,42 @@ from ...modules.user import UserStatus
 from ...modules.tick import ActionDetail, TICK_TYPE_WORK
 from ...modules.jobs import Job
 from ...src.commands.interactive import get_job_mgr, get_favor_mgr
-from ...modules.renderer import CardRenderer
+from ...modules.templates import CardType
+from ...modules.buff import BuffManager
+# 9/6: Pattern 10 通知跟随发起会话 — 从 event 拼完整 session_key
+from ..ui.message_sender import _extract_session_key
+
+
+DIFF_ICON = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}
 
 
 async def run_work_show_status_logic(user):
     """显示工作状态"""
     detail = user.get("action_detail", {})
     action_type = detail.get("action_type", "")
-    
+
     lines = ["═══════════════════════════", "    「工作中」", "═══════════════════════════"]
-    
+
     if action_type == TICK_TYPE_WORK:
         job_name = detail.get("data", {}).get("job_name", "工作中")
         planned = detail.get("planned_ticks", 0)
-        
+
         now = datetime.now(LOCAL_TZ)
         elapsed_seconds = ActionDetail.get_elapsed_seconds(detail, now)
         elapsed_ticks = int(elapsed_seconds // 60)
         earned = detail.get("earned_gold", 0)
         remaining_hours = max(0, (planned - elapsed_ticks) / 60)
         progress = min(100, int(elapsed_ticks / planned * 100)) if planned > 0 else 0
-        
+
         attrs = user.get("attributes", {})
-        
+
         lines.append(f"\n📋 当前: {job_name}")
         lines.append(f"⏰ 剩余: {remaining_hours:.1f} 小时")
         lines.append(f"💰 已赚: {earned} 金币")
         lines.append(f"\n进度: [{'█' * (progress // 5)}{'░' * (20 - progress // 5)}] {progress}%")
         lines.append(f"\n❤️ {int(attrs.get('health', 0))} 💪 {int(attrs.get('strength', 0))} ⚡ {int(attrs.get('energy', 0))}")
         lines.append(f"😊 {int(attrs.get('mood', 0))} 🍖 {int(attrs.get('satiety', 0))}")
-    
+
     lines.append("\n═══════════════════════════")
     lines.append("⏳ 工作进行中，整点自动结算")
     lines.append("📝 使用 /取消 取消当前工作")
@@ -51,7 +57,7 @@ async def run_work_show_status_logic(user):
 async def run_work_show_pool_logic(user, jmgr, fmgr):
     """显示委托池"""
     now = datetime.now(LOCAL_TZ)
-    
+
     # 检查池是否过期（3小时）
     pool_age_hours = None
     if "job_pool_created_at" in user:
@@ -60,25 +66,25 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
             pool_age_hours = (now - created).total_seconds() / 3600
         except (ValueError, TypeError):
             pass
-    
+
     should_refresh = (
-        "job_pool" not in user 
-        or not user["job_pool"] 
+        "job_pool" not in user
+        or not user["job_pool"]
         or (pool_age_hours is not None and pool_age_hours >= 3)
     )
-    
+
     if should_refresh:
         pool = jmgr.generate_job_pool(user, count=6)
         user["job_pool"] = [j.to_dict() for j in pool]
         user["job_pool_created_at"] = now.isoformat()
-    
+
     pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
     favor_data = user.get("company_favorability", {})
-    
+
     recommended = jmgr.pool_generator.get_company_recommended_jobs(user, max_per_company=2)
-    
+
     lines = ["═══════════════════════════", "    「 委 托 池 」", "═══════════════════════════"]
-    
+
     if pool:
         lines.append("\n📋 公共委托")
         for i, job in enumerate(pool, 1):
@@ -86,7 +92,7 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
             emoji = company.get("emoji", "") if company else ""
             company_name = company.get("name", job.company_id) if company else job.company_id
             diff = job.difficulty
-            diff_icon = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}.get(diff, "⚪")
+            diff_icon = DIFF_ICON.get(diff, "⚪")
             skill_str = ""
             if job.skill_required:
                 skills = ", ".join([f"{s}Lv.{l}" for s, l in job.skill_required.items()])
@@ -98,7 +104,7 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
             )
     else:
         lines.append("\n📋 暂无公共委托")
-    
+
     if recommended:
         lines.append("\n─────────── 公司推荐 ───────────")
         for cid, jobs in recommended.items():
@@ -112,7 +118,7 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
             lines.append(f"\n{emoji} {name} (Lv.{level['level']} {level['name']})")
             for job in jobs[:2]:
                 diff = job.get("difficulty", "D")
-                diff_icon = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}.get(diff, "⚪")
+                diff_icon = DIFF_ICON.get(diff, "⚪")
                 job_id = job.get("job_id", "???")
                 skill_str = ""
                 skill_req = job.get("skill_required", {})
@@ -124,12 +130,12 @@ async def run_work_show_pool_logic(user, jmgr, fmgr):
                     f"\n   🎯 {job.get('duration_hours', 1)}h | 💰{job.get('base_reward', 0)} | {diff_icon}{diff}"
                     f"{skill_str}"
                 )
-    
+
     lines.append("\n═══════════════════════════")
     lines.append("📝 /打工 <委托名/编号> 接受委托")
     lines.append("📝 /打工 公司 查看公司列表")
     lines.append("📝 /打工 公司名 查看公司详情")
-    
+
     return "\n".join(lines)
 
 
@@ -137,7 +143,7 @@ async def run_work_refresh_pool_logic(user, jmgr):
     """刷新委托池"""
     today = datetime.now(LOCAL_TZ).date()
     last_refresh = user.get("job_pool_refresh_date", "")
-    
+
     if last_refresh == str(today):
         used = user.get("job_pool_refresh_today", 0)
         if used >= 3:
@@ -146,11 +152,11 @@ async def run_work_refresh_pool_logic(user, jmgr):
     else:
         user["job_pool_refresh_today"] = 1
         user["job_pool_refresh_date"] = str(today)
-    
+
     pool = jmgr.generate_job_pool(user, count=6)
     user["job_pool"] = [j.to_dict() for j in pool]
     user["job_pool_created_at"] = datetime.now(LOCAL_TZ).isoformat()
-    
+
     return (
         f"✅ 委托池已刷新！\n今日剩余刷新次数: {3 - user['job_pool_refresh_today']}"
     )
@@ -159,9 +165,9 @@ async def run_work_refresh_pool_logic(user, jmgr):
 async def run_work_show_companies_logic(user, fmgr, jmgr):
     """显示公司列表"""
     summary = fmgr.get_all_companies_summary(user)
-    
+
     lines = ["═══════════════════════════", "    「 公 司 一 览 」", "═══════════════════════════"]
-    
+
     for s in summary:
         emoji = s.get("emoji", "")
         name = s.get("name", s["company_id"])
@@ -171,10 +177,10 @@ async def run_work_show_companies_logic(user, fmgr, jmgr):
             f"\n   ❤️ {s['favorability']} | {level_bar}"
             f"\n   ⭐ Lv.{s['level']} {s['level_name']}"
         )
-        
+
     lines.append("\n═══════════════════════════")
     lines.append("📝 /打工 公司名 查看公司详情和委托")
-    
+
     return "\n".join(lines)
 
 
@@ -183,10 +189,10 @@ async def run_work_show_company_detail_logic(user, company_id, fmgr, jmgr):
     company = jmgr.get_company_info(company_id)
     if not company:
         return f"❌ 未找到公司: {company_id}"
-        
+
     favor = fmgr.get_company_favorability(user, company_id)
     level = fmgr.get_favor_level(favor)
-    
+
     lines = [
         "═══════════════════════════",
         f"    「 {company.get('emoji', '')} {company.get('name', company_id)} 」",
@@ -197,20 +203,20 @@ async def run_work_show_company_detail_logic(user, company_id, fmgr, jmgr):
         f"⭐ 等级: Lv.{level['level']} {level['name']}",
         f"\n🔓 已解锁:",
     ]
-    
+
     for unlock in level.get("unlock", []):
         lines.append(f"   ✅ {unlock}")
-        
+
     avail_diffs = fmgr.get_available_difficulties(favor)
     diff_str = " ".join([{"D": "🟢D", "C": "🔵C", "B": "🟡B", "A": "🟠A", "S": "🔴S", "S+": "💜S+"}.get(d, d) for d in avail_diffs])
     lines.append(f"\n📋 可接难度: {diff_str}")
-    
+
     jobs = jmgr.get_company_jobs(user, company_id, max_per_company=3)
     if jobs:
         lines.append(f"\n📝 可接委托:")
         for job in jobs:
             diff = job.difficulty
-            diff_icon = {"D": "🟢", "C": "🔵", "B": "🟡", "A": "🟠", "S": "🔴", "S+": "💜"}.get(diff, "⚪")
+            diff_icon = DIFF_ICON.get(diff, "⚪")
             skill_str = ""
             if job.skill_required:
                 skill_str = f" [{', '.join([f'{s}Lv.{l}' for s,l in job.skill_required.items()])}]"
@@ -220,28 +226,34 @@ async def run_work_show_company_detail_logic(user, company_id, fmgr, jmgr):
             )
     else:
         lines.append(f"\n📝 暂无可接委托（好感度不足）")
-        
+
     lines.append("\n═══════════════════════════")
     lines.append("📝 /打工 <委托名> 接受委托")
-    
+
     return "\n".join(lines)
 
 
-async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
+async def run_work_accept_job_logic(user, cmd, args, jmgr, store, session_key: str = ""):
+    """接受委托 (启动 tick 工作).
+
+    Args:
+        session_key: 9/6 完整 session_key, tick 完成时按此 key 查缓存 event 发送通知。
+            留空时回退到旧 _infer_event 行为 (可能被误发到群聊)。
+    """
     """接受委托"""
     pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
-    
+
     if not pool:
         return (
             "📋 委托池是空的！\n"
             "先输入 /打工 查看当前委托池\n"
             "委托池每3小时自动刷新，或输入 /打工 列表 手动刷新"
         )
-    
-    
+
+
     job = None
     job_idx = None
-    
+
     # 按编号查找（1-based索引，如 /打工 1）
     try:
         idx = int(cmd) - 1
@@ -266,22 +278,22 @@ async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
                 job = j
                 job_idx = i
                 break
-    
+
     if not job:
         return f"❌ 未找到委托: {cmd}\n可用 /打工 查看委托池"
-        
+
     # 检查进行中委托数量（状态不一致时自动清理残留）
     if user.get("status") != "打工中" and user.get("jobs_in_progress"):
         user["jobs_in_progress"] = []
     in_progress = jmgr.get_player_current_jobs(user)
     if len(in_progress) >= 3:
         return "进行中的委托已达上限（3个），请先完成或取消现有委托"
-        
+
     # 接受委托
     success, msg = jmgr.accept_job(user, job)
     if not success:
         return f"❌ {msg}"
-    
+
     # 创建 action_detail 以启动 tick 系统
     now = datetime.now(LOCAL_TZ)
     detail = ActionDetail.create(
@@ -291,21 +303,22 @@ async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
         job_name=job.title,
         job_company=job.company_id,
         base_reward=job.base_reward,
+        session_key=session_key,  # 9/6: 完整 session_key
     )
     user["status"] = UserStatus.WORKING
     user["current_action"] = TICK_TYPE_WORK
     user["action_detail"] = detail
-    
+
     # 从委托池移除
     if job_idx is not None:
         user["job_pool"].pop(job_idx)
-    
+
     # 保存用户数据
     await store.update_user(str(user.get("user_id", "")), user)
-    
+
     company = jmgr.get_company_info(job.company_id)
     company_name = company.get("name", "") if company else ""
-    
+
     return (
         f"✅ 已接受委托！\n\n"
         f"📋 {job.title}\n"
@@ -316,26 +329,132 @@ async def run_work_accept_job_logic(user, cmd, args, jmgr, store):
     )
 
 
-async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr, renderer: CardRenderer):
-    """打工命令逻辑"""
+def _build_status_data(user: dict) -> dict:
+    """构造状态卡片 data — 9/6: 替代 renderer.render_status 内部组装."""
+    attrs = user.get("attributes", {})
+    progress = None
+    action_detail = user.get("action_detail")
+    if action_detail:
+        progress = {
+            "action": action_detail.get("action_type", user.get("current_action", "")),
+            "current": action_detail.get("hours_completed", 0),
+            "total": action_detail.get("planned_hours", action_detail.get("hours", 0)),
+        }
+    buff_tags = ""
+    active_buffs = user.get("checkin", {}).get("active_buffs", [])
+    valid_buffs = [b for b in active_buffs if not BuffManager.is_expired(b)]
+    if valid_buffs:
+        buff_tags = " ".join([
+            f"<span class='buff-tag'>{b.get('emoji','')}{b.get('name','')}</span>"
+            for b in valid_buffs[:3]
+        ])
+    return {
+        "nickname": user.get("nickname", "未知"),
+        "gold": int(user.get("gold", 0)),
+        "residence": user.get("residence", "桥下"),
+        "status": user.get("status", "空闲"),
+        "progress": progress,
+        "buff_tags": buff_tags,
+        "health": int(attrs.get("health", 0)),
+        "strength": int(attrs.get("strength", 0)),
+        "energy": int(attrs.get("energy", 0)),
+        "mood": int(attrs.get("mood", 0)),
+        "satiety": int(attrs.get("satiety", 0)),
+    }
+
+
+def _build_job_start_data(user, job: Job, jmgr) -> dict:
+    """构造开始工作卡片 data — 9/6: 替代 renderer.render_job_start 内部组装."""
+    company = jmgr.get_company_info(job.company_id)
+    consume = job.consume or {}
+    return {
+        "user_id": str(user.get("user_id", "")),
+        "nickname": user.get("nickname", "未知"),
+        "job_name": job.title,
+        "job_emoji": company.get("emoji", "📋") if company else "📋",
+        "hours": job.duration_hours,
+        "expected_gold": job.base_reward,
+        "expected_exp": 0,
+        "consume_strength": consume.get("strength", 0),
+        "consume_energy": consume.get("energy", 0),
+        "consume_satiety": consume.get("satiety", 0),
+        "active_buffs": None,
+    }
+
+
+def _build_job_pool_data(user: dict, pool: list, recommended: dict, jmgr, fmgr) -> dict:
+    """构造委托池卡片 data — 9/6: 替代 renderer.render_job_pool 内部组装."""
+    pools_data = []
+    for i, job in enumerate(pool, 1):
+        company = jmgr.get_company_info(job.company_id)
+        pools_data.append({
+            "index": i,
+            "title": f"{i}. {job.title}",
+            "emoji": company.get("emoji", "📋") if company else "📋",
+            "company_emoji": company.get("emoji", "") if company else "",
+            "company_name": company.get("name", job.company_id) if company else job.company_id,
+            "base_reward": job.base_reward,
+            "duration_hours": job.duration_hours,
+            "difficulty": job.difficulty,
+            "diff_icon": DIFF_ICON.get(job.difficulty, "⚪"),
+        })
+    recommended_data = []
+    favor_data = user.get("company_favorability", {})
+    for cid, jobs in recommended.items():
+        company = jmgr.get_company_info(cid)
+        if not company:
+            continue
+        favor = favor_data.get(cid, 0)
+        level = fmgr.get_favor_level(favor)
+        recommended_data.append({
+            "emoji": company.get("emoji", ""),
+            "name": company.get("name", cid),
+            "level": level["level"],
+            "level_name": level["name"],
+            "jobs": [
+                {
+                    "title": f"[{j.get('job_id', '??')}] {j.get('title', '')}",
+                    "emoji": company.get("emoji", "📋"),
+                    "base_reward": j.get("base_reward", 0),
+                    "duration_hours": j.get("duration_hours", 1),
+                    "difficulty": j.get("difficulty", "D"),
+                    "diff_icon": DIFF_ICON.get(j.get("difficulty", "D"), "⚪"),
+                }
+                for j in jobs[:2]
+            ],
+        })
+    return {
+        "user_id": str(user.get("user_id", "")),
+        "nickname": user.get("nickname", "未知"),
+        "pools": pools_data,
+        "recommended": recommended_data,
+    }
+
+
+async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr, sender):
+    """打工命令逻辑.
+
+    9/6: 改用 sender.send_card() 替代 3 处 try/except + renderer.render_*(...) 样板。
+    """
     user_id = str(event.get_sender_id())
     user = await store.get_user(user_id)
-    
+
     if not user:
         yield event.plain_result("📋 你还没有注册！\n先输入 /签到 自动注册")
         return
-    
+
     _, args = parser.parse(event)
     cmd = args[0] if args else None
-    
+
     # 工作状态：显示当前进度
     if user["status"] == UserStatus.WORKING:
         msg = await run_work_show_status_logic(user)
-        try:
-            url = await renderer.render_status(user, event)
-            yield event.image_result(url)
-        except Exception:
-            yield event.plain_result(msg)
+        # 9/6: 改用 sender.send_card() (CardType.STATUS 渲染模板)
+        data = _build_status_data(user)
+        async for r in sender.send_card(
+            event, CardType.STATUS, data, fallback_text=msg,
+        ):
+            yield r
         return
 
     # 空闲状态 - 无参数：显示委托池
@@ -362,16 +481,14 @@ async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr, ren
             await store.update_user(user_id, user)
 
         pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
-        favor_data = user.get("company_favorability", {})
         recommended = jmgr.pool_generator.get_company_recommended_jobs(user, max_per_company=2)
-
-        try:
-            url = await renderer.render_job_pool(user, pool, recommended, fmgr, jmgr, event)
-            yield event.image_result(url)
-        except Exception as e:
-            # 降级回纯文字
-            result = await run_work_show_pool_logic(user, jmgr, fmgr)
-            yield event.plain_result(result)
+        data = _build_job_pool_data(user, pool, recommended, jmgr, fmgr)
+        # 9/6: 改用 sender.send_card() (CardType.JOB_POOL 渲染模板)
+        fallback_text = await run_work_show_pool_logic(user, jmgr, fmgr)
+        async for r in sender.send_card(
+            event, CardType.JOB_POOL, data, fallback_text=fallback_text,
+        ):
+            yield r
         return
 
     # 子命令处理
@@ -394,52 +511,41 @@ async def run_work_logic(event: AstrMessageEvent, store, parser, jmgr, fmgr, ren
         return
 
     # 尝试匹配委托（按编号或名称）
-    result = await run_work_accept_job_logic(user, cmd, args, jmgr, store)
+    # 9/6: 拼完整 session_key 让 tick 完成通知能精确定位缓存 event
+    session_key = _extract_session_key(event) or ""
+    result = await run_work_accept_job_logic(user, cmd, args, jmgr, store, session_key=session_key)
     if "✅" in result:
         # 接受成功 → 渲染卡片
+        pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
+        job = None
+        # 按编号
         try:
-            pool = [Job.from_dict(j) for j in user.get("job_pool", [])]
-            job = None
-            # 按编号
-            try:
-                idx = int(cmd) - 1
-                if 0 <= idx < len(pool):
-                    job = pool[idx]
-            except ValueError:
-                pass
-            # 按job_id
-            if not job:
-                for j in pool:
-                    if j.job_id == cmd:
-                        job = j
-                        break
-            # 按名称
-            if not job:
-                for j in pool:
-                    if cmd in j.title or cmd in j.description:
-                        job = j
-                        break
+            idx = int(cmd) - 1
+            if 0 <= idx < len(pool):
+                job = pool[idx]
+        except ValueError:
+            pass
+        # 按job_id
+        if not job:
+            for j in pool:
+                if j.job_id == cmd:
+                    job = j
+                    break
+        # 按名称
+        if not job:
+            for j in pool:
+                if cmd in j.title or cmd in j.description:
+                    job = j
+                    break
 
-            if job:
-                company_info = jmgr.get_company_info(job.company_id)
-                # 从job.consume获取实际消耗值
-                consume = job.consume or {}
-                url = await renderer.render_job_start(
-                    user=user,
-                    event=event,
-                    job_name=job.title,
-                    job_emoji=company_info.get("emoji", "📋") if company_info else "📋",
-                    hours=job.duration_hours,
-                    expected_gold=job.base_reward,
-                    expected_exp=0,
-                    consume_strength=consume.get("strength", 0),
-                    consume_energy=consume.get("energy", 0),
-                    consume_satiety=consume.get("satiety", 0),
-                )
-                yield event.image_result(url)
-            else:
-                yield event.plain_result(result)
-        except Exception:
+        # 9/6: 改用 sender.send_card() (CardType.JOB_START 渲染模板)
+        if job:
+            data = _build_job_start_data(user, job, jmgr)
+            async for r in sender.send_card(
+                event, CardType.JOB_START, data, fallback_text=result,
+            ):
+                yield r
+        else:
             yield event.plain_result(result)
     else:
         yield event.plain_result(result)

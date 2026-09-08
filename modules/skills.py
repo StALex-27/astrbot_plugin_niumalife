@@ -4,7 +4,7 @@
 三档经验曲线：fast(速成)/standard(标准)/mastery(精修)
 """
 
-# 三档经验曲线（1-10级累计经验）
+# 三档经验曲线（1-10级累计经验）—— 学习系统用
 EXP_RATE_TABLE = {
     # 速成 T1：1→2=80, 2→3=160... 满级3600
     "fast": {
@@ -22,6 +22,25 @@ EXP_RATE_TABLE = {
         6: 2700, 7: 3780, 8: 5040, 9: 6480, 10: 8100,
     },
 }
+
+# 9/4 新增: 钓鱼专用 30 级曲线 (N 平方增长, 数月到满级)
+# 设计: Lv_n - Lv_(n-1) = (n-1)^2 * 100
+# Lv2 = 100 (用户需求), 满级 855500 exp ≈ 数月纯钓鱼
+# 1h 20 条 × 5 exp = 100 exp → 1h Lv2 (早期快速)
+# 满级 30h 活跃玩家 = ~2-4 个月每天 4h 钓鱼
+FISHING_LEVEL_CURVE = {
+    1: 0, 2: 100, 3: 500, 4: 1400, 5: 3000,
+    6: 5500, 7: 9100, 8: 14000, 9: 20400, 10: 28500,
+    11: 38500, 12: 50600, 13: 65000, 14: 81900, 15: 101500,
+    16: 124000, 17: 149600, 18: 178500, 19: 210900, 20: 247000,
+    21: 287000, 22: 331100, 23: 379500, 24: 432400, 25: 490000,
+    26: 552500, 27: 620100, 28: 693000, 29: 771400, 30: 855500,
+}
+
+# 钓鱼专属 exp_rate 名
+FISHING_EXP_RATE = "fishing_30"
+
+EXP_RATE_TABLE[FISHING_EXP_RATE] = FISHING_LEVEL_CURVE
 
 # 技能元数据（从 data/config/skills.json 加载）
 _SKILLS_META: dict = None
@@ -56,22 +75,24 @@ def get_skill_exp_rate(skill_name: str) -> str:
 
 def get_skill_level(exp: int, exp_rate: str = "standard") -> int:
     """根据经验值获取技能等级
-    
+
     Args:
         exp: 当前经验值
-        exp_rate: 经验曲线类型 fast/standard/mastery
-    
+        exp_rate: 经验曲线类型 fast/standard/mastery/fishing_30
+
     Returns:
-        int: 技能等级 (1-10)
+        int: 技能等级 (1-30, 由曲线 max_level 决定)
     """
     table = EXP_RATE_TABLE.get(exp_rate, EXP_RATE_TABLE["standard"])
+    # 9/4: max_level 由曲线 keys 决定 (如 fishing_30 = 30 级)
+    max_lvl = max(table.keys()) if table else 10
     level = 1
     for lvl, req_exp in table.items():
         if exp >= req_exp:
             level = lvl
         else:
             break
-    return min(level, 10)
+    return min(level, max_lvl)
 
 def get_user_skill_level(skill_name: str, user_data: dict) -> int:
     """获取用户某技能的实际等级（考虑曲线类型）
@@ -102,18 +123,19 @@ def get_skill_exp(skill_name: str, user_data: dict) -> int:
 
 def exp_to_next_level(current_exp: int, exp_rate: str = "standard") -> int:
     """计算到下一级还需要多少经验
-    
+
     Args:
         current_exp: 当前经验值
         exp_rate: 经验曲线类型
-    
+
     Returns:
-        int: 到下一级还需的经验值，10级满则返回0
+        int: 到下一级还需的经验值，已满级则返回 0
     """
-    current_level = get_skill_level(current_exp, exp_rate)
-    if current_level >= 10:
-        return 0
     table = EXP_RATE_TABLE.get(exp_rate, EXP_RATE_TABLE["standard"])
+    max_lvl = max(table.keys()) if table else 10
+    current_level = get_skill_level(current_exp, exp_rate)
+    if current_level >= max_lvl:
+        return 0
     next_exp = table.get(current_level + 1, 0)
     return next_exp - current_exp
 

@@ -1,102 +1,9722 @@
 {
   "_comment": "鱼类数据 - 钓鱼系统 v1.0",
-  "_rarity_weight": {"common": 1.0, "uncommon": 0.4, "rare": 0.12, "epic": 0.03, "legendary": 0.005},
-
-  "小鲫鱼": {
-    "name": "小鲫鱼", "emoji": "🐟",
-    "category": "fish", "rarity": "common", "tier": 1,
-    "habitat": ["pond", "river"],
-    "weight_range": [0.1, 0.4],
-    "base_price": 8,
-    "satiety_restore": 15,
-    "mood_restore": 1,
-    "exp_reward": 5,
-    "size_labels": ["指头长", "巴掌大", "手臂粗"],
-    "size_thresholds": [0.15, 0.25, 0.35],
-    "desc": "最常见的淡水鱼"
+  "_rarity_weight": {
+    "common": 1.0,
+    "uncommon": 0.4,
+    "rare": 0.12,
+    "epic": 0.03,
+    "legendary": 0.005
   },
-  "草鱼": {
-    "name": "草鱼", "emoji": "🐟",
-    "category": "fish", "rarity": "common", "tier": 1,
-    "habitat": ["pond", "river", "reservoir"],
-    "weight_range": [0.5, 2.0],
-    "base_price": 18,
-    "satiety_restore": 25, "mood_restore": 2,
-    "exp_reward": 10,
-    "size_labels": ["小条", "中条", "大条", "巨条"],
-    "size_thresholds": [0.8, 1.3, 1.7],
-    "desc": "四大家鱼之一"
+  "小虾": {
+    "name": "小虾",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "nearshore"
+    ],
+    "weight_range": [
+      0.005,
+      0.05
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.018500000000000003,
+      0.0365
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "田螺": {
+    "name": "田螺",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek"
+    ],
+    "weight_range": [
+      0.01,
+      0.08
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.031,
+      0.059000000000000004
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "泥鳅": {
+    "name": "泥鳅",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek"
+    ],
+    "weight_range": [
+      0.05,
+      0.25
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.11,
+      0.19
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "白条鱼": {
+    "name": "白条鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.03,
+      0.12
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.056999999999999995,
+      0.093
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "沙丁鱼": {
+    "name": "沙丁鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.05,
+      0.18
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.089,
+      0.14100000000000001
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "桃花鱼": {
+    "name": "桃花鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "reservoir"
+    ],
+    "weight_range": [
+      0.05,
+      0.18
+    ],
+    "base_price": 60,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.089,
+      0.14100000000000001
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "透明虾虎": {
+    "name": "透明虾虎",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.01,
+      0.08
+    ],
+    "base_price": 150,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.031,
+      0.059000000000000004
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "荧光水母鱼": {
+    "name": "荧光水母鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      0.02,
+      0.1
+    ],
+    "base_price": 400,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.044,
+      0.076
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "小鲫鱼": {
+    "name": "小鲫鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.1,
+      0.6
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.25,
+      0.44999999999999996
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "白条": {
+    "name": "白条",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.05,
+      0.3
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.125,
+      0.22499999999999998
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "黄颡鱼": {
+    "name": "黄颡鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.1,
+      0.7
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.28,
+      0.52
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "鳊鱼": {
+    "name": "鳊鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river",
+      "reservoir"
+    ],
+    "weight_range": [
+      0.3,
+      1.5
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      0.6,
+      0.8999999999999999,
+      1.2
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
   },
   "鲤鱼": {
-    "name": "鲤鱼", "emoji": "🐠",
-    "category": "fish", "rarity": "uncommon", "tier": 2,
-    "habitat": ["pond", "river"],
-    "weight_range": [0.3, 1.5],
-    "base_price": 35,
-    "satiety_restore": 20, "mood_restore": 3,
-    "exp_reward": 15,
-    "size_labels": ["小鲤", "中鲤", "大鲤"],
-    "size_thresholds": [0.6, 1.0],
-    "desc": "寓意吉祥"
+    "name": "鲤鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river",
+      "reservoir"
+    ],
+    "weight_range": [
+      0.3,
+      1.8
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      0.675,
+      1.05,
+      1.425
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "凤尾鱼": {
+    "name": "凤尾鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "nearshore"
+    ],
+    "weight_range": [
+      0.05,
+      0.3
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.125,
+      0.22499999999999998
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "月牙银鱼": {
+    "name": "月牙银鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "pond"
+    ],
+    "weight_range": [
+      0.2,
+      0.6
+    ],
+    "base_price": 1200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.32,
+      0.48
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "红眼鲮": {
+    "name": "红眼鲮",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "reservoir"
+    ],
+    "weight_range": [
+      0.3,
+      1.0
+    ],
+    "base_price": 500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.51,
+      0.7899999999999999
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "小黄鱼": {
+    "name": "小黄鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.1,
+      0.5
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.22,
+      0.38
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "黄花鱼": {
+    "name": "黄花鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.5,
+      1.8
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      0.825,
+      1.15,
+      1.475
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "秋刀鱼": {
+    "name": "秋刀鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      0.1,
+      0.5
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.22,
+      0.38
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "鲳鱼": {
+    "name": "鲳鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.2,
+      1.5
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      0.525,
+      0.8500000000000001,
+      1.175
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "海马": {
+    "name": "海马",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.05,
+      0.3
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.125,
+      0.22499999999999998
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny"
+  },
+  "灯笼鱼": {
+    "name": "灯笼鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      0.1,
+      1.2
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      0.375,
+      0.6499999999999999,
+      0.9249999999999999
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "海参": {
+    "name": "海参",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      0.1,
+      1.0
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.37,
+      0.73
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "鲍鱼": {
+    "name": "鲍鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      0.1,
+      0.8
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.31000000000000005,
+      0.59
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "海胆": {
+    "name": "海胆",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      0.05,
+      0.5
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.185,
+      0.365
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "海星": {
+    "name": "海星",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.05,
+      0.5
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.185,
+      0.365
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "河豚": {
+    "name": "河豚",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.2,
+      1.5
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      0.525,
+      0.8500000000000001,
+      1.175
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small"
+  },
+  "草鱼": {
+    "name": "草鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river",
+      "reservoir"
+    ],
+    "weight_range": [
+      2.0,
+      8.0
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      3.5,
+      5.0,
+      6.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
   },
   "鲶鱼": {
-    "name": "鲶鱼", "emoji": "🐡",
-    "category": "fish", "rarity": "uncommon", "tier": 2,
-    "habitat": ["river", "reservoir"],
-    "weight_range": [0.5, 3.0],
-    "base_price": 60,
-    "satiety_restore": 30, "mood_restore": 2,
-    "exp_reward": 20,
-    "size_labels": ["小鲶", "中鲶", "大鲶", "巨鲶"],
-    "size_thresholds": [1.0, 2.0, 2.7],
-    "desc": "无鳞凶猛"
+    "name": "鲶鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "reservoir",
+      "lake"
+    ],
+    "weight_range": [
+      1.0,
+      8.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.75,
+      4.5,
+      6.25
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
   },
   "黑鱼": {
-    "name": "黑鱼", "emoji": "🐟",
-    "category": "fish", "rarity": "rare", "tier": 3,
-    "habitat": ["river", "reservoir"],
-    "weight_range": [0.8, 4.0],
-    "base_price": 150,
-    "satiety_restore": 35, "mood_restore": 5,
-    "exp_reward": 50,
-    "size_labels": ["小斑", "中斑", "大斑", "斑王"],
-    "size_thresholds": [1.5, 2.5, 3.5],
-    "desc": "滋补上品"
+    "name": "黑鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "reservoir"
+    ],
+    "weight_range": [
+      1.5,
+      8.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      3.125,
+      4.75,
+      6.375
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
   },
   "鳜鱼": {
-    "name": "鳜鱼", "emoji": "🐟",
-    "category": "fish", "rarity": "rare", "tier": 3,
-    "habitat": ["reservoir"],
-    "weight_range": [0.3, 2.0],
-    "base_price": 220,
-    "satiety_restore": 25, "mood_restore": 8,
-    "exp_reward": 60,
-    "size_labels": ["小鳜", "中鳜", "大鳜"],
-    "size_thresholds": [0.8, 1.4],
-    "desc": "淡水鱼中的贵族"
+    "name": "鳜鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      0.5,
+      4.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      1.375,
+      2.25,
+      3.125
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鲈鱼": {
+    "name": "鲈鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "nearshore"
+    ],
+    "weight_range": [
+      1.0,
+      5.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.0,
+      3.0,
+      4.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "翘嘴鲌": {
+    "name": "翘嘴鲌",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "reservoir"
+    ],
+    "weight_range": [
+      0.5,
+      4.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      1.375,
+      2.25,
+      3.125
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
   },
   "虹鳟": {
-    "name": "虹鳟", "emoji": "🐠",
-    "category": "fish", "rarity": "epic", "tier": 4,
-    "habitat": ["reservoir"],
-    "weight_range": [1.0, 5.0],
-    "base_price": 800,
-    "satiety_restore": 40, "mood_restore": 10,
-    "exp_reward": 150,
-    "size_labels": ["小虹", "中虹", "大虹", "虹王"],
-    "size_thresholds": [2.0, 3.5, 4.5],
-    "desc": "颜值与美味并存"
+    "name": "虹鳟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      1.0,
+      6.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.25,
+      3.5,
+      4.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鳡鱼": {
+    "name": "鳡鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      1.0,
+      8.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.75,
+      4.5,
+      6.25
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "哲罗鲑": {
+    "name": "哲罗鲑",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      2.0,
+      12.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      4.5,
+      7.0,
+      9.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "蒙古鲌": {
+    "name": "蒙古鲌",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      0.5,
+      3.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      1.125,
+      1.75,
+      2.375
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "白鲢": {
+    "name": "白鲢",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      1.0,
+      6.0
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.25,
+      3.5,
+      4.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "花鲢": {
+    "name": "花鲢",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      1.0,
+      7.0
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.5,
+      4.0,
+      5.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鲫鱼王": {
+    "name": "鲫鱼王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      2.0,
+      5.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.75,
+      3.5,
+      4.25
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "中华鲟": {
+    "name": "中华鲟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "nearshore"
+    ],
+    "weight_range": [
+      5.0,
+      30.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      11.25,
+      17.5,
+      23.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鳡鱼王": {
+    "name": "鳡鱼王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      5.0,
+      20.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      8.75,
+      12.5,
+      16.25
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "翘嘴鲌王": {
+    "name": "翘嘴鲌王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      2.0,
+      8.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      3.5,
+      5.0,
+      6.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "带鱼": {
+    "name": "带鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      0.5,
+      3.0
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      1.125,
+      1.75,
+      2.375
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "比目鱼": {
+    "name": "比目鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1.0,
+      6.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.25,
+      3.5,
+      4.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "马鲛鱼": {
+    "name": "马鲛鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1.0,
+      8.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.75,
+      4.5,
+      6.25
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "石斑鱼": {
+    "name": "石斑鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      2.0,
+      12.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      4.5,
+      7.0,
+      9.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鲷鱼": {
+    "name": "鲷鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1.0,
+      8.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.75,
+      4.5,
+      6.25
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "海鲶": {
+    "name": "海鲶",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      1.0,
+      6.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.25,
+      3.5,
+      4.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "章鱼": {
+    "name": "章鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1.0,
+      15.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      4.5,
+      8.0,
+      11.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鳗鱼": {
+    "name": "鳗鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "nearshore"
+    ],
+    "weight_range": [
+      1.0,
+      8.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.75,
+      4.5,
+      6.25
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "海鳗": {
+    "name": "海鳗",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1.0,
+      6.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.25,
+      3.5,
+      4.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鮟鱇鱼": {
+    "name": "鮟鱇鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      2.0,
+      20.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      6.5,
+      11.0,
+      15.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "帝王蟹": {
+    "name": "帝王蟹",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      2.0,
+      12.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      4.5,
+      7.0,
+      9.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
   },
   "黄金锦鲤": {
-    "name": "黄金锦鲤", "emoji": "🐡",
-    "category": "fish", "rarity": "legendary", "tier": 5,
-    "habitat": ["pond"],
-    "weight_range": [1.5, 4.0],
-    "base_price": 3000,
-    "satiety_restore": 50, "mood_restore": 30,
-    "exp_reward": 500,
-    "size_labels": ["罕见大鱼", "稀世巨物"],
-    "size_thresholds": [2.5],
-    "desc": "传说能带来好运"
+    "name": "黄金锦鲤",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "pond"
+    ],
+    "weight_range": [
+      2.0,
+      8.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      3.5,
+      5.0,
+      6.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "三文鱼": {
+    "name": "三文鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "nearshore"
+    ],
+    "weight_range": [
+      2.0,
+      15.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      5.25,
+      8.5,
+      11.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鳕鱼": {
+    "name": "鳕鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1.0,
+      10.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      3.25,
+      5.5,
+      7.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "水母": {
+    "name": "水母",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      0.5,
+      5.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      1.625,
+      2.75,
+      3.875
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鱿鱼": {
+    "name": "鱿鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      0.5,
+      8.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.375,
+      4.25,
+      6.125
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "箭鱼": {
+    "name": "箭鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      5.0,
+      25.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      10.0,
+      15.0,
+      20.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "大马哈鱼": {
+    "name": "大马哈鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      3.0,
+      20.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      7.25,
+      11.5,
+      15.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "金鳞鲷": {
+    "name": "金鳞鲷",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      3.0,
+      8.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      4.25,
+      5.5,
+      6.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "海鲈鱼": {
+    "name": "海鲈鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      3.0,
+      8.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      4.25,
+      5.5,
+      6.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "草鱼王": {
+    "name": "草鱼王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "reservoir"
+    ],
+    "weight_range": [
+      8.0,
+      25.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      12.25,
+      16.5,
+      20.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鳙鲢": {
+    "name": "鳙鲢",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      5.0,
+      20.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      8.75,
+      12.5,
+      16.25
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "巨型蝠鲼": {
+    "name": "巨型蝠鲼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      8.0,
+      25.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      12.25,
+      16.5,
+      20.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "沧龙鲷": {
+    "name": "沧龙鲷",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      10.0,
+      30.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      15.0,
+      20.0,
+      25.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "剑鱼": {
+    "name": "剑鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      30.0,
+      150.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      60.0,
+      90.0,
+      120.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "旗鱼": {
+    "name": "旗鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      50.0,
+      250.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      100.0,
+      150.0,
+      200.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "月亮鱼": {
+    "name": "月亮鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      30.0,
+      200.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      72.5,
+      115.0,
+      157.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "海龟": {
+    "name": "海龟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      80.0,
+      400.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      160.0,
+      240.0,
+      320.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "狗鱼": {
+    "name": "狗鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      30.0,
+      150.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      60.0,
+      90.0,
+      120.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "巨骨舌鱼": {
+    "name": "巨骨舌鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 4,
+    "habitat": [
+      "river"
+    ],
+    "weight_range": [
+      50.0,
+      200.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      87.5,
+      125.0,
+      162.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "金枪鱼": {
+    "name": "金枪鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      50.0,
+      250.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      100.0,
+      150.0,
+      200.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "龙趸": {
+    "name": "龙趸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 4,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      80.0,
+      300.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      135.0,
+      190.0,
+      245.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "海龙王": {
+    "name": "海龙王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 4,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      80.0,
+      250.0
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      122.5,
+      165.0,
+      207.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "巨骨鲱": {
+    "name": "巨骨鲱",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 4,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      150.0,
+      450.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      225.0,
+      300.0,
+      375.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large"
+  },
+  "翻车鱼": {
+    "name": "翻车鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      500,
+      2000
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      800.0,
+      1250.0,
+      1700.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "利维坦": {
+    "name": "利维坦",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "abyss"
+    ],
+    "weight_range": [
+      500,
+      1500
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      750.0,
+      1000.0,
+      1250.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "深渊巨妖": {
+    "name": "深渊巨妖",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      500,
+      1500
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      750.0,
+      1000.0,
+      1250.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "大海蛇": {
+    "name": "大海蛇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      500,
+      3000
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      1000.0,
+      1750.0,
+      2500.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "沧龙": {
+    "name": "沧龙",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      600,
+      2000
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      880.0,
+      1300.0,
+      1720.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "海王蛇": {
+    "name": "海王蛇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      800,
+      3000
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      1240.0,
+      1900.0,
+      2560.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "海皇龟": {
+    "name": "海皇龟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1000,
+      4000
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      1600.0,
+      2500.0,
+      3400.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "巨型蝠鲼王": {
+    "name": "巨型蝠鲼王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1000,
+      4000
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      1600.0,
+      2500.0,
+      3400.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "蛟龙": {
+    "name": "蛟龙",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      1500,
+      6000
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      2400.0,
+      3750.0,
+      5100.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "鲲": {
+    "name": "鲲",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      2000,
+      8000
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      3200.0,
+      5000.0,
+      6800.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "巨骨鲱王": {
+    "name": "巨骨鲱王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      2000,
+      7000
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      3000.0,
+      4500.0,
+      6000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "虎鲸": {
+    "name": "虎鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      3000,
+      9000
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      4200.0,
+      6000.0,
+      7800.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "大海怪": {
+    "name": "大海怪",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      3000,
+      9000
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      4200.0,
+      6000.0,
+      7800.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "北海巨龟": {
+    "name": "北海巨龟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      5000,
+      10000
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      6000.0,
+      7500.0,
+      9000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "海皇蛟": {
+    "name": "海皇蛟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      6000,
+      10000
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      6800.0,
+      8000.0,
+      9200.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "九头海蛇": {
+    "name": "九头海蛇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      7000,
+      10000
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      7600.0,
+      8500.0,
+      9400.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "远古鲸神": {
+    "name": "远古鲸神",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      8000,
+      10000
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      8400.0,
+      9000.0,
+      9600.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge"
+  },
+  "古鳐巨影": {
+    "name": "古鳐巨影",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      10000,
+      30000
+    ],
+    "base_price": 12000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      14000.0,
+      20000.0,
+      26000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "巨蟹将军": {
+    "name": "巨蟹将军",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      15000,
+      40000
+    ],
+    "base_price": 12000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      20000.0,
+      27500.0,
+      35000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "深渊章鱼王": {
+    "name": "深渊章鱼王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      20000,
+      60000
+    ],
+    "base_price": 35000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      28000.0,
+      40000.0,
+      52000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "蓝鲸": {
+    "name": "蓝鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      30000,
+      100000
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      44000.0,
+      65000.0,
+      86000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "远古巨齿鲨": {
+    "name": "远古巨齿鲨",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      30000,
+      80000
+    ],
+    "base_price": 35000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      40000.0,
+      55000.0,
+      70000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "北溟玄鲸": {
+    "name": "北溟玄鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      40000,
+      90000
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      50000.0,
+      65000.0,
+      80000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "深海龙宫龟": {
+    "name": "深海龙宫龟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      50000,
+      99000
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      59800.0,
+      74500.0,
+      89200.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "冥海海王蛇": {
+    "name": "冥海海王蛇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      60000,
+      99000
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      67800.0,
+      79500.0,
+      91200.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "深渊母皇": {
+    "name": "深渊母皇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "abyss"
+    ],
+    "weight_range": [
+      70000,
+      99999
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      75999.8,
+      84999.5,
+      93999.2
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant"
+  },
+  "鲲鹏": {
+    "name": "鲲鹏",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "abyss"
+    ],
+    "weight_range": [
+      200000,
+      800000
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      320000.0,
+      500000.0,
+      680000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan"
+  },
+  "海皇波塞冬": {
+    "name": "海皇波塞冬",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "abyss"
+    ],
+    "weight_range": [
+      300000,
+      800000
+    ],
+    "base_price": 800000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      400000.0,
+      550000.0,
+      700000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan"
+  },
+  "旧日支配者": {
+    "name": "旧日支配者",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "abyss"
+    ],
+    "weight_range": [
+      500000,
+      1000000
+    ],
+    "base_price": 800000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      600000.0,
+      750000.0,
+      900000.0
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan"
+  },
+  "鳑鲏": {
+    "name": "鳑鲏",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.012,
+      0.02
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0144,
+      0.0176
+    ],
+    "desc": "溪流最普遍",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Bitterling"
+  },
+  "麦穗鱼": {
+    "name": "麦穗鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.018,
+      0.03
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.021599999999999998,
+      0.0264
+    ],
+    "desc": "稻田浅滩",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Topmouth Gudgeon"
+  },
+  "青鳉": {
+    "name": "青鳉",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.006,
+      0.01
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0072,
+      0.0088
+    ],
+    "desc": "静水表层",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Medaka"
+  },
+  "小鲦鱼": {
+    "name": "小鲦鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.024,
+      0.04
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0288,
+      0.0352
+    ],
+    "desc": "群游性",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Minnow"
+  },
+  "黑壳虾": {
+    "name": "黑壳虾",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "creek",
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      0.012,
+      0.02
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0144,
+      0.0176
+    ],
+    "desc": "溪流底栖",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Black Shell Shrimp"
+  },
+  "水黾": {
+    "name": "水黾",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.005,
+      0.005
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.005,
+      0.005
+    ],
+    "desc": "水面浮游",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Water Strider"
+  },
+  "蝌蚪": {
+    "name": "蝌蚪",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.012,
+      0.02
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0144,
+      0.0176
+    ],
+    "desc": "浅滩常见",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Tadpole"
+  },
+  "小泥鳅": {
+    "name": "小泥鳅",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.03,
+      0.05
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.036,
+      0.044
+    ],
+    "desc": "泥沙底质",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Small Loach"
+  },
+  "银针鱼": {
+    "name": "银针鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.036,
+      0.06
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.043199999999999995,
+      0.0528
+    ],
+    "desc": "水面群游",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Silver Needle Fish"
+  },
+  "小黄颡": {
+    "name": "小黄颡",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      0.048,
+      0.08
+    ],
+    "base_price": 10,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0576,
+      0.0704
+    ],
+    "desc": "夜行性",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Small Yellow Catfish"
+  },
+  "彩鰟鮍": {
+    "name": "彩鰟鮍",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.018,
+      0.03
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.021599999999999998,
+      0.0264
+    ],
+    "desc": "体色艳丽",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Colorful Bitterling"
+  },
+  "金线麦穗": {
+    "name": "金线麦穗",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.024,
+      0.04
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0288,
+      0.0352
+    ],
+    "desc": "金线贯穿",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Golden Line Gudgeon"
+  },
+  "萤光虾": {
+    "name": "萤光虾",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.009,
+      0.015
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.010799999999999999,
+      0.0132
+    ],
+    "desc": "微弱生物光",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Glow Shrimp"
+  },
+  "樱鳉": {
+    "name": "樱鳉",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.0072,
+      0.012
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.00864,
+      0.01056
+    ],
+    "desc": "樱花色鳞片",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Cherry Medaka"
+  },
+  "红尾小鱼": {
+    "name": "红尾小鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.03,
+      0.05
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.036,
+      0.044
+    ],
+    "desc": "尾鳍红色",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Redtail Minnow"
+  },
+  "虎纹小鲈": {
+    "name": "虎纹小鲈",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      0.042,
+      0.07
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0504,
+      0.0616
+    ],
+    "desc": "条纹清晰",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Tiger Perch"
+  },
+  "银鳞溪哥": {
+    "name": "银鳞溪哥",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.036,
+      0.06
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.043199999999999995,
+      0.0528
+    ],
+    "desc": "银光闪闪",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Silver Scale Chub"
+  },
+  "蓝鳍小鲦": {
+    "name": "蓝鳍小鲦",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.024,
+      0.04
+    ],
+    "base_price": 25,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0288,
+      0.0352
+    ],
+    "desc": "背鳍蓝色",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Bluefin Minnow"
+  },
+  "水晶虾": {
+    "name": "水晶虾",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.012,
+      0.02
+    ],
+    "base_price": 60,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0144,
+      0.0176
+    ],
+    "desc": "透明如晶",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Crystal Shrimp"
+  },
+  "蓝鳃太阳鱼幼体": {
+    "name": "蓝鳃太阳鱼幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.06,
+      0.1
+    ],
+    "base_price": 60,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.072,
+      0.088
+    ],
+    "desc": "鳃盖蓝斑",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Bluegill Young"
+  },
+  "珍珠小鲈": {
+    "name": "珍珠小鲈",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      0.048,
+      0.08
+    ],
+    "base_price": 60,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0576,
+      0.0704
+    ],
+    "desc": "珍珠斑点",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Pearl Perch"
+  },
+  "金鳅": {
+    "name": "金鳅",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.036,
+      0.06
+    ],
+    "base_price": 60,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.043199999999999995,
+      0.0528
+    ],
+    "desc": "金色泥鳅",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Golden Loach"
+  },
+  "彩虹青鳉": {
+    "name": "彩虹青鳉",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.009,
+      0.015
+    ],
+    "base_price": 60,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.010799999999999999,
+      0.0132
+    ],
+    "desc": "虹彩鳞片",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Rainbow Medaka"
+  },
+  "银针王": {
+    "name": "银针王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.09,
+      0.15
+    ],
+    "base_price": 60,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.108,
+      0.132
+    ],
+    "desc": "针鱼之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Silver Needle King"
+  },
+  "星辉鳑鲏": {
+    "name": "星辉鳑鲏",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.024,
+      0.04
+    ],
+    "base_price": 150,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0288,
+      0.0352
+    ],
+    "desc": "星辉纹路",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Starry Bitterling"
+  },
+  "幻彩小鲦": {
+    "name": "幻彩小鲦",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.03,
+      0.05
+    ],
+    "base_price": 150,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.036,
+      0.044
+    ],
+    "desc": "幻彩鳞片",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Iridescent Minnow"
+  },
+  "玉脂虾": {
+    "name": "玉脂虾",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.015,
+      0.025
+    ],
+    "base_price": 150,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.018,
+      0.022
+    ],
+    "desc": "白玉质感",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Jade Shrimp"
+  },
+  "金瞳青鳉": {
+    "name": "金瞳青鳉",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.0108,
+      0.018
+    ],
+    "base_price": 150,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.01296,
+      0.01584
+    ],
+    "desc": "金色瞳孔",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Golden Eye Medaka"
+  },
+  "龙鳞青鳉": {
+    "name": "龙鳞青鳉",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "river"
+    ],
+    "weight_range": [
+      0.012,
+      0.02
+    ],
+    "base_price": 400,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.0144,
+      0.0176
+    ],
+    "desc": "龙鳞纹路",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Dragon Scale Medaka"
+  },
+  "凤尾小鲈": {
+    "name": "凤尾小鲈",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "creek"
+    ],
+    "weight_range": [
+      0.072,
+      0.12
+    ],
+    "base_price": 400,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.08639999999999999,
+      0.1056
+    ],
+    "desc": "凤凰尾鳍",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Phoenix Tail Perch"
+  },
+  "小罗非": {
+    "name": "小罗非",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.36,
+      0.6
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.432,
+      0.528
+    ],
+    "desc": "浅滩常见",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Small Tilapia"
+  },
+  "溪哥": {
+    "name": "溪哥",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.3,
+      0.4
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.33,
+      0.37
+    ],
+    "desc": "急流区",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Chub"
+  },
+  "马口鱼": {
+    "name": "马口鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      0.3,
+      0.5
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.36,
+      0.43999999999999995
+    ],
+    "desc": "凶猛小鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Mandarin Fish"
+  },
+  "小鲈鱼": {
+    "name": "小鲈鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      0.42,
+      0.7
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.504,
+      0.616
+    ],
+    "desc": "静水区",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Small Perch"
+  },
+  "黄辣丁": {
+    "name": "黄辣丁",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      0.36,
+      0.6
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.432,
+      0.528
+    ],
+    "desc": "底栖夜行",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Yellow Catfish"
+  },
+  "小鳊鱼": {
+    "name": "小鳊鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.3,
+      0.5
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.36,
+      0.43999999999999995
+    ],
+    "desc": "群游中层",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Small Bream"
+  },
+  "沙塘鳢": {
+    "name": "沙塘鳢",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.3,
+      0.4
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.33,
+      0.37
+    ],
+    "desc": "沙底伏击",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Sand Goby"
+  },
+  "金线鲫": {
+    "name": "金线鲫",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.48,
+      0.8
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.576,
+      0.704
+    ],
+    "desc": "金线背脊",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Golden Line Carp"
+  },
+  "彩虹马口": {
+    "name": "彩虹马口",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.36,
+      0.6
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.432,
+      0.528
+    ],
+    "desc": "彩虹色",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Rainbow Mandarin"
+  },
+  "红鳍鲌": {
+    "name": "红鳍鲌",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.42,
+      0.7
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.504,
+      0.616
+    ],
+    "desc": "红鳍银身",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Redfin Culter"
+  },
+  "银鲴": {
+    "name": "银鲴",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.3,
+      0.5
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.36,
+      0.43999999999999995
+    ],
+    "desc": "银光闪烁",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Silver Gudgeon"
+  },
+  "花鲫": {
+    "name": "花鲫",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.54,
+      0.9
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.648,
+      0.792
+    ],
+    "desc": "碎花鳞片",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Spotted Carp"
+  },
+  "赤眼鳟": {
+    "name": "赤眼鳟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "creek",
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      0.72,
+      1.2
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.864,
+      1.056
+    ],
+    "desc": "红眼特征",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Redeye Trout"
+  },
+  "大鳍鳠": {
+    "name": "大鳍鳠",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      0.6,
+      1.0
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.72,
+      0.8799999999999999
+    ],
+    "desc": "背鳍巨大",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Big Fin Catfish"
+  },
+  "铜鱼": {
+    "name": "铜鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.48,
+      0.8
+    ],
+    "base_price": 75,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.576,
+      0.704
+    ],
+    "desc": "铜色光泽",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Bronze Fish"
+  },
+  "蓝鳃太阳鱼": {
+    "name": "蓝鳃太阳鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.6,
+      1.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.72,
+      0.8799999999999999
+    ],
+    "desc": "蓝斑鳃盖",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Bluegill"
+  },
+  "珍珠罗非": {
+    "name": "珍珠罗非",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.72,
+      1.2
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.864,
+      1.056
+    ],
+    "desc": "珍珠光泽",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Pearl Tilapia"
+  },
+  "金鳟幼体": {
+    "name": "金鳟幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "creek",
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      0.48,
+      0.8
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.576,
+      0.704
+    ],
+    "desc": "金色鳟鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Golden Trout Young"
+  },
+  "白化鲶幼体": {
+    "name": "白化鲶幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      0.36,
+      0.6
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.432,
+      0.528
+    ],
+    "desc": "白化个体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Albino Catfish Young"
+  },
+  "玻璃鱼": {
+    "name": "玻璃鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.18,
+      0.3
+    ],
+    "base_price": 60,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.216,
+      0.264
+    ],
+    "desc": "透明可见骨",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "tiny",
+    "english": "Glass Fish"
+  },
+  "电鳗幼体": {
+    "name": "电鳗幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "coast"
+    ],
+    "weight_range": [
+      0.9,
+      1.5
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      1.08,
+      1.32
+    ],
+    "desc": "微发电能力",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Electric Eel Young"
+  },
+  "星辉马口": {
+    "name": "星辉马口",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "creek",
+      "river"
+    ],
+    "weight_range": [
+      0.54,
+      0.9
+    ],
+    "base_price": 500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.648,
+      0.792
+    ],
+    "desc": "星辉纹",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Starry Mandarin"
+  },
+  "幻彩鳑鲏": {
+    "name": "幻彩鳑鲏",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.42,
+      0.7
+    ],
+    "base_price": 500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.504,
+      0.616
+    ],
+    "desc": "幻彩鳞片",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Iridescent Bitterling"
+  },
+  "玉鲈": {
+    "name": "玉鲈",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      0.6,
+      1.0
+    ],
+    "base_price": 500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.72,
+      0.8799999999999999
+    ],
+    "desc": "白玉质感",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Jade Perch"
+  },
+  "赤金罗非": {
+    "name": "赤金罗非",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      0.84,
+      1.4
+    ],
+    "base_price": 500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      1.008,
+      1.232
+    ],
+    "desc": "赤金色",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Red Gold Tilapia"
+  },
+  "龙须溪哥": {
+    "name": "龙须溪哥",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "creek"
+    ],
+    "weight_range": [
+      0.36,
+      0.6
+    ],
+    "base_price": 1200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.432,
+      0.528
+    ],
+    "desc": "龙须触须",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Dragon Whisker Chub"
+  },
+  "凤尾马口": {
+    "name": "凤尾马口",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "creek"
+    ],
+    "weight_range": [
+      0.6,
+      1.0
+    ],
+    "base_price": 1200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.72,
+      0.8799999999999999
+    ],
+    "desc": "凤尾形态",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Phoenix Tail Mandarin"
+  },
+  "金鳞鲤幼体": {
+    "name": "金鳞鲤幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 3,
+    "habitat": [
+      "pond"
+    ],
+    "weight_range": [
+      0.48,
+      0.8
+    ],
+    "base_price": 3500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      0.576,
+      0.704
+    ],
+    "desc": "神话血脉幼鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Golden Scale Carp Young"
+  },
+  "鲢鱼": {
+    "name": "鲢鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      3.6,
+      6.0
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      4.2,
+      4.8,
+      5.4
+    ],
+    "desc": "滤食性",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Silver Carp"
+  },
+  "鳙鱼": {
+    "name": "鳙鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      6.0,
+      10.0
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      7.0,
+      8.0,
+      9.0
+    ],
+    "desc": "大头鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Bighead Carp"
+  },
+  "土鲶": {
+    "name": "土鲶",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      2.4,
+      4.0
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.8,
+      3.2,
+      3.6
+    ],
+    "desc": "底栖伏击",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Mud Catfish"
+  },
+  "黑鱼幼体": {
+    "name": "黑鱼幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      2,
+      2.5
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      2.15,
+      2.35
+    ],
+    "desc": "凶猛幼鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Snakehead Young"
+  },
+  "黄颡鱼成体": {
+    "name": "黄颡鱼成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      1.2,
+      2.0
+    ],
+    "base_price": 30,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "指头长",
+      "巴掌大",
+      "手臂粗"
+    ],
+    "size_thresholds": [
+      1.44,
+      1.7599999999999998
+    ],
+    "desc": "黄色带刺",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "small",
+    "english": "Yellow Catfish Adult"
+  },
+  "青鱼": {
+    "name": "青鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river"
+    ],
+    "weight_range": [
+      9.0,
+      15.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      10.5,
+      12.0,
+      13.5
+    ],
+    "desc": "螺蛳为食",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Black Carp"
+  },
+  "桂花鱼": {
+    "name": "桂花鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      3.0,
+      5.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      3.5,
+      4.0,
+      4.5
+    ],
+    "desc": "鳜鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Mandarin Fish"
+  },
+  "大口鲶": {
+    "name": "大口鲶",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      7.2,
+      12.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      8.4,
+      9.6,
+      10.8
+    ],
+    "desc": "大口伏击",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Big Mouth Catfish"
+  },
+  "白鳝": {
+    "name": "白鳝",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "coast"
+    ],
+    "weight_range": [
+      2.4,
+      4.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      2.8,
+      3.2,
+      3.6
+    ],
+    "desc": "长蛇形",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "White Eel"
+  },
+  "红鲌": {
+    "name": "红鲌",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      3.6,
+      6.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      4.2,
+      4.8,
+      5.4
+    ],
+    "desc": "红色鱼鳍",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Red Culter"
+  },
+  "银鲢": {
+    "name": "银鲢",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "pond",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      4.8,
+      8.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      5.6,
+      6.4,
+      7.2
+    ],
+    "desc": "银色滤食",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Silver Bighead"
+  },
+  "花鲈": {
+    "name": "花鲈",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      3.0,
+      5.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      3.5,
+      4.0,
+      4.5
+    ],
+    "desc": "海水/淡水",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Spotted Sea Bass"
+  },
+  "金鲤": {
+    "name": "金鲤",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      4.8,
+      8.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      5.6,
+      6.4,
+      7.2
+    ],
+    "desc": "金色锦鲤",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Golden Carp"
+  },
+  "彩鲤": {
+    "name": "彩鲤",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      4.2,
+      7.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      4.9,
+      5.6,
+      6.3
+    ],
+    "desc": "彩色锦鲤",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Colorful Carp"
+  },
+  "大鲵": {
+    "name": "大鲵",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      12.0,
+      20.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      14.0,
+      16.0,
+      18.0
+    ],
+    "desc": "巨型蝾螈",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Giant Salamander"
+  },
+  "龙鲤亚成": {
+    "name": "龙鲤亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "river",
+      "lake",
+      "abyss"
+    ],
+    "weight_range": [
+      6.0,
+      10.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      7.0,
+      8.0,
+      9.0
+    ],
+    "desc": "龙纹锦鲤",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Dragon Carp Young"
+  },
+  "黑鲩": {
+    "name": "黑鲩",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      15.0,
+      25.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      17.5,
+      20.0,
+      22.5
+    ],
+    "desc": "黑色青鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Black Bighead"
+  },
+  "大鳢": {
+    "name": "大鳢",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      9.0,
+      15.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      10.5,
+      12.0,
+      13.5
+    ],
+    "desc": "巨型黑鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Giant Snakehead"
+  },
+  "赤鳞鲤": {
+    "name": "赤鳞鲤",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      7.2,
+      12.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      8.4,
+      9.6,
+      10.8
+    ],
+    "desc": "赤红鳞片",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Red Scale Carp"
+  },
+  "蓝龙鲶": {
+    "name": "蓝龙鲶",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "lake",
+      "river"
+    ],
+    "weight_range": [
+      10.8,
+      18.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      12.600000000000001,
+      14.4,
+      16.2
+    ],
+    "desc": "蓝色变异",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Blue Dragon Catfish"
+  },
+  "金鳟成体": {
+    "name": "金鳟成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "creek",
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      6.0,
+      10.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      7.0,
+      8.0,
+      9.0
+    ],
+    "desc": "金色成鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Golden Trout Adult"
+  },
+  "雷龙鲶亚成": {
+    "name": "雷龙鲶亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "lake",
+      "reservoir"
+    ],
+    "weight_range": [
+      12.0,
+      20.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      14.0,
+      16.0,
+      18.0
+    ],
+    "desc": "雷电纹路",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Thunder Dragon Catfish Young"
+  },
+  "龙鲤成体": {
+    "name": "龙鲤成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "river"
+    ],
+    "weight_range": [
+      18.0,
+      30.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      21.0,
+      24.0,
+      27.0
+    ],
+    "desc": "真龙血脉",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Dragon Carp Adult"
+  },
+  "赤鲟": {
+    "name": "赤鲟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      15.0,
+      25.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      17.5,
+      20.0,
+      22.5
+    ],
+    "desc": "赤色鲟鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Red Sturgeon"
+  },
+  "渊鳡": {
+    "name": "渊鳡",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "river"
+    ],
+    "weight_range": [
+      21.0,
+      35.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      24.5,
+      28.0,
+      31.5
+    ],
+    "desc": "深渊鳡鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Abyss Culter"
+  },
+  "墨麒麟幼体": {
+    "name": "墨麒麟幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 3,
+    "habitat": [
+      "lake"
+    ],
+    "weight_range": [
+      9.0,
+      15.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      10.5,
+      12.0,
+      13.5
+    ],
+    "desc": "麒麟幼体形态",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Ink Kirin Young"
+  },
+  "炎鳞兽幼体": {
+    "name": "炎鳞兽幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 3,
+    "habitat": [
+      "reservoir"
+    ],
+    "weight_range": [
+      7.2,
+      12.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      8.4,
+      9.6,
+      10.8
+    ],
+    "desc": "炎鳞幼体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Flame Scale Beast Young"
+  },
+  "大鲶鱼": {
+    "name": "大鲶鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "nearshore"
+    ],
+    "weight_range": [
+      50,
+      80.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      57.5,
+      65.0,
+      72.5
+    ],
+    "desc": "1.5m级鲶",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Catfish"
+  },
+  "大鲤鱼": {
+    "name": "大鲤鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      50,
+      60.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      52.5,
+      55.0,
+      57.5
+    ],
+    "desc": "米级鲤",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Carp"
+  },
+  "大青鱼": {
+    "name": "大青鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 4,
+    "habitat": [
+      "pond",
+      "nearshore"
+    ],
+    "weight_range": [
+      60.0,
+      100.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      70.0,
+      80.0,
+      90.0
+    ],
+    "desc": "螺蛳青",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Black Carp"
+  },
+  "大黑鱼": {
+    "name": "大黑鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 3,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake"
+    ],
+    "weight_range": [
+      30.0,
+      50.0
+    ],
+    "base_price": 80,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      35.0,
+      40.0,
+      45.0
+    ],
+    "desc": "米级黑鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium",
+    "english": "Giant Snakehead"
+  },
+  "巨鲮": {
+    "name": "巨鲮",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      50,
+      70.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      55.0,
+      60.0,
+      65.0
+    ],
+    "desc": "淡水拉力王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Mud Carp"
+  },
+  "大鳊": {
+    "name": "大鳊",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      50,
+      55.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      51.25,
+      52.5,
+      53.75
+    ],
+    "desc": "巨型鳊鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Bream"
+  },
+  "大草鱼": {
+    "name": "大草鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      54.0,
+      90.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      63.0,
+      72.0,
+      81.0
+    ],
+    "desc": "2m级草鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Grass Carp"
+  },
+  "大桂鱼": {
+    "name": "大桂鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      50,
+      80.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      57.5,
+      65.0,
+      72.5
+    ],
+    "desc": "1m鳜鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Mandarin"
+  },
+  "巨鲶": {
+    "name": "巨鲶",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "nearshore"
+    ],
+    "weight_range": [
+      90.0,
+      150.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      105.0,
+      120.0,
+      135.0
+    ],
+    "desc": "2m级鲶",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Catfish"
+  },
+  "大罗非": {
+    "name": "大罗非",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 4,
+    "habitat": [
+      "pond",
+      "river",
+      "nearshore"
+    ],
+    "weight_range": [
+      50,
+      60.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "手掌大",
+      "手臂粗",
+      "腰粗",
+      "桌面大"
+    ],
+    "size_thresholds": [
+      52.5,
+      55.0,
+      57.5
+    ],
+    "desc": "巨型罗非",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Tilapia"
+  },
+  "巨鳡": {
+    "name": "巨鳡",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      60.0,
+      100.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      70.0,
+      80.0,
+      90.0
+    ],
+    "desc": "淡水之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Culter"
+  },
+  "大鳝": {
+    "name": "大鳝",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 4,
+    "habitat": [
+      "river",
+      "nearshore",
+      "coast"
+    ],
+    "weight_range": [
+      50,
+      70.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      55.0,
+      60.0,
+      65.0
+    ],
+    "desc": "米级鳝鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Eel"
+  },
+  "军鱼": {
+    "name": "军鱼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      50,
+      80.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      57.5,
+      65.0,
+      72.5
+    ],
+    "desc": "激流勇士",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Army Fish"
+  },
+  "大虹鳟": {
+    "name": "大虹鳟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 4,
+    "habitat": [
+      "creek",
+      "reservoir",
+      "nearshore"
+    ],
+    "weight_range": [
+      54.0,
+      90.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      63.0,
+      72.0,
+      81.0
+    ],
+    "desc": "冷水虹鳟",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Giant Rainbow Trout"
+  },
+  "白鲟": {
+    "name": "白鲟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 4,
+    "habitat": [
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      120.0,
+      200.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      140.0,
+      160.0,
+      180.0
+    ],
+    "desc": "古老鲟鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "White Sturgeon"
+  },
+  "金鳇亚成": {
+    "name": "金鳇亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 4,
+    "habitat": [
+      "nearshore",
+      "river"
+    ],
+    "weight_range": [
+      72.0,
+      120.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      84.0,
+      96.0,
+      108.0
+    ],
+    "desc": "金色鳇鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Golden Beluga Young"
+  },
+  "玄鳞鲶亚成": {
+    "name": "玄鳞鲶亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      90.0,
+      150.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      105.0,
+      120.0,
+      135.0
+    ],
+    "desc": "玄色鳞片",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Dark Scale Catfish Young"
+  },
+  "龙鲤壮年": {
+    "name": "龙鲤壮年",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 4,
+    "habitat": [
+      "river",
+      "lake",
+      "nearshore",
+      "abyss"
+    ],
+    "weight_range": [
+      108.0,
+      180.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      126.0,
+      144.0,
+      162.0
+    ],
+    "desc": "壮年龙鲤",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Dragon Carp Adult"
+  },
+  "渊龙鳡亚成": {
+    "name": "渊龙鳡亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 4,
+    "habitat": [
+      "river",
+      "lake",
+      "nearshore",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      96.0,
+      160.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      112.0,
+      128.0,
+      144.0
+    ],
+    "desc": "深渊鳡鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Abyss Dragon Culter Young"
+  },
+  "赤鳞巨鲤": {
+    "name": "赤鳞巨鲤",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      120.0,
+      200.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      140.0,
+      160.0,
+      180.0
+    ],
+    "desc": "赤鳞大型化",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Red Scale Giant Carp"
+  },
+  "雷龙鲶成体": {
+    "name": "雷龙鲶成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "lake",
+      "reservoir"
+    ],
+    "weight_range": [
+      150.0,
+      250.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      175.0,
+      200.0,
+      225.0
+    ],
+    "desc": "雷纹成鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Thunder Dragon Catfish Adult"
+  },
+  "晶鳞大鳡": {
+    "name": "晶鳞大鳡",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      108.0,
+      180.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      126.0,
+      144.0,
+      162.0
+    ],
+    "desc": "水晶鳞",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Crystal Scale Giant Culter"
+  },
+  "炎鳞鲤": {
+    "name": "炎鳞鲤",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 4,
+    "habitat": [
+      "deep_sea",
+      "nearshore"
+    ],
+    "weight_range": [
+      90.0,
+      150.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      105.0,
+      120.0,
+      135.0
+    ],
+    "desc": "火焰纹路",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Flame Scale Carp"
+  },
+  "苍鳞鲟王": {
+    "name": "苍鳞鲟王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 4,
+    "habitat": [
+      "nearshore"
+    ],
+    "weight_range": [
+      210.0,
+      350.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      245.0,
+      280.0,
+      315.0
+    ],
+    "desc": "苍色鳞王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Azure Scale Sturgeon King"
+  },
+  "渊龙鳡成体": {
+    "name": "渊龙鳡成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 4,
+    "habitat": [
+      "river",
+      "lake",
+      "nearshore",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      180.0,
+      300.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      210.0,
+      240.0,
+      270.0
+    ],
+    "desc": "深渊成鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Abyss Dragon Culter Adult"
+  },
+  "玄龙巨鲶": {
+    "name": "玄龙巨鲶",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      240.0,
+      400.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      280.0,
+      320.0,
+      360.0
+    ],
+    "desc": "玄龙血脉",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Dark Dragon Catfish"
+  },
+  "墨麒麟半成": {
+    "name": "墨麒麟半成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 4,
+    "habitat": [
+      "lake"
+    ],
+    "weight_range": [
+      150.0,
+      250.0
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      175.0,
+      200.0,
+      225.0
+    ],
+    "desc": "半成熟麒麟",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Ink Kirin Young Adult"
+  },
+  "炎鳞兽成体": {
+    "name": "炎鳞兽成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      120.0,
+      200.0
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      140.0,
+      160.0,
+      180.0
+    ],
+    "desc": "炎鳞成年",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Flame Scale Beast Adult"
+  },
+  "沧海龙幼体": {
+    "name": "沧海龙幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 4,
+    "habitat": [
+      "river",
+      "lake",
+      "nearshore",
+      "abyss"
+    ],
+    "weight_range": [
+      90.0,
+      150.0
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      105.0,
+      120.0,
+      135.0
+    ],
+    "desc": "沧海之龙幼体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Sea Dragon Young"
+  },
+  "幼年鲸鲨": {
+    "name": "幼年鲸鲨",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      500,
+      800.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      575.0,
+      650.0,
+      725.0
+    ],
+    "desc": "幼年鲸鲨",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Whale Shark Young"
+  },
+  "巨型鲶": {
+    "name": "巨型鲶",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "reservoir",
+      "river",
+      "deep_sea"
+    ],
+    "weight_range": [
+      500,
+      600.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      525.0,
+      550.0,
+      575.0
+    ],
+    "desc": "3m级鲶",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Giant Catfish 3m"
+  },
+  "巨型鳇": {
+    "name": "巨型鳇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      600.0,
+      1000.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      700.0,
+      800.0,
+      900.0
+    ],
+    "desc": "3m鳇鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Giant Beluga"
+  },
+  "巨型鲟": {
+    "name": "巨型鲟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      540.0,
+      900.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      630.0,
+      720.0,
+      810.0
+    ],
+    "desc": "3m级鲟",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Giant Sturgeon"
+  },
+  "幼年蝠鲼": {
+    "name": "幼年蝠鲼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 4,
+    "habitat": [
+      "reservoir",
+      "river",
+      "lake",
+      "nearshore"
+    ],
+    "weight_range": [
+      300.0,
+      500.0
+    ],
+    "base_price": 200,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      350.0,
+      400.0,
+      450.0
+    ],
+    "desc": "幼年蝠鲼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "large",
+    "english": "Manta Ray Young"
+  },
+  "金鳇成体": {
+    "name": "金鳇成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "river"
+    ],
+    "weight_range": [
+      900.0,
+      1500.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      1050.0,
+      1200.0,
+      1350.0
+    ],
+    "desc": "金色成鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Golden Beluga Adult"
+  },
+  "玄鳞鲶成体": {
+    "name": "玄鳞鲶成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      720.0,
+      1200.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      840.0,
+      960.0,
+      1080.0
+    ],
+    "desc": "玄色成鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Dark Scale Catfish Adult"
+  },
+  "小巨鱿": {
+    "name": "小巨鱿",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      500,
+      800.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      575.0,
+      650.0,
+      725.0
+    ],
+    "desc": "小巨鱿",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Small Giant Squid"
+  },
+  "小巨鳐": {
+    "name": "小巨鳐",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      500,
+      700.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      550.0,
+      600.0,
+      650.0
+    ],
+    "desc": "小巨鳐",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Small Giant Ray"
+  },
+  "银鲨亚成": {
+    "name": "银鲨亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      600.0,
+      1000.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      700.0,
+      800.0,
+      900.0
+    ],
+    "desc": "银色鲨鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Silver Shark Young"
+  },
+  "白鲟王": {
+    "name": "白鲟王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      1500.0,
+      2500.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      1750.0,
+      2000.0,
+      2250.0
+    ],
+    "desc": "白鲟之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "White Sturgeon King"
+  },
+  "金鳇王": {
+    "name": "金鳇王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "nearshore",
+      "river"
+    ],
+    "weight_range": [
+      1800.0,
+      3000.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      2040.0,
+      2400.0,
+      2760.0
+    ],
+    "desc": "鳇鱼之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Golden Beluga King"
+  },
+  "玄鳞鲶王": {
+    "name": "玄鳞鲶王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "reservoir",
+      "river"
+    ],
+    "weight_range": [
+      1680.0,
+      2800.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      1904.0,
+      2240.0,
+      2576.0
+    ],
+    "desc": "玄鳞之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Dark Scale Catfish King"
+  },
+  "古巨鲨幼体": {
+    "name": "古巨鲨幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      900.0,
+      1500.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      1050.0,
+      1200.0,
+      1350.0
+    ],
+    "desc": "史前鲨鱼幼体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Ancient Giant Shark Young"
+  },
+  "深海巨鳐": {
+    "name": "深海巨鳐",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      1200.0,
+      2000.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      1400.0,
+      1600.0,
+      1800.0
+    ],
+    "desc": "深海鳐鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Deep Sea Giant Ray"
+  },
+  "雷龙鳇": {
+    "name": "雷龙鳇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "lake",
+      "reservoir"
+    ],
+    "weight_range": [
+      2400.0,
+      4000.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      2720.0,
+      3200.0,
+      3680.0
+    ],
+    "desc": "雷电鳇鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Thunder Dragon Beluga"
+  },
+  "星鳞鲟": {
+    "name": "星鳞鲟",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      2100.0,
+      3500.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      2380.0,
+      2800.0,
+      3220.0
+    ],
+    "desc": "星鳞鲟鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Star Scale Sturgeon"
+  },
+  "炎鳞巨鲶": {
+    "name": "炎鳞巨鲶",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "nearshore"
+    ],
+    "weight_range": [
+      1800.0,
+      3000.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      2040.0,
+      2400.0,
+      2760.0
+    ],
+    "desc": "炎鳞大鲶",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Flame Scale Giant Catfish"
+  },
+  "晶鳞巨鲨": {
+    "name": "晶鳞巨鲨",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      2700.0,
+      4500.0
+    ],
+    "base_price": 10000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      3060.0,
+      3600.0,
+      4140.0
+    ],
+    "desc": "水晶鲨鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Crystal Scale Giant Shark"
+  },
+  "渊龙鳇": {
+    "name": "渊龙鳇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      3600.0,
+      6000.0
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      4080.0,
+      4800.0,
+      5520.0
+    ],
+    "desc": "深渊鳇鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Abyss Dragon Beluga"
+  },
+  "沧海龙亚成": {
+    "name": "沧海龙亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      2400.0,
+      4000.0
+    ],
+    "base_price": 30000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      2720.0,
+      3200.0,
+      3680.0
+    ],
+    "desc": "沧海之龙亚成",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Sea Dragon Young Adult"
+  },
+  "墨麒麟成体": {
+    "name": "墨麒麟成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "lake"
+    ],
+    "weight_range": [
+      3900.0,
+      6500.0
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      4420.0,
+      5200.0,
+      5980.0
+    ],
+    "desc": "成年麒麟",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Ink Kirin Adult"
+  },
+  "海龙兽幼体": {
+    "name": "海龙兽幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      1800.0,
+      3000.0
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      2040.0,
+      2400.0,
+      2760.0
+    ],
+    "desc": "海龙幼体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Sea Dragon Beast Young"
+  },
+  "深渊海蛇幼体": {
+    "name": "深渊海蛇幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      1500.0,
+      2500.0
+    ],
+    "base_price": 80000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "车大",
+      "房大",
+      "楼大",
+      "广场大"
+    ],
+    "size_thresholds": [
+      1750.0,
+      2000.0,
+      2250.0
+    ],
+    "desc": "海蛇幼体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Abyss Sea Serpent Young"
+  },
+  "成年鲸鲨": {
+    "name": "成年鲸鲨",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      10000,
+      15000.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      11000.0,
+      12500.0,
+      14000.0
+    ],
+    "desc": "成年鲸鲨",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Whale Shark Adult"
+  },
+  "成年姥鲨": {
+    "name": "成年姥鲨",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      10000,
+      12000.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      10400.0,
+      11000.0,
+      11600.0
+    ],
+    "desc": "成年姥鲨",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Basking Shark Adult"
+  },
+  "成年巨口鲨": {
+    "name": "成年巨口鲨",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      6000.0,
+      10000.0
+    ],
+    "base_price": 600,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      6800.0,
+      8000.0,
+      9200.0
+    ],
+    "desc": "成年巨口鲨",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "huge",
+    "english": "Megamouth Shark Adult"
+  },
+  "巨鳍乌贼": {
+    "name": "巨鳍乌贼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      10800.0,
+      18000.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      12240.0,
+      14400.0,
+      16560.0
+    ],
+    "desc": "巨型鳍乌贼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Giant Fin Squid"
+  },
+  "巨鳐王": {
+    "name": "巨鳐王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      12000.0,
+      20000.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      13600.0,
+      16000.0,
+      18400.0
+    ],
+    "desc": "鳐鱼之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Giant Ray King"
+  },
+  "古巨鲨亚成": {
+    "name": "古巨鲨亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      10000,
+      15000.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      11000.0,
+      12500.0,
+      14000.0
+    ],
+    "desc": "史前鲨鱼亚成",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Ancient Giant Shark Young Adult"
+  },
+  "深海巨鳐王": {
+    "name": "深海巨鳐王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      18000.0,
+      30000.0
+    ],
+    "base_price": 12000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      20400.0,
+      24000.0,
+      27600.0
+    ],
+    "desc": "深海鳐王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Deep Sea Giant Ray King"
+  },
+  "古巨鲨成体": {
+    "name": "古巨鲨成体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      21000.0,
+      35000.0
+    ],
+    "base_price": 12000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      23800.0,
+      28000.0,
+      32200.0
+    ],
+    "desc": "史前鲨鱼成年",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Ancient Giant Shark Adult"
+  },
+  "幼年沧龙": {
+    "name": "幼年沧龙",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      10000,
+      15000.0
+    ],
+    "base_price": 12000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      11000.0,
+      12500.0,
+      14000.0
+    ],
+    "desc": "史前沧龙幼体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Mosasaurus Young"
+  },
+  "晶鳞巨鲨王": {
+    "name": "晶鳞巨鲨王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      24000.0,
+      40000.0
+    ],
+    "base_price": 35000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      27200.0,
+      32000.0,
+      36800.0
+    ],
+    "desc": "水晶巨鲨",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Crystal Scale Giant Shark King"
+  },
+  "深渊巨鳐": {
+    "name": "深渊巨鳐",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      21000.0,
+      35000.0
+    ],
+    "base_price": 35000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      23800.0,
+      28000.0,
+      32200.0
+    ],
+    "desc": "深渊鳐鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Abyss Giant Ray"
+  },
+  "炎鳞巨鲸": {
+    "name": "炎鳞巨鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      27000.0,
+      45000.0
+    ],
+    "base_price": 35000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      30600.0,
+      36000.0,
+      41400.0
+    ],
+    "desc": "炎鳞鲸鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Flame Scale Giant Whale"
+  },
+  "苍海巨鱿": {
+    "name": "苍海巨鱿",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      30000.0,
+      50000.0
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      34000.0,
+      40000.0,
+      46000.0
+    ],
+    "desc": "苍海巨鱿",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Azure Sea Giant Squid"
+  },
+  "成年沧海龙": {
+    "name": "成年沧海龙",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      24000.0,
+      40000.0
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      27200.0,
+      32000.0,
+      36800.0
+    ],
+    "desc": "成年沧海龙",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Sea Dragon Adult"
+  },
+  "太虚鲸": {
+    "name": "太虚鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      33000.0,
+      55000.0
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      37400.0,
+      44000.0,
+      50600.0
+    ],
+    "desc": "太虚之鲸",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Taixu Whale"
+  },
+  "深渊海蛇亚成": {
+    "name": "深渊海蛇亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      18000.0,
+      30000.0
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      20400.0,
+      24000.0,
+      27600.0
+    ],
+    "desc": "海蛇亚成",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Abyss Sea Serpent Young Adult"
+  },
+  "克拉肯幼体": {
+    "name": "克拉肯幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      15000.0,
+      25000.0
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      17000.0,
+      20000.0,
+      23000.0
+    ],
+    "desc": "克拉肯幼体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Kraken Young"
+  },
+  "利维坦幼体": {
+    "name": "利维坦幼体",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      12000.0,
+      20000.0
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      13600.0,
+      16000.0,
+      18400.0
+    ],
+    "desc": "利维坦幼体",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Leviathan Young"
+  },
+  "海龙兽亚成": {
+    "name": "海龙兽亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      21000.0,
+      35000.0
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      23800.0,
+      28000.0,
+      32200.0
+    ],
+    "desc": "海龙亚成",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Sea Dragon Beast Young Adult"
+  },
+  "巨鲸": {
+    "name": "巨鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      100000,
+      150000.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      110000.0,
+      125000.0,
+      140000.0
+    ],
+    "desc": "20m级巨鲸",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Giant Whale"
+  },
+  "成年蓝鲸": {
+    "name": "成年蓝鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "common",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      100000,
+      120000.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      104000.0,
+      110000.0,
+      116000.0
+    ],
+    "desc": "成年蓝鲸",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Blue Whale Adult"
+  },
+  "古鲸": {
+    "name": "古鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      108000.0,
+      180000.0
+    ],
+    "base_price": 12000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      122400.0,
+      144000.0,
+      165600.0
+    ],
+    "desc": "史前古鲸",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Ancient Whale"
+  },
+  "巨鱿王": {
+    "name": "巨鱿王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "uncommon",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      100000,
+      150000.0
+    ],
+    "base_price": 12000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      110000.0,
+      125000.0,
+      140000.0
+    ],
+    "desc": "巨鱿之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Giant Squid King"
+  },
+  "蓝鲸王": {
+    "name": "蓝鲸王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      150000.0,
+      250000.0
+    ],
+    "base_price": 35000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      170000.0,
+      200000.0,
+      230000.0
+    ],
+    "desc": "鲸鱼之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Blue Whale King"
+  },
+  "沧龙亚成": {
+    "name": "沧龙亚成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "rare",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      100000,
+      120000.0
+    ],
+    "base_price": 35000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      104000.0,
+      110000.0,
+      116000.0
+    ],
+    "desc": "史前沧龙亚成",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Mosasaurus Young Adult"
+  },
+  "星鳞巨鲸": {
+    "name": "星鳞巨鲸",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      180000.0,
+      300000.0
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      204000.0,
+      240000.0,
+      276000.0
+    ],
+    "desc": "星鳞鲸鱼",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Star Scale Giant Whale"
+  },
+  "深渊巨王乌贼": {
+    "name": "深渊巨王乌贼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      150000.0,
+      250000.0
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      170000.0,
+      200000.0,
+      230000.0
+    ],
+    "desc": "深渊乌贼王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Abyss Giant King Squid"
+  },
+  "成年沧龙": {
+    "name": "成年沧龙",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      120000.0,
+      200000.0
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      136000.0,
+      160000.0,
+      184000.0
+    ],
+    "desc": "史前沧龙成年",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Mosasaurus Adult"
+  },
+  "克拉肯半成": {
+    "name": "克拉肯半成",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      210000.0,
+      350000.0
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      238000.0,
+      280000.0,
+      322000.0
+    ],
+    "desc": "半成熟克拉肯",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Kraken Young Adult"
+  },
+  "太虚鲸王": {
+    "name": "太虚鲸王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      270000.0,
+      450000.0
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      306000.0,
+      360000.0,
+      414000.0
+    ],
+    "desc": "太虚鲸之王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Taixu Whale King"
+  },
+  "成年深渊海蛇": {
+    "name": "成年深渊海蛇",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      240000.0,
+      400000.0
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      272000.0,
+      320000.0,
+      368000.0
+    ],
+    "desc": "海蛇成年",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Abyss Sea Serpent Adult"
+  },
+  "成年利维坦": {
+    "name": "成年利维坦",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      360000.0,
+      600000.0
+    ],
+    "base_price": 800000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      408000.0,
+      480000.0,
+      552000.0
+    ],
+    "desc": "利维坦成年",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Leviathan Adult"
+  },
+  "世界蛇之影": {
+    "name": "世界蛇之影",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      420000.0,
+      700000.0
+    ],
+    "base_price": 800000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      476000.0,
+      560000.0,
+      644000.0
+    ],
+    "desc": "神话巨蛇",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Shadow of Jörmungandr"
+  },
+  "深渊之母": {
+    "name": "深渊之母",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      480000.0,
+      800000.0
+    ],
+    "base_price": 800000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      544000.0,
+      640000.0,
+      736000.0
+    ],
+    "desc": "深渊起源",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Mother of Abyss"
+  },
+  "成年海龙兽": {
+    "name": "成年海龙兽",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      300000.0,
+      500000.0
+    ],
+    "base_price": 800000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      340000.0,
+      400000.0,
+      460000.0
+    ],
+    "desc": "海龙成年",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Sea Dragon Beast Adult"
+  },
+  "成年克拉肯": {
+    "name": "成年克拉肯",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "mythic",
+    "tier": 5,
+    "habitat": [
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      390000.0,
+      650000.0
+    ],
+    "base_price": 800000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      442000.0,
+      520000.0,
+      598000.0
+    ],
+    "desc": "克拉肯成年",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Kraken Adult"
+  },
+  "海怪乌贼": {
+    "name": "海怪乌贼",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 3,
+    "habitat": [
+      "deep_sea"
+    ],
+    "weight_range": [
+      5.0,
+      30.0
+    ],
+    "base_price": 4000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      11.25,
+      17.5,
+      23.75
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "鲨鱼小": {
+    "name": "鲨鱼小",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "epic",
+    "tier": 3,
+    "habitat": [
+      "nearshore",
+      "deep_sea"
+    ],
+    "weight_range": [
+      8.0,
+      30.0
+    ],
+    "base_price": 1500,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "小臂粗",
+      "腰粗",
+      "人大",
+      "车大"
+    ],
+    "size_thresholds": [
+      13.5,
+      19.0,
+      24.5
+    ],
+    "desc": "",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "medium"
+  },
+  "渊龙巨鲨": {
+    "name": "渊龙巨鲨",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      36000.0,
+      60000.0
+    ],
+    "base_price": 100000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      40800.0,
+      48000.0,
+      55200.0
+    ],
+    "desc": "深渊龙鲨",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "giant",
+    "english": "Abyss Dragon Shark"
+  },
+  "渊龙海王": {
+    "name": "渊龙海王",
+    "emoji": "🐟",
+    "category": "fish",
+    "rarity": "legendary",
+    "tier": 5,
+    "habitat": [
+      "river",
+      "lake",
+      "deep_sea",
+      "abyss"
+    ],
+    "weight_range": [
+      300000.0,
+      500000.0
+    ],
+    "base_price": 300000,
+    "satiety_restore": 50,
+    "mood_restore": 10,
+    "exp_reward": 100,
+    "size_labels": [
+      "广场大",
+      "街区大",
+      "城镇大",
+      "城市大"
+    ],
+    "size_thresholds": [
+      340000.0,
+      400000.0,
+      460000.0
+    ],
+    "desc": "深渊海王",
+    "strength": 100,
+    "diet": "omnivore",
+    "size_class": "titan",
+    "english": "Abyss Dragon Sea King"
   }
 }

@@ -17,7 +17,6 @@ from .constants import INITIAL_GOLD, INITIAL_ATTRIBUTES, INITIAL_SKILLS
 class UserStatus:
     FREE = "空闲"
     WORKING = "工作中"
-    SLEEPING = "睡眠中"
     LEARNING = "学习中"
     ENTERTAINING = "娱乐中"
     HOSPITALIZED = "住院中"

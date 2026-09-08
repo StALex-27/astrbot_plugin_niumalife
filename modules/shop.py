@@ -1,503 +1,566 @@
 """
-商店系统模块
-包含商店配置、商品管理、购买逻辑
+商店系统 V3 - 统合商店模块
+
+9/4重构:
+- 取消基础商店/公司商店分离
+- 取消固定/随机商品池配置
+- 所有可售卖物品 (price>0) 统一进商店
+- 按 4 大分类展示: 食物 / 药品 / 装备 / 渔具
+- /商店 无参数: 整合页面, 每类随机 6 种 (2x3)
+- /商店 <分类>: 完整列表 (按 tier 排序)
+- /商店 买 <物品名> [数量]: 购买
 """
 import random
-from datetime import datetime, timezone, timedelta
-from typing import Optional
+from typing import Optional, Tuple, List
 
 from .constants import ITEMS
+from .skills import get_skill_level as _get_skill_level, get_skill_exp_rate as _get_skill_exp_rate
+from ..src.data.content_registry import ContentRegistry
 
 
 # ============================================================
-# 商店配置
+# 分类筛选
 # ============================================================
 
-TICKETS_PER_HOUR = 60
+# 9/7 命名统一: 全部加 fishing_ 前缀
+FISHING_SUBS = {"fishing_rod", "fishing_line", "fishing_hook", "fishing_float", "fishing_reel", "fishing_bait", "fishing_lure", "fishing_waders"}
+FISHING_SLOTS = {"fishing_rod", "fishing_line", "fishing_hook", "fishing_float", "fishing_bait", "fishing_reel", "fishing_lure", "fishing_waders"}
+FISHING_CATEGORIES = {"tool"}  # 渔具有些 category=tool
 
-SHOPS = {
-    "基础商店": {
-        "name": "基础商店",
-        "emoji": "🏪",
-        "desc": "日常所需，应有尽有",
-        "fixed_items": [
-            "泡面", "矿泉水", "面包", "薯片", "创可贴", "纸巾"
-        ],
-        "random_pool": ["肉包", "巧克力", "电池", "牙膏", "维生素"],
-        "random_count": 3,
-        "refresh_interval": "1h",  # 1小时刷新随机商品
-    },
-    "小吃街": {
-        "name": "小吃街",
-        "emoji": "🍜",
-        "desc": "各地美食，吃货天堂",
-        "fixed_items": [
-            "关东煮", "奶茶", "咖啡", "炸鸡", "鸡蛋"
-        ],
-        "random_pool": [
-            "披萨", "火锅", "沙拉", "水果", "肉包", "豪华便当"
-        ],
-        "random_count": 3,
-        "refresh_interval": "3h",
-    },
-    "药品店": {
-        "name": "药品店",
-        "emoji": "💊",
-        "desc": "健康保障，药品齐全",
-        "fixed_items": [
-            "创可贴", "止痛药", "维生素"
-        ],
-        "random_pool": [
-            "感冒药", "胃药", "能量饮料", "安眠药"
-        ],
-        "random_count": 2,
-        "refresh_interval": "6h",
-    },
-    "超市": {
-        "name": "超市",
-        "emoji": "🛒",
-        "desc": "一站式购物，生活必备",
-        "fixed_items": [
-            "电池", "纸巾", "牙膏", "沐浴露"
-        ],
-        "random_pool": [
-            "雨伞", "防晒霜", "零食礼包", "牛奶", "水果"
-        ],
-        "random_count": 3,
-        "refresh_interval": "12h",
-    },
-    "工具店": {
-        "name": "工具店",
-        "emoji": "🔧",
-        "desc": "装备升级，效率加倍",
-        "fixed_items": [
-            "帆布双肩包", "移动电源"
-        ],
-        "random_pool": [
-            "降噪耳塞", "机械键盘", "雨伞", "防晒霜"
-        ],
-        "random_count": 2,
-        "refresh_interval": "24h",
-        "category": "tool",
-    },
-    "数码店": {
-        "name": "数码店",
-        "emoji": "📱",
-        "desc": "科技前沿，数码潮流",
-        "fixed_items": [
-            "备用机", "红米Note12"
-        ],
-        "random_pool": [
-            "小米14Ultra", "华为Mate60Pro", "降噪耳机"
-        ],
-        "random_count": 2,
-        "refresh_interval": "24h",
-        "category": "phone",
-    },
-    "服装店": {
-        "name": "服装店",
-        "emoji": "👔",
-        "desc": "时尚穿搭，提升魅力",
-        "fixed_items": [
-            "格子衬衫", "棒球帽", "钥匙扣"
-        ],
-        "random_pool": [
-            "纯色T恤", "品牌卫衣", "防蓝光眼镜"
-        ],
-        "random_count": 2,
-        "refresh_interval": "12h",
-        "category": "clothing",
-    },
-    "饰品店": {
-        "name": "饰品店",
-        "emoji": "💍",
-        "desc": "精致饰品，品味之选",
-        "fixed_items": [
-            "钥匙扣", "品牌钱包"
-        ],
-        "random_pool": [
-            "平安玉佩", "AppleWatch", "降噪耳机"
-        ],
-        "random_count": 2,
-        "refresh_interval": "24h",
-        "category": "accessory",
-    },
+CATEGORY_NAMES = {
+    "food": "食物",
+    "props": "道具",
+    "equip": "装备",
+    "fishing": "渔具",
+    "daily": "日用品",
+}
+
+CATEGORY_EMOJI = {
+    "food": "🍞",
+    "props": "🧪",
+    "equip": "🎒",
+    "fishing": "🎣",
+    "daily": "🧻",
 }
 
 
-# 随机商店的全局随机池（不在其他固定商店中的稀有物品）
-GLOBAL_RANDOM_POOL = [
-    "豪华便当", "自助餐券", "安眠药", "能量饮料",
-    "零食礼包", "沙拉", "火锅", "披萨",
-    "机械键盘", "商务休闲装", "智能眼镜",
-    "AppleWatch", "iPhone16ProMax"
+# ============================================================
+# Effects 格式化
+# ============================================================
+
+SIZE_LABELS = {
+    "tiny": "微型", "small": "小型", "medium": "中型",
+    "large": "大型", "huge": "巨型", "giant": "超巨型", "titan": "泰坦级",
+}
+HABITAT_LABELS = {"pond": "池", "river": "河", "reservoir": "库", "coast": "海岸", "shallow_sea": "浅海", "deep_sea": "深海"}
+DIET_LABELS = {"carnivore": "肉", "herbivore": "草", "omnivore": "杂"}
+FOOD_ATTR_LABELS = {"strength": "体力", "health": "健康", "satiety": "饱食", "mood": "心情", "energy": "精力"}
+
+# 优先级 + 显示标签
+EFFECTS_PRIORITY = [
+    ("target_size_weights", "尺寸"),
+    ("habitat_filter", "水域"),
+    ("target_diet", "食性"),
+    ("load_capacity_max", "承载"),
+    ("max_hook_slots", "钩槽"),
+    ("fishing_bonus", "中鱼"),
+    ("habitat_bonus", "水域"),
+    ("rare_bonus", "稀有"),
+    ("duration_reduce", "收竿"),
 ]
 
 
-# ============================================================
-# 商店刷新状态
-# ============================================================
+def format_effects_short(effects: dict, max_len: int = 70) -> str:
+    """格式化 effects 为短文本
 
-def parse_refresh_interval(interval: str) -> int:
-    """解析刷新间隔（转换为分钟）
-    
     Args:
-        interval: 间隔字符串，如 "1h", "3h", "24h"
-    
-    Returns:
-        int: 分钟数
+        effects: 物品 effects 字典
+        max_len: 最大字符数
     """
-    interval = interval.lower().strip()
-    if interval.endswith("h"):
-        return int(interval[:-1]) * 60
-    elif interval.endswith("d"):
-        return int(interval[:-1]) * 60 * 24
-    elif interval.endswith("m"):
-        return int(interval[:-1])
-    else:
-        return int(interval)
+    if not effects:
+        return ""
+
+    parts = []
+    for key, label in EFFECTS_PRIORITY:
+        if key not in effects:
+            continue
+        v = effects[key]
+        if key == "target_size_weights" and isinstance(v, dict):
+            sz = ",".join(f"{SIZE_LABELS.get(k, k)}{int(w*100)}%" for k, w in v.items())
+            parts.append(f"{label}:{sz}")
+        elif key == "habitat_filter" and isinstance(v, list):
+            parts.append(f"{label}:{'.'.join(HABITAT_LABELS.get(h, h) for h in v)}")
+        elif key == "habitat_bonus" and isinstance(v, dict):
+            # 鱼竿: {reservoir: 0.1} → "水域:库+10%"
+            parts.append(f"水域:" + ",".join(f"{HABITAT_LABELS.get(h, h)}+{int(w*100)}%" for h, w in v.items()))
+        elif key == "target_diet" and isinstance(v, list):
+            parts.append(f"{label}:{'.'.join(DIET_LABELS.get(d, d) for d in v)}")
+        elif key == "load_capacity_max":
+            parts.append(f"{label}{v}kg")
+        elif key == "max_hook_slots":
+            parts.append(f"{label}{int(v)}")
+        elif key == "duration_reduce":
+            if v > 0:
+                parts.append(f"{label}-{int(v)}")
+        elif isinstance(v, float) and v > 0:
+            parts.append(f"{label}+{int(v*100)}%")
+        elif isinstance(v, (int, float)) and v > 0:
+            parts.append(f"{label}+{v}")
+        # 长度控制
+        if len(" · ".join(parts)) > max_len:
+            break
+
+    # 食物/药品属性
+    if not parts:
+        food_attrs = []
+        for attr in ["strength", "health", "satiety", "mood", "energy"]:
+            if attr in effects:
+                food_attrs.append(f"+{effects[attr]}{FOOD_ATTR_LABELS.get(attr, attr)}")
+        if food_attrs:
+            parts.extend(food_attrs)
+
+    return " · ".join(parts)[:max_len]
 
 
-def should_refresh(last_time: Optional[str], interval: str) -> bool:
-    """检查是否应该刷新
-    
+# ============================================================
+# 解锁条件检查
+# ============================================================
+
+def get_player_level(user: dict) -> int:
+    """计算玩家总等级: 基于属性 / 技能 / 累计"""
+    # 1. 属性等级
+    attrs = user.get("attributes", {})
+    attr_level = max([v // 20 for v in attrs.values()] + [0])
+    # 2. 技能等级 (从 skill_exp 算)
+    skills = user.get("skills", {})
+    skill_level = max(list(skills.values()) + [0])
+    # 3. 总等级 = max(属性, 技能)
+    return max(attr_level, skill_level, 1)
+
+
+def get_user_skill_level(user: dict, skill_name: str) -> int:
+    """获取用户某技能等级 (兼容 old/new)
+
+    9/4: 从 skills.json 读 exp_rate (如 钓鱼 = fishing_30), 让曲线生效
+    """
+    # 新格式 skill_exp
+    skill_exp = user.get("skill_exp", {})
+    if skill_name in skill_exp:
+        # 9/4: 按 skills.json 的 exp_rate 查等级, 不再简化 // 100
+        exp_rate = _get_skill_exp_rate(skill_name)
+        return _get_skill_level(skill_exp[skill_name], exp_rate)
+    # 旧格式 skills[skill_name]
+    skills = user.get("skills", {})
+    return int(skills.get(skill_name, 0))
+
+
+def check_unlock_requirements(user: dict, item_info: dict) -> tuple[bool, str]:
+    """检查用户是否满足物品解锁条件
+
     Args:
-        last_time: 上次刷新时间 (ISO格式)
-        interval: 刷新间隔
-    
+        user: 用户数据
+        item_info: 物品配置 dict
+
     Returns:
-        bool: 是否应该刷新
+        (unlocked, reason): (True, "") 解锁 / (False, "原因") 锁定
     """
-    if last_time is None:
+    # 9/7: ContentRegistry.to_dict() 把 unlock_requirements 存在 extra 子 dict,
+    #       必须先扁平化以兼容 item_info["unlock_requirements"] 直接访问
+    req = item_info.get("unlock_requirements") or item_info.get("extra", {}).get("unlock_requirements") or {}
+    if not req:
+        return True, ""
+
+    # 1. 玩家等级
+    if "min_player_level" in req:
+        need = req["min_player_level"]
+        cur = get_player_level(user)
+        if cur < need:
+            return False, f"需要玩家等级 Lv.{need}（当前 Lv.{cur}）"
+
+    # 2. 钓鱼技能等级
+    if "min_fishing_level" in req:
+        need = req["min_fishing_level"]
+        cur = get_user_skill_level(user, "钓鱼")
+        if cur < need:
+            return False, f"需要钓鱼技能 Lv.{need}（当前 Lv.{cur}）"
+
+    # 3. 苦力技能等级
+    if "min_labor_level" in req:
+        need = req["min_labor_level"]
+        cur = get_user_skill_level(user, "苦力")
+        if cur < need:
+            return False, f"需要苦力技能 Lv.{need}（当前 Lv.{cur}）"
+
+    # 4. 公司好感度
+    if "min_company_favor" in req:
+        need = req["min_company_favor"]
+        favor = user.get("company_favorability", {})
+        max_favor = max(favor.values()) if favor else 0
+        if max_favor < need:
+            return False, f"需要公司好感度 {need}（当前最高 {max_favor}）"
+
+    # 5. 称号
+    if "required_title" in req:
+        need = req["required_title"]
+        titles = user.get("titles", [])
+        if need not in titles:
+            return False, f"需要称号「{need}」"
+
+    return True, ""
+
+
+def _is_fishing_item(v: dict) -> bool:
+    """判断是否渔具: subcategory 或 slot 在 FISHING_SUBS/SLOTS 即算渔具"""
+    if v.get("subcategory") in FISHING_SUBS:
         return True
-    
-    try:
-        last = datetime.fromisoformat(last_time)
-        now = datetime.now(timezone(timedelta(hours=8)))
-        elapsed = (now - last).total_seconds() / 60
-        return elapsed >= parse_refresh_interval(interval)
-    except:
+    if v.get("slot") in FISHING_SLOTS:
         return True
-
-
-# ============================================================
-# 商店状态管理
-# ============================================================
-
-def get_shop_state(plugin) -> dict:
-    """获取商店状态（从KV存储）"""
-    return plugin._shop_state or {}
-
-
-def save_shop_state(plugin, state: dict):
-    """保存商店状态"""
-    plugin._shop_state = state
-
-
-def refresh_shop_items(plugin, shop_id: str) -> list:
-    """刷新商店的随机商品
-    
-    Args:
-        plugin: 插件实例
-        shop_id: 商店ID
-    
-    Returns:
-        list: 刷新后的随机商品ID列表
-    """
-    shop = SHOPS.get(shop_id)
-    if not shop:
-        return []
-    
-    pool = shop.get("random_pool", [])
-    count = shop.get("random_count", 3)
-    
-    if len(pool) <= count:
-        return pool.copy()
-    
-    # 随机选择
-    selected = random.sample(pool, count)
-    
-    # 更新状态
-    state = get_shop_state(plugin)
-    state[shop_id] = {
-        "random_items": selected,
-        "last_refresh": datetime.now(timezone(timedelta(hours=8))).isoformat()
-    }
-    save_shop_state(plugin, state)
-    
-    return selected
-
-
-def get_shop_items(plugin, shop_id: str) -> tuple[list, list]:
-    """获取商店商品
-    
-    Args:
-        plugin: 插件实例
-        shop_id: 商店ID
-    
-    Returns:
-        tuple[list, list]: (固定商品, 随机商品)
-    """
-    shop = SHOPS.get(shop_id)
-    if not shop:
-        return [], []
-    
-    fixed = shop.get("fixed_items", [])
-    
-    # 检查随机商品是否需要刷新
-    state = get_shop_state(plugin)
-    shop_state = state.get(shop_id, {})
-    random_items = shop_state.get("random_items", [])
-    last_refresh = shop_state.get("last_refresh")
-    
-    interval = shop.get("refresh_interval", "1h")
-    if should_refresh(last_refresh, interval) or not random_items:
-        random_items = refresh_shop_items(plugin, shop_id)
-    
-    return fixed, random_items
-
-
-def get_global_random_items(plugin, count: int = 3) -> list:
-    """获取全局随机商品（用于基础商店的随机区）
-    
-    Args:
-        plugin: 插件实例
-        count: 商品数量
-    
-    Returns:
-        list: 随机商品ID列表
-    """
-    state = get_shop_state(plugin)
-    global_state = state.get("_global_random", {})
-    last_refresh = global_state.get("last_refresh")
-    
-    if should_refresh(last_refresh, "1h"):
-        selected = random.sample(GLOBAL_RANDOM_POOL, min(count, len(GLOBAL_RANDOM_POOL)))
-        global_state = {
-            "items": selected,
-            "last_refresh": datetime.now(timezone(timedelta(hours=8))).isoformat()
-        }
-        state["_global_random"] = global_state
-        save_shop_state(plugin, state)
-        return selected
-    
-    return global_state.get("items", [])
-
-
-# ============================================================
-# 购买逻辑
-# ============================================================
-
-def is_item_in_shop(plugin, shop_id: str, item_id: str) -> bool:
-    """检查物品是否在商店中（固定+随机）
-    
-    Args:
-        plugin: 插件实例
-        shop_id: 商店ID
-        item_id: 物品ID
-    
-    Returns:
-        bool: 物品是否在商店中
-    """
-    fixed, random_items = get_shop_items(plugin, shop_id)
-    return item_id in fixed or item_id in random_items
-
-
-def is_item_available_global(plugin, item_id: str) -> bool:
-    """检查物品是否在任何商店中可购买
-    
-    Args:
-        plugin: 插件实例
-        item_id: 物品ID
-    
-    Returns:
-        bool: 物品是否可购买
-    """
-    for shop_id in SHOPS.keys():
-        if is_item_in_shop(plugin, shop_id, item_id):
-            return True
     return False
 
 
-def buy_item(
-    plugin, user: dict, shop_id: str, item_id: str, quantity: int = 1
-) -> tuple[bool, str]:
-    """购买物品
-    
-    Args:
-        plugin: 插件实例
-        user: 用户数据
-        shop_id: 商店ID
-        item_id: 物品ID
-        quantity: 数量
-    
-    Returns:
-        tuple[bool, str]: (是否成功, 消息)
+def _classify_item(v: dict) -> Optional[str]:
+    """返回物品分类 key: food/props/equip/fishing/daily/None (不可售卖)
+
+    9/4晚: 道具栏只收纳 药品 + 附魔券
+    优先级: 渔具 > 食物 > 道具 > 装备
     """
-    shop = SHOPS.get(shop_id)
-    if not shop:
-        return False, "商店不存在"
-    
-    # 检查物品是否在商店中
-    fixed, random_items = get_shop_items(plugin, shop_id)
-    if item_id not in fixed and item_id not in random_items:
-        return False, f"{shop['emoji']} {shop['name']} 没有该商品"
-    
+    if v.get("price", 0) <= 0:
+        return None  # 无价/不可售卖
+    if _is_fishing_item(v):
+        return "fishing"
+    cat = v.get("category", "")
+    if cat == "food":
+        return "food"
+    # 9/4晚: 道具栏只收纳 药品 + 附魔券
+    if cat == "medicine":
+        return "props"
+    if cat == "enchant":
+        return "props"
+    if cat == "daily":
+        return "daily"
+    # 通用装备: slot in (clothing/head/accessory/tool/phone) 或 category=equipment
+    slot = v.get("slot", "")
+    if cat == "equipment":
+        return "equip"
+    if slot in ("clothing", "head", "accessory", "tool", "phone", "neck", "waist"):
+        return "equip"
+    return None
+
+
+def get_sellable_items() -> dict:
+    """返回 {category: [(item_id, item_info), ...]} 所有可售卖物品
+
+    按 tier 排序
+
+    9/6: 改用 ContentRegistry.instance().filter_by_action("sell") 替代遍历 ITEMS dict。
+    ContentRegistry 自动按 category/slot/price 推导 actions (price>0 即可 sell)。
+    9/4晚: 道具栏只收纳 药品 + 附魔券 (medicine/enchant → "props" 桶)
+    """
+    groups = {"food": [], "props": [], "equip": [], "fishing": [], "daily": []}
+    # 9/6: 从 ContentRegistry 取所有可卖物品 (ContentDef), 转回 dict 格式给旧调用方
+    reg = ContentRegistry.instance()
+    sellable = reg.filter_by_action("sell", content_type="item")
+    for d in sellable:
+        item = d.to_dict()
+        # 9/4晚: 道具栏合并 (medicine + enchant → "props")
+        cat = _classify_item(item)
+        if not cat:
+            continue
+        # ContentDef 用 tuple of tuple 存 effects, 转回 dict 给调用方
+        groups[cat].append((d.content_id, item))
+    # 按 tier 排序
+    for cat in groups:
+        groups[cat].sort(key=lambda x: (x[1].get("tier", 1), x[1].get("price", 0)))
+    return groups
+
+
+# ============================================================
+# 商店刷新 (随机抽取)
+# ============================================================
+
+SHOP_REFRESH_STATE = {}  # {category: [(item_id, ts), ...]}
+
+
+def refresh_category_items(category: str, count: int = 6, seed: Optional[int] = None) -> List[Tuple[str, dict]]:
+    """随机抽取某个分类的 count 个物品 (按 tier 均匀抽样)
+
+    策略: 按 tier 权重, 每个 tier 抽 1-2 个, 保证展示多样性
+    """
+    all_items = get_sellable_items().get(category, [])
+    if not all_items:
+        return []
+    if len(all_items) <= count:
+        return all_items.copy()
+
+    # 按 tier 分桶
+    by_tier = {}
+    for item_id, item in all_items:
+        tier = item.get("tier", 1)
+        by_tier.setdefault(tier, []).append((item_id, item))
+
+    tiers = sorted(by_tier.keys())
+    result = []
+
+    rng = random.Random(seed) if seed is not None else random.Random()
+
+    # 第一轮: 每个 tier 抽 1 个
+    for tier in tiers:
+        if len(result) >= count:
+            break
+        if by_tier[tier]:
+            pick = rng.choice(by_tier[tier])
+            result.append(pick)
+            by_tier[tier].remove(pick)
+
+    # 第二轮: 仍不够, 随机补齐
+    if len(result) < count:
+        remaining = [x for tier_items in by_tier.values() for x in tier_items if x not in result]
+        rng.shuffle(remaining)
+        for pick in remaining:
+            if len(result) >= count:
+                break
+            result.append(pick)
+
+    return result[:count]
+
+
+def get_shop_display_items(plugin=None, seed: Optional[int] = None) -> dict:
+    """获取整合商店页面展示的物品
+
+    每分类随机 6 个
+    """
+    display = {}
+    for cat in ["food", "props", "equip", "fishing"]:
+        display[cat] = refresh_category_items(cat, count=6, seed=seed)
+    return display
+
+
+# ============================================================
+# 整合商店页面渲染
+# ============================================================
+
+def format_shop_unified(plugin=None, user: Optional[dict] = None) -> str:
+    """整合商店首页 - 4 分类各 6 种 (2 行 3 列)"""
+    lines = [
+        "═══════════════════════════════════════════",
+        "        「 🏪 商 店 」",
+        "═══════════════════════════════════════════",
+    ]
+    if user:
+        lines.append(f"💰 金币: ¥{int(user.get('gold', 0))}")
+        lines.append("")
+
+    display = get_shop_display_items(plugin)
+    for cat_key, items in display.items():
+        if not items:
+            continue
+        cat_name = CATEGORY_NAMES[cat_key]
+        cat_emoji = CATEGORY_EMOJI[cat_key]
+        lines.append(f"── {cat_emoji} {cat_name} ──")
+        lines.extend(_format_grid(items, cols=3))
+        lines.append("")
+
+    lines.append("═══════════════════════════════════════════")
+    lines.append("📋 /商店 <分类>   查看完整列表")
+    lines.append("   /商店 买 <物品名> [数量]   购买")
+    lines.append("   分类: 食物 / 道具 / 装备 / 渔具 / 日用品")
+    lines.append("═══════════════════════════════════════════")
+    return "\n".join(lines)
+
+
+def _format_grid(items: list, cols: int = 3) -> list:
+    """2D 网格格式化 (默认 2 行 3 列)
+
+    Returns: 字符串行列表
+    """
+    if not items:
+        return ["  (无)"]
+
+    lines = []
+    row = []
+    for item_id, item in items:
+        name = item.get("name", item_id)
+        price = item.get("price", 0)
+        rarity = item.get("rarity", "common")
+        rarity_dot = {"common": "⚪", "uncommon": "🟢", "rare": "🔵", "epic": "🟣", "legendary": "🟡"}.get(rarity, "⚪")
+        row.append(f"{rarity_dot}{name} ¥{price}")
+        if len(row) >= cols:
+            lines.append("  " + "  |  ".join(row))
+            row = []
+    if row:
+        lines.append("  " + "  |  ".join(row))
+    return lines
+
+
+def format_shop_category(category=None, plugin=None, user: dict = None, tier_groups: list = None, page_title: str = "") -> str:
+    """完整展示某个分类 (按 tier 排序)
+
+    Args:
+        category: 分类 key (兼容旧调用, 可选)
+        plugin: 兼容旧签名
+        user: 用户 (用于昵称/金币等)
+        tier_groups: 已按 tier 分组的物品 (新调用) - 优先使用
+        page_title: 页面标题
+    """
+    lines = [
+        "═══════════════════════════════════════════",
+    ]
+    if page_title:
+        lines.append(f"  📦 「 {page_title} 」")
+    else:
+        cat_name = CATEGORY_NAMES.get(category, category)
+        cat_emoji = CATEGORY_EMOJI.get(category, "📦")
+        lines.append(f"  {cat_emoji} 「 {cat_name} 商店 」")
+    lines.extend([
+        "═══════════════════════════════════════════",
+    ])
+
+    # 优先用 tier_groups (新调用方式)
+    if tier_groups:
+        for grp in tier_groups:
+            tier = grp.get("tier", 1)
+            items = grp.get("item_list", [])
+            lines.append(f"── T{tier} ──")
+            for card in items:
+                if isinstance(card, dict):
+                    nm = card.get("name", "?")
+                    pr = card.get("price", 0)
+                    lines.append(f"  {nm} ¥{pr}")
+                else:
+                    lines.append(f"  {card}")
+        lines.append("═══════════════════════════════════════════")
+        return "\n".join(lines)
+
+    # fallback: 用 category 查
+    all_items = get_sellable_items().get(category, [])
+    if not all_items:
+        return f"❌ 无该分类商品: {category}"
+
+    lines.append(f"  共 {len(all_items)} 件商品")
+    lines.append("═══════════════════════════════════════════")
+
+    # 按 tier 分组
+    by_tier = {}
+    for item_id, item in all_items:
+        tier = item.get("tier", 1)
+        by_tier.setdefault(tier, []).append((item_id, item))
+
+    for tier in sorted(by_tier.keys()):
+        lines.append(f"── T{tier} ──")
+        lines.extend(_format_grid(by_tier[tier], cols=3))
+        lines.append("")
+
+    lines.append("═══════════════════════════════════════════")
+    lines.append(f"📋 /商店 买 <物品名> [数量]")
+    lines.append("═══════════════════════════════════════════")
+    return "\n".join(lines)
+
+
+# ============================================================
+# 购买逻辑 (兼容旧 buy_item 接口)
+# ============================================================
+
+def buy_item(
+    plugin, user: dict, item_id: str, quantity: int = 1
+) -> tuple[bool, str]:
+    """购买物品 - 9/4 重构: 不依赖店铺分类, 任何可售卖物品都买
+
+    Args:
+        plugin: 插件实例 (兼容旧接口)
+        user: 用户数据
+        item_id: 物品 ID
+        quantity: 数量
+
+    Returns:
+        tuple[bool, str]: (成功, 消息)
+    """
     item = ITEMS.get(item_id)
     if not item:
-        return False, "物品不存在"
-    
-    # 检查金币
+        return False, "❌ 物品不存在"
+
+    if item.get("price", 0) <= 0:
+        return False, "❌ 该物品不可购买"
+
     price = item.get("price", 0) * quantity
     if user.get("gold", 0) < price:
-        return False, f"金币不足，需要 {price} 金币"
-    
-    # 检查背包
-    category = item.get("category", "")
-    subcategory = item.get("subcategory", "")
-    is_food = category == "food" or category == "medicine" or category == "daily"
-    
-    if is_food:
-        # 食物/药品可以堆叠，检查是否有同名物品
-        inventory = user.get("inventory", [])
-        stack_found = False
-        stack_idx = -1
-        
-        if item.get("stackable", False):
-            for i, inv_item in enumerate(inventory):
-                if inv_item.get("id") == item_id:
-                    stack_found = True
-                    stack_idx = i
-                    break
-        
-        if stack_found and item.get("stackable"):
-            # 堆叠
-            inventory[stack_idx]["quantity"] = inventory[stack_idx].get("quantity", 1) + quantity
-        else:
-            # 新增
+        return False, f"❌ 金币不足，需要 {price} 金币，你只有 {int(user.get('gold', 0))}"
+
+    # 加 inventory
+    inventory = user.get("inventory", [])
+    is_food = item.get("category") == "food" or item.get("category") == "medicine" or item.get("category") == "daily"
+    is_stackable = item.get("stackable", False) or is_food  # 食物药品默认可堆叠
+
+    if is_stackable:
+        # 堆叠: 找已有同名物品
+        stacked = False
+        for inv_item in inventory:
+            if inv_item.get("id") == item_id:
+                inv_item["quantity"] = inv_item.get("quantity", 1) + quantity
+                # 补全字段
+                for k in ["category", "type", "effects", "name"]:
+                    if k not in inv_item:
+                        inv_item[k] = item.get(k)
+                stacked = True
+                break
+        if not stacked:
             inventory.append({
                 "id": item_id,
                 "name": item.get("name"),
-                "quantity": quantity
+                "category": item.get("category"),
+                "type": item.get("type"),
+                "quantity": quantity,
+                "effects": item.get("effects", {}),
             })
     else:
-        # 非堆叠物品（装备等）
+        # 装备/渔具: 不堆叠, 多个就多个 entry
+        # 9/4晚: 补全 slot/category/type 字段, 防止后续 equip_item 误判
+        # 9/4晚: 加 rarity + rarity_mult (持久化词条抽取结果)
+        # 9/4晚: 消耗性鱼饵无 rarity (保持原样), 渔具和拟饵加 rarity="common"
+        from .entry_lib import make_inventory_entry
+
+        # 9/7 命名统一: 全部加 fishing_ 前缀
+        is_consumable_bait = (
+            item.get("slot") == "fishing_bait"
+            and item.get("subcategory") != "fishing_lure"
+            and item.get("consumable", False)
+        )
+
         for _ in range(quantity):
-            inventory = user.get("inventory", [])
-            
-            # 检查装备栏位是否为空
-            slot = item.get("slot")
-            if slot:
-                equipped = user.get("equipped_items", {})
-                if slot not in equipped or not equipped[slot]:
-                    # 自动装备
-                    equipped[slot] = {
-                        "id": item_id,
-                        "name": item.get("name"),
-                        "effects": item.get("effects", {})
-                    }
-                    user["equipped_items"] = equipped
-                    # 不加入背包
-                else:
-                    # 栏位被占用，加入背包
-                    inventory.append({
-                        "id": item_id,
-                        "name": item.get("name")
-                    })
-            else:
+            if is_consumable_bait:
+                # 消耗性鱼饵: 无 rarity, 旧字段
                 inventory.append({
                     "id": item_id,
-                    "name": item.get("name")
+                    "name": item.get("name"),
+                    "category": item.get("category"),
+                    "type": item.get("type"),
+                    "slot": item.get("slot"),
+                    "base_effects": item.get("base_effects", {}),
+                    "consumable": item.get("consumable", False),
                 })
-    
+            else:
+                # 渔具/拟饵/通用装备: 商店默认 common, 持久化 rarity_mult
+                entry = make_inventory_entry(item_id, "common")
+                entry["name"] = item.get("name")
+                entry["category"] = item.get("category")
+                entry["type"] = item.get("type")
+                entry["slot"] = item.get("slot")
+                entry["consumable"] = item.get("consumable", False)
+                inventory.append(entry)
+
     user["inventory"] = inventory
     user["gold"] = user.get("gold", 0) - price
-    
-    return True, f"购买成功！{'[已自动装备]' if slot and slot not in (user.get('equipped_items') or {}) else ''}"
+
+    return True, f"✅ 购买 {item.get('name')} ×{quantity} 成功 (花费 {price} 金币)"
 
 
 # ============================================================
-# 商店列表
+# 兼容旧接口
 # ============================================================
 
-def get_all_shops() -> list:
-    """获取所有商店列表"""
-    return list(SHOPS.keys())
+def get_shop_items(plugin, shop_id: str) -> tuple[list, list]:
+    """兼容旧接口: 返回固定/随机"""
+    return [], get_sellable_items().get(shop_id, [])[:20]
 
 
-def format_shop_list(plugin) -> str:
-    """格式化商店列表"""
-    lines = ["━━━━━━━━━━━━━━", "【 商 店 列 表 】", "━━━━━━━━━━━━━━"]
-    
-    for shop_id, shop in SHOPS.items():
-        fixed, random_items = get_shop_items(plugin, shop_id)
-        total = len(fixed) + len(random_items)
-        lines.append(f"{shop['emoji']} /商店 {shop_id}")
-        lines.append(f"   {shop['desc']} ({total}件)")
-    
-    lines.append("━━━━━━━━━━━━━━")
-    lines.append("指令: /商店 <商店名> 查看商品")
-    lines.append("      /商店 买 <物品名> [数量] 购买")
-    
-    return "\n".join(lines)
-
-
-def format_shop_items(plugin, shop_id: str) -> str:
-    """格式化商店商品列表"""
-    shop = SHOPS.get(shop_id)
-    if not shop:
-        return "商店不存在"
-    
-    fixed, random_items = get_shop_items(plugin, shop_id)
-    
-    lines = [
-        "━━━━━━━━━━━━━━",
-        f"{shop['emoji']} 【 {shop['name']} 】",
-        f"{shop['desc']}",
-        "━━━━━━━━━━━━━━",
-    ]
-    
-    # 固定商品
-    if fixed:
-        lines.append("【 常驻商品 】")
-        for item_id in fixed:
-            item = ITEMS.get(item_id, {})
-            price = item.get("price", 0)
-            effects = format_item_effects_short(item.get("effects", {}))
-            lines.append(f"• {item.get('name', item_id)} §e{price}金§r {effects}")
-    
-    # 随机商品
-    if random_items:
-        lines.append("【 限时商品 】")
-        for item_id in random_items:
-            item = ITEMS.get(item_id, {})
-            price = item.get("price", 0)
-            effects = format_item_effects_short(item.get("effects", {}))
-            lines.append(f"★ {item.get('name', item_id)} §e{price}金§r {effects}")
-    
-    lines.append("━━━━━━━━━━━━━━")
-    lines.append(f"购买: /商店 买 <物品名> [数量]")
-    
-    return "\n".join(lines)
-
-
-def format_item_effects_short(effects: dict) -> str:
-    """格式化物品效果（简短）"""
-    if not effects:
-        return ""
-    
-    parts = []
-    effect_names = {
-        "satiety": "饱食",
-        "mood": "心情",
-        "health": "健康",
-        "energy": "精力",
-        "strength": "体力",
-    }
-    
-    for key, value in effects.items():
-        name = effect_names.get(key, key)
-        if isinstance(value, (int, float)) and value > 0:
-            parts.append(f"+{value}{name}")
-    
-    return f"({', '.join(parts)})" if parts else ""
+# 保留旧 SHOPS 字典 (防止外部 import 报错, 但不再使用)
+SHOPS = {}

@@ -7,14 +7,16 @@
 - 判断消息类型是否需要渲染卡片
 - 后台任务（tick）完成通知的主动推送
 - 兼容命令响应和后台推送两种调用模式
+
+9/5 重构：_send_platform_message 不再走 StarTools.send_message（platform_id 解析有 bug），
+改用 main.py 的 _notify_queue + 缓存 event 方案，与 tick.py 的 _notify_catch / _notify_empty
+走同一条路，避免 3 套发送路径并存（ARCHITECTURE.md L4 设计目标）。
 """
 
-import asyncio
 from enum import Enum, auto
 from typing import Optional, Dict, Any
 
 from astrbot.api import logger
-from astrbot.api.star import StarTools
 from astrbot.core.message.message_event_result import MessageChain
 
 
@@ -69,7 +71,6 @@ class MessageType(Enum):
     NOTIFY_WORK_COMPLETE = auto()   # 工作完成通知
     NOTIFY_LEARN_COMPLETE = auto()   # 学习完成通知
     NOTIFY_ENTERTAIN_COMPLETE = auto()  # 娱乐完成通知
-    NOTIFY_SLEEP_COMPLETE = auto()   # 睡眠完成通知
     NOTIFY_EAT_COMPLETE = auto()     # 吃饭完成通知
     NOTIFY_LOW_ATTR = auto()         # 属性过低警告
     NOTIFY_RENT_DUE = auto()         # 房租到期提醒
@@ -111,7 +112,6 @@ RENDER_CARD_BY_DEFAULT: Dict[MessageType, bool] = {
     MessageType.NOTIFY_WORK_COMPLETE: False,
     MessageType.NOTIFY_LEARN_COMPLETE: False,
     MessageType.NOTIFY_ENTERTAIN_COMPLETE: False,
-    MessageType.NOTIFY_SLEEP_COMPLETE: False,
     MessageType.NOTIFY_EAT_COMPLETE: False,
     MessageType.NOTIFY_LOW_ATTR: False,
     MessageType.NOTIFY_RENT_DUE: False,
@@ -271,41 +271,86 @@ class Messenger:
 
     async def _send_platform_message(
         self,
-        platform_msg_type: str,   # "GroupMessage" | "PrivateMessage"
+        platform_msg_type: str,   # "GroupMessage" | "PrivateMessage" (保留签名兼容, 实际不再用)
         target_id: str,
         text: Optional[str] = None,
-        image_url: Optional[str] = None
+        image_url: Optional[str] = None,
+        session_key: str = "",
     ):
-        """实际发送平台消息（文本 或/和 图片）"""
-        from astrbot.core.platform.message_session import MessageSession
-        # platform_msg_type 形如 "GroupMessage"/"PrivateMessage"
-        # platform_id 应是配置里 "id" 字段（你的 QQ 机器人是 "丽贝卡"），从 plugin 读
-        platform_id = getattr(self._plugin, "_platform_id", "") or "aiocqhttp"
-        session = MessageSession.from_str(f"{platform_id}:{platform_msg_type}:{target_id}")
-        try:
-            if image_url and text:
-                # 有图片有文字：先发文字再发图片
-                await StarTools.send_message(
-                    session,
-                    MessageChain().message(text)
-                )
-                await asyncio.sleep(0.3)
-                await StarTools.send_message(
-                    session,
-                    MessageChain().url_image(image_url)
-                )
-            elif image_url:
-                await StarTools.send_message(
-                    session,
-                    MessageChain().url_image(image_url)
-                )
-            elif text:
-                await StarTools.send_message(
-                    session,
-                    MessageChain().message(text)
-                )
-        except Exception as e:
-            self._plugin.logger.error(f"消息发送失败 [{platform_msg_type}/{target_id}]: {e}")
+        """实际发送平台消息（文本 或/和 图片）。
+
+        9/5 重构：tick 后台通知改走 main.py 已有的 _notify_queue + 缓存 event 方案，
+        跟随发起会话（群/私聊），不切换窗口。彻底避开 StarTools.send_message 的
+        platform_id 解析问题。
+
+        Args:
+            platform_msg_type: 保留参数，仅用于日志区分（已不再用于路由）。
+            target_id: 用户 ID（QQ 号）。
+            text: 文本消息内容。
+            image_url: 图片 URL 或本地路径。
+        """
+        if not text and not image_url:
+            return
+
+        # 构造 MessageChain (用本地路径走 file_image, http 走 url_image, 与 _LocalRenderer 对齐)
+        chain = MessageChain()
+        if text:
+            chain = chain.message(text)
+        if image_url:
+            if image_url.startswith(("http://", "https://")):
+                chain = chain.url_image(image_url)
+            else:
+                chain = chain.file_image(image_url)
+
+        # 9/6: 走 _notify_queue: 后台 _notification_consumer 用缓存的 event.send
+        # 同时入队 (user_id, msg_chain, session_key) - consumer 按 session_key 查找 event
+        queue = getattr(self._plugin, "_notify_queue", None)
+        if queue is None:
+            self._plugin.logger.error(f"[Messenger] _notify_queue 未初始化, 通知丢弃 user={target_id}")
+            return
+
+        # 9/6: 优先用 caller 传的 session_key (Pattern 10)
+        # 留空时才走反查 fallback (旧行为)
+        if not session_key:
+            try:
+                from src.ui.message_sender import _extract_session_key  # type: ignore
+            except ImportError:
+                _extract_session_key = None  # 测试 / 单文件运行 fallback
+            best = self._infer_recent_event(target_id)
+            if best is not None and _extract_session_key is not None:
+                try:
+                    session_key = _extract_session_key(best) or ""
+                except Exception:
+                    session_key = ""
+
+        # 持久化路径: 如果 queue 满了 / 拿不到 event, 走 sender.notify() 落 KV
+        # 此处保持简化: 入队, consumer 找不到 event 时由 sender.notify 重试
+        await queue.put((target_id, chain, session_key))
+
+    def _infer_recent_event(self, user_id: str):
+        """反查 user_id 最近一次活跃的 event (兼容旧 _recent_event dict)。"""
+        # 新版 _recent_events (session_key -> event)
+        events = getattr(self._plugin, "_recent_events", None)
+        if events:
+            best = None
+            best_time = 0.0
+            for ev in events.values():
+                sender_id = ""
+                try:
+                    sender_id = str(ev.get_sender_id())
+                except Exception:
+                    continue
+                if sender_id == user_id:
+                    t = getattr(ev, "_niuma_cached_at", 0)
+                    if t > best_time:
+                        best = ev
+                        best_time = t
+            return best
+        # 兼容旧 _recent_event (user_id -> event)
+        old = getattr(self._plugin, "_recent_event", None)
+        if isinstance(old, dict):
+            return old.get(user_id)
+        return None
 
     # ============================================================
     # 命令响应模式（事件上下文中使用 yield）
@@ -359,7 +404,8 @@ class Messenger:
         user_id: str,
         msg_type: MessageType,
         data: dict,
-        platform: str = "PrivateMessage"
+        platform: str = "PrivateMessage",
+        session_key: str = "",
     ):
         """
         后台推送模式：主动向用户发送通知
@@ -369,6 +415,8 @@ class Messenger:
             msg_type: 消息类型
             data: 消息内容数据
             platform: "PrivateMessage" | "GroupMessage"
+            session_key: 9/6 完整 session_key。优先用此 key 查缓存 event。
+                留空时回退到反查 _recent_events (旧行为)。
         """
         # 获取用户设置判断是否启用通知
         settings = await self._store.get_user_settings(user_id)
@@ -386,7 +434,8 @@ class Messenger:
         await self._send_platform_message(
             platform, user_id,
             text=text,
-            image_url=image_url if should_card else None
+            image_url=image_url if should_card else None,
+            session_key=session_key,
         )
 
     # ============================================================
@@ -394,8 +443,13 @@ class Messenger:
     # ============================================================
 
     async def notify_work_complete(self, user_id: str, job_name: str,
-                                   earned_gold: int, event=None):
-        """工作完成通知（后台推送）"""
+                                   earned_gold: int, event=None, session_key: str = ""):
+        """工作完成通知（后台推送）
+
+        Args:
+            session_key: 9/6 完整 session_key (Pattern 10 通知跟随发起会话)。
+                留空时回退到反查 _recent_events (旧行为, 可能被误发到群聊)。
+        """
         await self.push(
             user_id,
             MessageType.NOTIFY_WORK_COMPLETE,
@@ -404,12 +458,17 @@ class Messenger:
                     f"📋 {job_name} 已完成！\n"
                     f"💰 获得 {earned_gold} 金币"
                 )
-            }
+            },
+            session_key=session_key,
         )
 
     async def notify_learn_complete(self, user_id: str, skill_name: str,
-                                    earned_exp: int):
-        """学习完成通知"""
+                                    earned_exp: int, event=None, session_key: str = ""):
+        """学习完成通知
+
+        Args:
+            session_key: 9/6 完整 session_key (Pattern 10)。
+        """
         await self.push(
             user_id,
             MessageType.NOTIFY_LEARN_COMPLETE,
@@ -418,12 +477,17 @@ class Messenger:
                     f"📚 {skill_name} 学习完成！\n"
                     f"📈 获得 {earned_exp} 经验"
                 )
-            }
+            },
+            session_key=session_key,
         )
 
     async def notify_entertain_complete(self, user_id: str, ent_name: str,
-                                        mood_gain: int):
-        """娱乐完成通知"""
+                                        mood_gain: int, event=None, session_key: str = ""):
+        """娱乐完成通知
+
+        Args:
+            session_key: 9/6 完整 session_key (Pattern 10)。
+        """
         await self.push(
             user_id,
             MessageType.NOTIFY_ENTERTAIN_COMPLETE,
@@ -432,7 +496,8 @@ class Messenger:
                     f"🎮 {ent_name} 结束！\n"
                     f"😊 心情 +{mood_gain}"
                 )
-            }
+            },
+            session_key=session_key,
         )
 
     async def notify_low_attr(self, user_id: str, attr_name: str, value: float):

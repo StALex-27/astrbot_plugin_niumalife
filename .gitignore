@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.egg-info/
+*.bak
+*.bak_*
+data/data_*.db
+data/scripts/
+scripts/

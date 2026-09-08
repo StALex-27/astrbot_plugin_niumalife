@@ -201,7 +201,7 @@ class DailyReportGenerator:
             report = self._build_personal_report(user, date_str, today_key)
             try:
                 platform_id = getattr(self._plugin, "_platform_id", "") or "aiocqhttp"
-                priv_session = MessageSession.from_str(f"{platform_id}:PrivateMessage:{user_id}")
+                priv_session = MessageSession.from_str(f"{platform_id}:FriendMessage:{user_id}")
                 await StarTools.send_message(
                     priv_session,
                     MessageChain().message(report)

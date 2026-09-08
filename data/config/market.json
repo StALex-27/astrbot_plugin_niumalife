@@ -1,0 +1,48 @@
+{
+  "_comment": "物品市场价格表 - 通用交易系统用",
+  "_format": {
+    "base": "基础价格 (金币)",
+    "weight_multiplier": "重量倍率 (0=忽略重量, 0.8=中等, 1.2=大鱼高价)",
+    "volatility": "价格波动率 (0=固定, 0.3=传说鱼价格波动大)",
+    "category": "类别: fish/food/item"
+  },
+  "_categories": {
+    "fish": "鱼 (按 base_price * 重量倍率, 基础价来自 fishes.json base_price 兜底)",
+    "food": "食物 (消耗品, 不收重量, 通常买入价的 50%-70% 出售)",
+    "item": "物品 (装备/材料/杂物, 持久, 通常买入价的 50%-80% 出售)"
+  },
+
+  "fish": {
+    "草鱼":      {"base": 18,   "weight_multiplier": 0.7, "volatility": 0.05, "category": "fish"},
+    "鲫鱼":      {"base": 35,   "weight_multiplier": 0.6, "volatility": 0.05, "category": "fish"},
+    "鲤鱼":      {"base": 35,   "weight_multiplier": 0.6, "volatility": 0.05, "category": "fish"},
+    "黑鱼":      {"base": 150,  "weight_multiplier": 0.8, "volatility": 0.10, "category": "fish"},
+    "鲈鱼":      {"base": 80,   "weight_multiplier": 0.7, "volatility": 0.08, "category": "fish"},
+    "鲶鱼":      {"base": 60,   "weight_multiplier": 0.7, "volatility": 0.08, "category": "fish"},
+    "石斑鱼":    {"base": 250,  "weight_multiplier": 1.0, "volatility": 0.15, "category": "fish"},
+    "鲍鱼":      {"base": 300,  "weight_multiplier": 0.5, "volatility": 0.15, "category": "fish"},
+    "海参":      {"base": 50,   "weight_multiplier": 0.4, "volatility": 0.10, "category": "fish"},
+    "中华鲟":    {"base": 2000, "weight_multiplier": 1.2, "volatility": 0.20, "category": "fish"},
+    "龙趸":      {"base": 8000, "weight_multiplier": 1.5, "volatility": 0.30, "category": "fish"},
+    "帝王蟹":    {"base": 3000, "weight_multiplier": 1.3, "volatility": 0.25, "category": "fish"},
+    "黄金锦鲤":  {"base": 3000, "weight_multiplier": 1.2, "volatility": 0.30, "category": "fish"}
+  },
+
+  "food": {
+    "泡面":    {"base": 5,   "weight_multiplier": 0, "volatility": 0.02, "category": "food"},
+    "薯片":    {"base": 3,   "weight_multiplier": 0, "volatility": 0.02, "category": "food"},
+    "面包":    {"base": 4,   "weight_multiplier": 0, "volatility": 0.02, "category": "food"},
+    "肉包":    {"base": 8,   "weight_multiplier": 0, "volatility": 0.02, "category": "food"},
+    "鸡蛋":    {"base": 6,   "weight_multiplier": 0, "volatility": 0.02, "category": "food"},
+    "咖啡":    {"base": 12,  "weight_multiplier": 0, "volatility": 0.05, "category": "food"}
+  },
+
+  "item": {
+    "竹竿":         {"base": 30,   "weight_multiplier": 0, "volatility": 0.05, "category": "item"},
+    "碳素竿":       {"base": 150,  "weight_multiplier": 0, "volatility": 0.05, "category": "item"},
+    "传说鱼竿":     {"base": 1500, "weight_multiplier": 0, "volatility": 0.10, "category": "item"},
+    "蚯蚓":         {"base": 3,    "weight_multiplier": 0, "volatility": 0.05, "category": "item"},
+    "商品饵":       {"base": 8,    "weight_multiplier": 0, "volatility": 0.05, "category": "item"},
+    "活虾":         {"base": 20,   "weight_multiplier": 0, "volatility": 0.05, "category": "item"}
+  }
+}
